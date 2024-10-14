@@ -7,12 +7,28 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService<User> {
-
+public class UserServiceImpl implements UserService {
+    private final RoleService roleService;
     private final UserRepo userRepository;
 
-    public UserServiceImpl(UserRepo userRepository) {
+    public UserServiceImpl(UserRepo userRepository, RoleService roleService) {
         this.userRepository = userRepository;
+        this.roleService = roleService;
+    }
+
+    @Override
+    public long count() {
+        return userRepository.count();
+    }
+
+    @Override
+    public void delete(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 
     @Override
@@ -27,21 +43,9 @@ public class UserServiceImpl implements UserService<User> {
 
     @Override
     public User save(User user) {
+//        user.setRole(
+//                roleService.findById(1L).orElseThrow(() -> new RuntimeException("Role not found"))
+//        );
         return userRepository.save(user);
-    }
-
-    @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
-    }
-
-    @Override
-    public void delete(User user) {
-        userRepository.delete(user);
-    }
-
-    @Override
-    public long count() {
-        return userRepository.count();
     }
 }

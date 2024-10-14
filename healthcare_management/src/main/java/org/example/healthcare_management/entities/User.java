@@ -44,7 +44,7 @@ public class User {
     private String description;
 
     @ManyToOne(
-            fetch = FetchType.LAZY, cascade = {
+            fetch = FetchType.EAGER, cascade = {
                 CascadeType.PERSIST,
                 CascadeType.MERGE,
                 CascadeType.REFRESH,
@@ -72,8 +72,7 @@ public class User {
             String address,
             String phone,
             Gender gender,
-            String description,
-            Role role
+            String description
     ) {
         this.name = name;
         this.email = email;
@@ -82,7 +81,6 @@ public class User {
         this.phone = phone;
         this.gender = gender;
         this.description = description;
-        this.role = role;
     }
 }
 

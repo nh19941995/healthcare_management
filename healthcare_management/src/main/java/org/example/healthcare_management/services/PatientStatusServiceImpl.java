@@ -24,6 +24,6 @@ public class PatientStatusServiceImpl implements PatientStatusService {
 
     @Override
     public PatientStatus save(PatientStatus patientStatus) {
-        return patientStatusRepo.save(patientStatus);
+        return patientStatusRepo.saveAndFlush(patientStatus);
     }
 }

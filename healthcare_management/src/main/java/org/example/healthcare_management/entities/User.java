@@ -2,6 +2,7 @@ package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.healthcare_management.enums.Gender;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +37,8 @@ public class User {
     private String avatar;
 
     @Column(name = "gender")
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -63,7 +65,16 @@ public class User {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public User(String name, String email, String password, String address, String phone, String gender, String description, Role role) {
+    public User(
+            String name,
+            String email,
+            String password,
+            String address,
+            String phone,
+            Gender gender,
+            String description,
+            Role role
+    ) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -74,3 +85,4 @@ public class User {
         this.role = role;
     }
 }
+

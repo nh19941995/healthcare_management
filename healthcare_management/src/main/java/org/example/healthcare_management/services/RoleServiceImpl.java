@@ -4,6 +4,8 @@ import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RoleServiceImpl implements RoleService{
     private final RoleRepo roleRepo;
@@ -26,5 +28,10 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public Role save(Role role) {
         return roleRepo.save(role);
+    }
+
+    @Override
+    public Optional<Role> findById(Long id) {
+        return roleRepo.findById(id);
     }
 }

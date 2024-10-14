@@ -54,9 +54,6 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column(name = "position_id")
-    private String positionId;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -65,4 +62,15 @@ public class User {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public User(String name, String email, String password, String address, String phone, String gender, String description, Role role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.address = address;
+        this.phone = phone;
+        this.gender = gender;
+        this.description = description;
+        this.role = role;
+    }
 }

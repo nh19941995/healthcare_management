@@ -19,4 +19,9 @@ public class Role {
     private String name;
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+
+    public Role(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

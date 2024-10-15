@@ -29,7 +29,7 @@ public class Patient {
     // tên cột chứa khóa phụ trong bảng patients là doctor_id
     // cột phụ doctor_id sẽ dc thêm vào bảng patients
     @JoinColumn(name = "doctor_id")
-    private User doctorId;
+    private Doctor doctor;
 
     @OneToOne(
             cascade = CascadeType.ALL,
@@ -38,7 +38,7 @@ public class Patient {
     // tên cột chứa khóa phụ trong bảng wife là user_Id
     // cột phụ sẽ dc thêm vào bảng patients
     @JoinColumn(name = "user_Id")
-    private User userId;
+    private User user;
 
     @ManyToOne(
             fetch = FetchType.LAZY,

@@ -26,10 +26,19 @@ public class Doctor {
     // tên cột chứa khóa phụ trong bảng doctors là infor_id
     // cột phụ sẽ dc thêm vào bảng doctors
     @JoinColumn(name = "infor_id")
-    private User inforId;
+    private User doctorInfo;
 
     @Column(name = "clinicId")
     private Integer clinicId;
+
+    // mappedBy trỏ tới tên biến doctors trong entity Specialization
+    @OneToMany(mappedBy = "doctor", cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.DETACH
+    }, fetch = FetchType.LAZY)
+    private Set<Patient> patients = new HashSet<>();
 
     @ManyToMany(
             fetch = FetchType.LAZY,
@@ -43,9 +52,9 @@ public class Doctor {
     @JoinTable(
             // tên bảng trung gian
             name = "doctors_specialization",
-            // tên cột chứa khóa chính trong bảng trung gian
+            // tên cột chứa khóa phụ trong bảng trung gian của Doctor
             joinColumns = @JoinColumn(name = "doctor_id"),
-            // tên cột chứa khóa phụ trong bảng trung gian
+            // tên cột chứa khóa phụ trong bảng trung gian của Specialization
             inverseJoinColumns = @JoinColumn(name = "specialization_id")
     )
     private Set<Specialization> specializations = new HashSet<>();

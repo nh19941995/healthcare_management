@@ -32,14 +32,14 @@ public class Specialization {
     private String image;
 
     @CreationTimestamp
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "deletedAt")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @ManyToMany(

@@ -3,6 +3,8 @@ package org.example.healthcare_management.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,6 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Table(name = "patients")  // bảng bệnh nhân
+@SQLDelete(sql = "UPDATE patients SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,14 +78,14 @@ public class Patient {
     private PatientStatus status;
 
     @CreationTimestamp
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "deletedAt")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     // Helper methods for Doctor (ManyToMany)

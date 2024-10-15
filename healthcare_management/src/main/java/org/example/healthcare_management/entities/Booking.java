@@ -1,9 +1,10 @@
 package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Table(name = "bookings")  // bảng bác sĩ
+@SQLDelete(sql = "UPDATE bookings SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

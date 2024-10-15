@@ -4,10 +4,12 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.example.healthcare_management.entities.PatientStatus;
 import org.example.healthcare_management.entities.Role;
+import org.example.healthcare_management.entities.Specialization;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.Gender;
 import org.example.healthcare_management.services.PatientStatusService;
 import org.example.healthcare_management.services.RoleService;
+import org.example.healthcare_management.services.SpecializationService;
 import org.example.healthcare_management.services.UserService;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +18,13 @@ public class DataInitializer {
     private final UserService userService;
     private final RoleService roleService;
     private final PatientStatusService patientStatusService;
+    private final SpecializationService specializationService;
 
-
-
-    public DataInitializer(UserService userService, RoleService roleService, PatientStatusService patientStatusService) {
+    public DataInitializer(UserService userService, RoleService roleService, PatientStatusService patientStatusService, SpecializationService specializationService) {
         this.userService = userService;
         this.roleService = roleService;
         this.patientStatusService = patientStatusService;
+        this.specializationService = specializationService;
     }
 
     @PostConstruct
@@ -95,6 +97,39 @@ public class DataInitializer {
                     .gender(Gender.MALE)
                     .description("Marketing Specialist")
                     .build());
+        }
+
+        if (specializationService.count()==0){
+            specializationService.save(new Specialization(
+                    "Cardiology",
+                    "Deals with disorders of the heart and the cardiovascular system.",
+                    null
+            ));
+
+            specializationService.save(new Specialization(
+                    "Dermatology",
+                    "Deals with the skin, hair, nails, and its diseases.",
+                    null
+            ));
+
+            specializationService.save(new Specialization(
+                    "Endocrinology",
+                    "Deals with the endocrine system and its specific secretions called hormones.",
+                    null
+            ));
+
+            specializationService.save(new Specialization(
+                    "Gastroenterology",
+                    "Deals with the digestive system and its disorders.",
+                    null
+            ));
+
+            specializationService.save(new Specialization(
+                    "Hematology",
+                    "Deals with blood and the blood-forming organs.",
+                    null
+            ));
+
         }
 
 

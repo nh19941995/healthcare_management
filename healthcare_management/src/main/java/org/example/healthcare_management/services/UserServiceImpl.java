@@ -46,6 +46,12 @@ public class UserServiceImpl implements UserService {
 //        user.setRole(
 //                roleService.findById(1L).orElseThrow(() -> new RuntimeException("Role not found"))
 //        );
+        // lấy ra LocalDateTime hiện tại và gán cho createdAt
+        if (user.getCreatedAt() == null){
+            user.setCreatedAt(java.time.LocalDateTime.now());
+        }else {
+            user.setUpdatedAt(java.time.LocalDateTime.now());
+        }
         return userRepository.save(user);
     }
 }

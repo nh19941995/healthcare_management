@@ -21,7 +21,8 @@ public class Doctor {
 
     @OneToOne(
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
+            fetch = FetchType.LAZY,
+            optional = false // thông tin bác sĩ không thể null
     )
     // tên cột chứa khóa phụ trong bảng doctors là infor_id
     // cột phụ sẽ dc thêm vào bảng doctors
@@ -37,8 +38,18 @@ public class Doctor {
     }, fetch = FetchType.LAZY)
     private Set<Booking> bookings = new HashSet<>();
 
-//    @Column(name = "clinicId")
-//    private Integer clinicId;
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.DETACH
+            })
+    // tên cột chứa khóa phụ trong bảng doctors là clinic_id
+    // cột phụ clinic_id sẽ dc thêm vào bảng doctors
+    @JoinColumn(name = "clinic_id")
+    private Clinic clinic;
 
     @ManyToMany(
             fetch = FetchType.LAZY,

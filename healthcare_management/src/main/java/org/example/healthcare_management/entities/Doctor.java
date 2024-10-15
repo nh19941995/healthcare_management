@@ -40,13 +40,23 @@ public class Doctor {
 //    @Column(name = "clinicId")
 //    private Integer clinicId;
 
-    // mappedBy trỏ tới tên biến doctors trong entity Patient
-    @OneToMany(mappedBy = "doctor", cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.REFRESH,
-            CascadeType.DETACH
-    }, fetch = FetchType.LAZY)
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.DETACH
+            }
+    )
+    @JoinTable(
+            // tên bảng trung gian
+            name = "doctors_patients",
+            // tên cột chứa khóa phụ trong bảng trung gian của Doctor
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            // tên cột chứa khóa phụ trong bảng trung gian của Specialization
+            inverseJoinColumns = @JoinColumn(name = "patient_id")
+    )
     private Set<Patient> patients = new HashSet<>();
 
     @ManyToMany(
@@ -76,4 +86,39 @@ public class Doctor {
 
     @Column(name = "deletedAt")
     private LocalDateTime deletedAt;
+
+
+    // Helper methods for Booking (OneToMany)
+    public void addBooking(Booking booking) {
+        this.bookings.add(booking);
+        booking.setDoctor(this);
+    }
+
+    public void removeBooking(Booking booking) {
+        this.bookings.remove(booking);
+        booking.setDoctor(null);
+    }
+
+    // Helper methods for Patient (ManyToMany)
+    public void addPatient(Patient patient) {
+        this.patients.add(patient);
+        patient.getDoctors().add(this);
+    }
+
+    public void removePatient(Patient patient) {
+        this.patients.remove(patient);
+        patient.getDoctors().remove(this);
+    }
+
+    // Helper methods for Specialization (ManyToMany)
+    public void addSpecialization(Specialization specialization) {
+        this.specializations.add(specialization);
+        specialization.getDoctors().add(this);
+    }
+
+    public void removeSpecialization(Specialization specialization) {
+        this.specializations.remove(specialization);
+        specialization.getDoctors().remove(this);
+    }
+
 }

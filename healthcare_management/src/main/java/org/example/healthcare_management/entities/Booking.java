@@ -59,4 +59,26 @@ public class Booking {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    // Helper method for Doctor
+    public void setDoctor(Doctor doctor) {
+        if (this.doctor != null) {
+            this.doctor.getBookings().remove(this);
+        }
+        this.doctor = doctor;
+        if (doctor != null) {
+            doctor.getBookings().add(this);
+        }
+    }
+
+    // Helper method for Patient
+    public void setPatient(Patient patient) {
+        if (this.patient != null) {
+            this.patient.getBookings().remove(this);
+        }
+        this.patient = patient;
+        if (patient != null) {
+            patient.getBookings().add(this);
+        }
+    }
 }

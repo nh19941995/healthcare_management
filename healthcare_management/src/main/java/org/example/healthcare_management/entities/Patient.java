@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,19 +19,20 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(
+
+    @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE,
                     CascadeType.REFRESH,
                     CascadeType.DETACH
-            }
+            },
+            // tên biến của set<Patient> trong entity Doctor
+            mappedBy = "patients"
     )
-    // tên cột chứa khóa phụ trong bảng patients là doctor_id
-    // cột phụ doctor_id sẽ dc thêm vào bảng patients
-    @JoinColumn(name = "doctor_id")
-    private Doctor doctor;
+    // tên biến authors trong entity Book
+    private Set<Doctor> doctors = new HashSet<>();
 
     @OneToOne(
             cascade = CascadeType.ALL,
@@ -39,6 +42,19 @@ public class Patient {
     // cột phụ sẽ dc thêm vào bảng patients
     @JoinColumn(name = "user_Id")
     private User user;
+
+    // mappedBy trỏ tới tên biến patient trong entity booking
+    @OneToMany(
+            mappedBy = "patient",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.DETACH
+            }, fetch = FetchType.LAZY
+    )
+    private Set<Booking> bookings = new HashSet<>();
+
 
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -62,4 +78,27 @@ public class Patient {
 
     @Column(name = "deletedAt")
     private LocalDateTime deletedAt;
+
+    // Helper methods for Doctor (ManyToMany)
+    public void addDoctor(Doctor doctor) {
+        this.doctors.add(doctor);
+        doctor.getPatients().add(this);
+    }
+
+    public void removeDoctor(Doctor doctor) {
+        this.doctors.remove(doctor);
+        doctor.getPatients().remove(this);
+    }
+
+    // Helper methods for Booking (OneToMany)
+    public void addBooking(Booking booking) {
+        this.bookings.add(booking);
+        booking.setPatient(this);
+    }
+
+    public void removeBooking(Booking booking) {
+        this.bookings.remove(booking);
+        booking.setPatient(null);
+    }
+
 }

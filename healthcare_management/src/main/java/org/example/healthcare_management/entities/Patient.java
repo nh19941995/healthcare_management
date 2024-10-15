@@ -2,6 +2,8 @@ package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -36,7 +38,8 @@ public class Patient {
 
     @OneToOne(
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
+            fetch = FetchType.LAZY,
+            optional = false // thông tin bệnh nhân không thể null
     )
     // tên cột chứa khóa phụ trong bảng wife là user_Id
     // cột phụ sẽ dc thêm vào bảng patients
@@ -70,9 +73,11 @@ public class Patient {
     @JoinColumn(name = "status_id")
     private PatientStatus status;
 
+    @CreationTimestamp
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
 

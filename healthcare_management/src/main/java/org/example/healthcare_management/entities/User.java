@@ -3,6 +3,8 @@ package org.example.healthcare_management.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Gender;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -56,9 +58,11 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 

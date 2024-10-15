@@ -2,6 +2,8 @@ package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -29,9 +31,11 @@ public class Specialization {
     @Column(name = "image")
     private String image;
 
+    @CreationTimestamp
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
 

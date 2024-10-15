@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "doctors")
+@Table(name = "doctors")  // bảng bác sĩ
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,19 @@ public class Doctor {
     @JoinColumn(name = "infor_id")
     private User doctorInfo;
 
-    @Column(name = "clinicId")
-    private Integer clinicId;
+    // mappedBy trỏ tới tên biến doctors trong entity Booking
+    @OneToMany(mappedBy = "doctor", cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.DETACH
+    }, fetch = FetchType.LAZY)
+    private Set<Booking> bookings = new HashSet<>();
 
-    // mappedBy trỏ tới tên biến doctors trong entity Specialization
+//    @Column(name = "clinicId")
+//    private Integer clinicId;
+
+    // mappedBy trỏ tới tên biến doctors trong entity Patient
     @OneToMany(mappedBy = "doctor", cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,

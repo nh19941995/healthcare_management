@@ -11,12 +11,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "patients")  // bảng bệnh nhân
-public class Patient {
+@Table(name = "bookings")  // bảng bác sĩ
+public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "status_id")
+    private String statusId;
+
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {
@@ -26,20 +29,11 @@ public class Patient {
                     CascadeType.DETACH
             }
     )
-    // tên cột chứa khóa phụ trong bảng patients là doctor_id
-    // cột phụ doctor_id sẽ dc thêm vào bảng patients
+    // tên cột chứa khóa phụ trong bảng bookings là doctor_id
+    // cột phụ doctor_id sẽ dc thêm vào bảng bookings
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    @OneToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
-    // tên cột chứa khóa phụ trong bảng wife là user_Id
-    // cột phụ sẽ dc thêm vào bảng patients
-    @JoinColumn(name = "user_Id")
-    private User user;
-
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {
@@ -49,17 +43,20 @@ public class Patient {
                     CascadeType.DETACH
             }
     )
-    // tên cột chứa khóa phụ trong bảng user là status_id
-    // cột phụ role_id sẽ dc thêm vào bảng user
-    @JoinColumn(name = "status_id")
-    private PatientStatus status;
+    // tên cột chứa khóa phụ trong bảng bookings là patient_id
+    // cột phụ patient_id sẽ dc thêm vào bảng bookings
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
-    @Column(name = "createdAt")
+    @Column(name = "appointment_date")
+    private LocalDateTime appointmentDate;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "deletedAt")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 }

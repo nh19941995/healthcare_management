@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "users")
+@Table(name = "users") // bảng người dùng
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

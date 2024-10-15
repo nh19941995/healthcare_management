@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "PatientStatus")
+@Table(name = "PatientStatus") // bảng trạng thái bệnh nhân
 public class PatientStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

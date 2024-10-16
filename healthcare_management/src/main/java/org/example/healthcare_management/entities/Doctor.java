@@ -95,6 +95,16 @@ public class Doctor {
     )
     private Set<Specialization> specializations = new HashSet<>();
 
+    // mappedBy trỏ tới tên biến doctor trong entity Schedule
+    @OneToMany(mappedBy = "doctor", cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.DETACH
+    }, fetch = FetchType.LAZY)
+    private Set<Schedule> schedules = new HashSet<>();
+
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -138,6 +148,16 @@ public class Doctor {
     public void removeSpecialization(Specialization specialization) {
         this.specializations.remove(specialization);
         specialization.getDoctors().remove(this);
+    }
+
+    public void addSchedule(Schedule schedule) {
+        this.schedules.add(schedule);
+        schedule.setDoctor(this);
+    }
+
+    public void removeSchedule(Schedule schedule) {
+        this.schedules.remove(schedule);
+        schedule.setDoctor(null);
     }
 
 }

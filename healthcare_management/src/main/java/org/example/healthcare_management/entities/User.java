@@ -2,6 +2,10 @@ package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.healthcare_management.enums.Gender;
+import org.example.healthcare_management.enums.Status;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "users")
+@Table(name = "users") // bảng người dùng
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,13 +40,14 @@ public class User {
     private String avatar;
 
     @Column(name = "gender")
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne(
-            fetch = FetchType.LAZY, cascade = {
+            fetch = FetchType.EAGER, cascade = {
                 CascadeType.PERSIST,
                 CascadeType.MERGE,
                 CascadeType.REFRESH,
@@ -54,16 +59,33 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public User(String name, String email, String password, String address, String phone, String gender, String description, Role role) {
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    @Column(name = "lock_reason")
+    private String lockReason;
+
+    public User(
+            String name,
+            String email,
+            String password,
+            String address,
+            String phone,
+            Gender gender,
+            String description
+    ) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -71,6 +93,6 @@ public class User {
         this.phone = phone;
         this.gender = gender;
         this.description = description;
-        this.role = role;
     }
 }
+

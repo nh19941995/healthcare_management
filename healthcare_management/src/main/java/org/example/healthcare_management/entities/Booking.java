@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
+import org.example.healthcare_management.enums.BookingStatus;
+import org.example.healthcare_management.enums.Gender;
 import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
@@ -22,8 +24,9 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "status_id")
-    private String statusId;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
     @ManyToOne(
             fetch = FetchType.LAZY,

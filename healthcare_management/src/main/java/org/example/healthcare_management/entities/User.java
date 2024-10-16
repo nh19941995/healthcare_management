@@ -3,6 +3,7 @@ package org.example.healthcare_management.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Gender;
+import org.example.healthcare_management.enums.Status;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -68,6 +69,13 @@ public class User {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    @Column(name = "lock_reason")
+    private String lockReason;
 
     public User(
             String name,

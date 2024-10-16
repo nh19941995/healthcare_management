@@ -2,6 +2,7 @@ package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.healthcare_management.enums.Status;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -34,6 +35,12 @@ public class Doctor {
     // cột phụ sẽ dc thêm vào bảng doctors
     @JoinColumn(name = "infor_id")
     private User doctorInfo;
+
+    @Column(name = "achievements")
+    private String achievements;
+
+    @Column(name = "medical_training")
+    private String medicalTraining;
 
     // mappedBy trỏ tới tên biến doctors trong entity Booking
     @OneToMany(mappedBy = "doctor", cascade = {
@@ -104,6 +111,12 @@ public class Doctor {
     }, fetch = FetchType.LAZY)
     private Set<Schedule> schedules = new HashSet<>();
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    @Column(name = "lock_reason")
+    private String lockReason;
 
     @CreationTimestamp
     @Column(name = "created_at")

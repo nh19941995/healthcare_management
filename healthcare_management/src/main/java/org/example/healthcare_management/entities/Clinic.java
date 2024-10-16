@@ -20,7 +20,7 @@ import java.util.Set;
 @Table(name = "clinics") // bảng phòng khám
 @SQLDelete(sql = "UPDATE clinics SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
-public class Clinic {
+public class Clinic { // phòng khám
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

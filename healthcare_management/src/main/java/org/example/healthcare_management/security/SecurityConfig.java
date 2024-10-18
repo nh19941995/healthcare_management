@@ -16,6 +16,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -48,12 +49,15 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 // kích hoạt bảo mật cho các request
                 .authorizeHttpRequests(authorize -> authorize
+                    // public
+                .requestMatchers("/public/**").permitAll()
                     // users
                 .requestMatchers(HttpMethod.GET, "/users").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/users").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/users").hasAnyRole( "DOCTOR", "ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
 
 
@@ -68,9 +72,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080")); // Thay đổi origin theo nhu cầu
+        configuration.setAllowedOrigins(List.of("http://localhost:*", "http://172.27.48.1:*")); // Thay đổi origin theo nhu cầu
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

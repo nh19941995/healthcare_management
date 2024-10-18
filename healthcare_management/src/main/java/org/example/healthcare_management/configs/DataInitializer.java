@@ -7,6 +7,10 @@ import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.Specialization;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.Gender;
+import org.example.healthcare_management.repositories.PatientStatusRepo;
+import org.example.healthcare_management.repositories.RoleRepo;
+import org.example.healthcare_management.repositories.SpecializationRepo;
+import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.PatientStatusService;
 import org.example.healthcare_management.services.RoleService;
 import org.example.healthcare_management.services.SpecializationService;
@@ -15,40 +19,40 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataInitializer {
-    private final UserService userService;
-    private final RoleService roleService;
-    private final PatientStatusService patientStatusService;
-    private final SpecializationService specializationService;
+    private final UserRepo userRepo;
+    private final RoleRepo rolerepo;
+    private final PatientStatusRepo patientStatusrepo;
+    private final SpecializationRepo specializationrepo;
 
-    public DataInitializer(UserService userService, RoleService roleService, PatientStatusService patientStatusService, SpecializationService specializationService) {
-        this.userService = userService;
-        this.roleService = roleService;
-        this.patientStatusService = patientStatusService;
-        this.specializationService = specializationService;
+    public DataInitializer(UserRepo userRepo, RoleRepo rolerepo, PatientStatusRepo patientStatusrepo, SpecializationRepo specializationrepo) {
+        this.userRepo = userRepo;
+        this.rolerepo = rolerepo;
+        this.patientStatusrepo = patientStatusrepo;
+        this.specializationrepo = specializationrepo;
     }
 
     @PostConstruct
     @Transactional
     public void init() {
-        if (roleService.count() == 0){
-            roleService.save(new Role("ADMIN", "Admin role"));
-            roleService.save(new Role("DOCTOR", "Doctor role"));
-            roleService.save(new Role("PATIENT", "Patient role"));
+        if (rolerepo.count() == 0){
+            rolerepo.save(new Role("ADMIN", "Admin role"));
+            rolerepo.save(new Role("DOCTOR", "Doctor role"));
+            rolerepo.save(new Role("PATIENT", "Patient role"));
         }
 
-        if (patientStatusService.count() == 0){
+        if (patientStatusrepo.count() == 0){
             // đang điều trị
-            patientStatusService.save(new PatientStatus("Under treatment", "Patient is treatment"));
+            patientStatusrepo.save(new PatientStatus("Under treatment", "Patient is treatment"));
             // ra viện
-            patientStatusService.save(new PatientStatus("Discharged", "Patient is Discharged"));
+            patientStatusrepo.save(new PatientStatus("Discharged", "Patient is Discharged"));
             // theo dõi chặt chẽ
-            patientStatusService.save(new PatientStatus("Monitor", "Patient is Monitor"));
+            patientStatusrepo.save(new PatientStatus("Monitor", "Patient is Monitor"));
             // theo dõi bình thường
-            patientStatusService.save(new PatientStatus( "Follow-up","Scheduled for follow-up appointment in one week"));
+            patientStatusrepo.save(new PatientStatus( "Follow-up","Scheduled for follow-up appointment in one week"));
         }
 
-        if (userService.count() == 0) {
-            userService.save(User.builder()
+        if (userRepo.count() == 0) {
+            userRepo.save(User.builder()
                     .name("John Doe")
                     .email("john.doe@example.com")
                     .password("securePass123")
@@ -58,7 +62,7 @@ public class DataInitializer {
                     .description("Senior Software Engineer")
                     .build());
 
-            userService.save(User.builder()
+            userRepo.save(User.builder()
                     .name("Jane Smith")
                     .email("jane.smith@example.com")
                     .password("strongPass456")
@@ -68,7 +72,7 @@ public class DataInitializer {
                     .description("Product Manager")
                     .build());
 
-            userService.save(User.builder()
+            userRepo.save(User.builder()
                     .name("Alex Johnson")
                     .email("alex.johnson@example.com")
                     .password("complexPass789")
@@ -78,7 +82,7 @@ public class DataInitializer {
                     .description("UX Designer")
                     .build());
 
-            userService.save(User.builder()
+            userRepo.save(User.builder()
                     .name("Emily Brown")
                     .email("emily.brown@example.com")
                     .password("safePass101")
@@ -88,7 +92,7 @@ public class DataInitializer {
                     .description("Data Scientist")
                     .build());
 
-            userService.save(User.builder()
+            userRepo.save(User.builder()
                     .name("Michael Lee")
                     .email("michael.lee@example.com")
                     .password("strongPass202")
@@ -99,32 +103,32 @@ public class DataInitializer {
                     .build());
         }
 
-        if (specializationService.count()==0){
-            specializationService.save(new Specialization(
+        if (specializationrepo.count()==0){
+            specializationrepo.save(new Specialization(
                     "Cardiology",
                     "Deals with disorders of the heart and the cardiovascular system.",
                     null
             ));
 
-            specializationService.save(new Specialization(
+            specializationrepo.save(new Specialization(
                     "Dermatology",
                     "Deals with the skin, hair, nails, and its diseases.",
                     null
             ));
 
-            specializationService.save(new Specialization(
+            specializationrepo.save(new Specialization(
                     "Endocrinology",
                     "Deals with the endocrine system and its specific secretions called hormones.",
                     null
             ));
 
-            specializationService.save(new Specialization(
+            specializationrepo.save(new Specialization(
                     "Gastroenterology",
                     "Deals with the digestive system and its disorders.",
                     null
             ));
 
-            specializationService.save(new Specialization(
+            specializationrepo.save(new Specialization(
                     "Hematology",
                     "Deals with blood and the blood-forming organs.",
                     null

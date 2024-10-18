@@ -12,18 +12,5 @@ public class PatientStatusServiceImpl implements PatientStatusService {
         this.patientStatusRepo = patientStatusRepo;
     }
 
-    @Override
-    public long count() {
-        return patientStatusRepo.count();
-    }
 
-    @Override
-    public Iterable<PatientStatus> findAll() {
-        return patientStatusRepo.findAll();
-    }
-
-    @Override
-    public PatientStatus save(PatientStatus patientStatus) {
-        return patientStatusRepo.saveAndFlush(patientStatus);
-    }
 }

@@ -15,27 +15,5 @@ public class SpecializationServiceImpl implements SpecializationService{
         this.specializationRepo = specializationRepo;
     }
 
-    @Override
-    public long count() {
-        return specializationRepo.count();
-    }
 
-    @Override
-    public Optional<Specialization> findById(Long id) {
-        return specializationRepo.findById(id);
-    }
-
-    @Override
-    public Iterable<Specialization> findAll() {
-        return specializationRepo.findAll();
-    }
-
-    @Override
-    public Specialization save(Specialization specialization) {
-        // lấy ra LocalDateTime hiện tại và gán cho createdAt
-        if (specialization.getCreatedAt() == null){
-            specialization.setCreatedAt(java.time.LocalDateTime.now());
-        }
-        return specializationRepo.saveAndFlush(specialization);
-    }
 }

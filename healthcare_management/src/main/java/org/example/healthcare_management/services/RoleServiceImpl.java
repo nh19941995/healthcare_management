@@ -15,23 +15,5 @@ public class RoleServiceImpl implements RoleService{
     }
 
 
-    @Override
-    public long count() {
-        return roleRepo.count();
-    }
 
-    @Override
-    public Iterable<Role> findAll() {
-        return roleRepo.findAll();
-    }
-
-    @Override
-    public Role save(Role role) {
-        return roleRepo.saveAndFlush(role);
-    }
-
-    @Override
-    public Optional<Role> findById(Long id) {
-        return roleRepo.findById(id);
-    }
 }

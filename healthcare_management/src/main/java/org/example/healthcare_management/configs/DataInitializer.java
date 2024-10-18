@@ -1,12 +1,14 @@
 package org.example.healthcare_management.configs;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.example.healthcare_management.entities.PatientStatus;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.Specialization;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.Gender;
+import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.repositories.PatientStatusRepo;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.SpecializationRepo;
@@ -52,54 +54,75 @@ public class DataInitializer {
         }
 
         if (userRepo.count() == 0) {
-            userRepo.save(User.builder()
+            Role adminRole = rolerepo.findById(1L).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+            Role doctorRole = rolerepo.findById(2L).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+            Role patientRole = rolerepo.findById(3L).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+            userRepo.save(
+                    User.builder()
                     .name("John Doe")
                     .email("john.doe@example.com")
-                    .password("securePass123")
+                    .username("john")
+                    .password("{noop}securePass123")
                     .address("123 Main St, Anytown, USA")
                     .phone("555-1234")
                     .gender(Gender.MALE)
                     .description("Senior Software Engineer")
-                    .build());
+                    .role(adminRole)
+                    .status(Status.ACTIVE)
+                    .build()
+
+            );
 
             userRepo.save(User.builder()
                     .name("Jane Smith")
                     .email("jane.smith@example.com")
-                    .password("strongPass456")
+                    .username("jane")
+                    .password("{noop}jane")
                     .address("456 Elm St, Another City, USA")
                     .phone("555-5678")
                     .gender(Gender.FEMALE)
                     .description("Product Manager")
+                    .role(doctorRole)
+                    .status(Status.ACTIVE)
                     .build());
 
             userRepo.save(User.builder()
                     .name("Alex Johnson")
                     .email("alex.johnson@example.com")
-                    .password("complexPass789")
+                    .username("alex")
+                    .password("{noop}alex")
                     .address("789 Oak Ave, Somewhere, USA")
                     .phone("555-9012")
                     .gender(Gender.FEMALE)
                     .description("UX Designer")
+                    .role(patientRole)
+                    .status(Status.ACTIVE)
                     .build());
 
             userRepo.save(User.builder()
                     .name("Emily Brown")
                     .email("emily.brown@example.com")
-                    .password("safePass101")
+                    .username("emily")
+                    .password("{noop}emily")
                     .address("101 Pine Rd, Elsewhere, USA")
                     .phone("555-3456")
                     .gender(Gender.FEMALE)
                     .description("Data Scientist")
+                    .role(patientRole)
+                    .status(Status.ACTIVE)
                     .build());
 
             userRepo.save(User.builder()
                     .name("Michael Lee")
                     .email("michael.lee@example.com")
-                    .password("strongPass202")
+                    .username("michael")
+                    .password("{noop}michael")
                     .address("202 Cedar Ln, Nowhere, USA")
                     .phone("555-7890")
                     .gender(Gender.MALE)
                     .description("Marketing Specialist")
+                    .role(patientRole)
+                    .status(Status.ACTIVE)
                     .build());
         }
 

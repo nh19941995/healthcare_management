@@ -24,6 +24,9 @@ public class User {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "email")
     private String email;
 
@@ -46,14 +49,7 @@ public class User {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne(
-            fetch = FetchType.EAGER, cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE,
-                CascadeType.REFRESH,
-                CascadeType.DETACH
-            }
-    )
+    @ManyToOne(fetch = FetchType.EAGER)
     // tên cột chứa khóa phụ trong bảng user là role_id
     // cột phụ role_id sẽ dc thêm vào bảng user
     @JoinColumn(name = "role_id")

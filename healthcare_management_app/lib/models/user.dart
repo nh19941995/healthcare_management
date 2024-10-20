@@ -1,4 +1,5 @@
 class User {
+
   User({
     required this.id,
     required this.address,
@@ -76,3 +77,4 @@ class User {
     return "$id, $address, $avatar, $createdAt, $deletedAt, $description, $email, $gender, $lockReason, $name, $password, $phone, $status, $updatedAt, $roleId, ";
   }
 }
+

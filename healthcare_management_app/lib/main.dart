@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 import 'package:healthcare_management_app/screens/comons/splash.dart'; // Import màn hình Splash
 import 'package:healthcare_management_app/providers/user_provider.dart'; // Import UserProvider
@@ -16,14 +17,18 @@ void main() {
       child: MyApp(),
     ),
   );
+
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       debugShowCheckedModeBanner: false, // Tắt banner debug
       home: SplashScreen(), // Gọi SplashScreen từ splash.dart
+
+
     );
   }
 }

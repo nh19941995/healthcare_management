@@ -2,6 +2,8 @@ package org.example.healthcare_management.rest;
 
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.security.AuthService;
+import org.example.healthcare_management.security.JwtResponse;
+import org.example.healthcare_management.security.LoginRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,5 +1,7 @@
-// Splash.dart
+// splash.dart
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/screens/comons/login.dart';
+import 'package:healthcare_management_app/screens/comons/sign_up.dart';
 
 class SplashScreen extends StatelessWidget {
   @override
@@ -41,7 +43,9 @@ class SplashScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Hành động khi nhấn Sign Up
+                  Navigator.push(context,
+                      MaterialPageRoute(builder:
+                          (content) => SignUp()));
                 },
                 child: Text(
                   'Sign Up',
@@ -60,7 +64,9 @@ class SplashScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Hành động khi nhấn Login
+                  Navigator.push(context,
+                      MaterialPageRoute(builder:
+                          (content) => Login()));
                 },
                 child: Text(
                   'Login',

@@ -1,6 +1,7 @@
 package org.example.healthcare_management.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.healthcare_management.controllers.dto.UserRegister;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.security.AuthService;
 import org.example.healthcare_management.security.JwtResponse;
@@ -32,7 +33,7 @@ public class AuthController {
 
     // url: localhost:8080/auth/register
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody UserRegister user) {
         log.info("Register request: {}", user);
         User registeredUser = authService.register(user);
         return ResponseEntity.ok(registeredUser);

@@ -37,9 +37,9 @@ public class DataInitializer {
     @Transactional
     public void init() {
         if (rolerepo.count() == 0){
-            rolerepo.save(new Role("ADMIN", "Admin role"));
-            rolerepo.save(new Role("DOCTOR", "Doctor role"));
-            rolerepo.save(new Role("PATIENT", "Patient role"));
+            rolerepo.save(new Role("ROLE_ADMIN", "Admin role"));
+            rolerepo.save(new Role("ROLE_DOCTOR", "Doctor role"));
+            rolerepo.save(new Role("ROLE_PATIENT", "Patient role"));
         }
 
         if (patientStatusrepo.count() == 0){

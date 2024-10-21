@@ -62,6 +62,7 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         });
         User newUser = userRegister.toUser();
+        // mặc định role của user mới là PATIENT
         newUser.setRole(roleService.findByName("PATIENT"));
         newUser.setStatus(Status.ACTIVE);
         log.info("Register request for user: {}", newUser);

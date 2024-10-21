@@ -1,4 +1,5 @@
 package org.example.healthcare_management.security;
+import org.springframework.lang.NonNull;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -29,8 +30,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull  HttpServletResponse response,
+            @NonNull FilterChain filterChain
+    )
             throws ServletException, IOException {
+
+
+
+
         log.info("Processing authentication for '{}'", request.getRequestURL());
         // Lấy token từ header: Lấy giá trị của header Authorization từ yêu cầu.
         final String requestTokenHeader = request.getHeader("Authorization");

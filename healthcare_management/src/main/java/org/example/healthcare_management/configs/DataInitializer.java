@@ -53,6 +53,20 @@ public class DataInitializer {
             patientStatusrepo.save(new PatientStatus( "Follow-up","Scheduled for follow-up appointment in one week"));
         }
 
+        if (userRepo.count() == 0) {
+            User user = User.builder()
+                    .name("Nguyễn Trung Hiếu")
+                    .username("godOfJava@999")
+                    .password("$2a$10$VB8vkPK0KtCMctlmmvlVvO2HKDiO0YXgjxsjtKDNDmEPgbSVCpmBe")
+                    .email("godOfJava@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0773307333")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .role(rolerepo.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role not found")))
+                    .build();
+            userRepo.save(user);
+        }
 
         if (specializationrepo.count()==0){
             specializationrepo.save(new Specialization(

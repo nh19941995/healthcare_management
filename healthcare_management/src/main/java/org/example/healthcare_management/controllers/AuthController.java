@@ -26,16 +26,16 @@ public class AuthController {
     // url: localhost:8080/auth/login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws Exception {
-        log.info("Login request: {}", loginRequest);
+        log.info("Controller - Login request: {}", loginRequest);
         String token = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
     // url: localhost:8080/auth/register
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserRegister user) {
-        log.info("Register request: {}", user);
-        User registeredUser = authService.register(user);
-        return ResponseEntity.ok(registeredUser);
+    public ResponseEntity<?> register(@RequestBody UserRegister userRegister) {
+        log.info("Controller - Register request: {}", userRegister);
+        User newUser = authService.register(userRegister);
+        return ResponseEntity.ok(newUser);
     }
 }

@@ -3,10 +3,12 @@ package org.example.healthcare_management.security;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.UserRegister;
+import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.RoleService;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -58,14 +60,16 @@ public class AuthService {
 
     // đăng ký tài khoản
     public User register(UserRegister userRegister) {
+        log.info("Service - Register request for userRegister: {}", userRegister);
         userRepository.findByUsername(userRegister.getUsername()).ifPresent(u -> {
             throw new RuntimeException("Username already exists");
         });
         User newUser = userRegister.toUser();
         // mặc định role của user mới là PATIENT
-        newUser.setRole(roleService.findByName("PATIENT"));
+
+        newUser.setRole(roleService.findByName("ROLE_PATIENT"));
         newUser.setStatus(Status.ACTIVE);
-        log.info("Register request for user: {}", newUser);
+        log.info("Service - Register request for user: {}", newUser);
         // mã hóa mật khẩu trước khi lưu vào database
         newUser.setPassword(passwordEncoder.encode(userRegister.getPassword()));
         // Lưu user mới vào database thông qua UserRepo.

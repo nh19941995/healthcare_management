@@ -63,7 +63,7 @@ public class SecurityConfig {
 
                         // User endpoint
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("PATIENT", "ADMIN", "DOCTOR")
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("PATIENT", "ADMIN", "DOCTOR")
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                         // Doctor endpoint
@@ -101,7 +101,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/specializations/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/specializations/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/specializations/**").hasRole("ADMIN")
-
 
                         .anyRequest().authenticated()
                 )

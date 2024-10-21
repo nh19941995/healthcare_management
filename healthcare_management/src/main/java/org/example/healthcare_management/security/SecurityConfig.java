@@ -60,10 +60,49 @@ public class SecurityConfig {
                                 "/api/public/**"  // Thêm endpoint này nếu bạn có các API công khai khác
                         ).permitAll()
                         // Đặt quy tắc phân quyền cho các endpoint của Spring Data REST
+
+                        // User endpoint
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("PATIENT", "ADMIN", "DOCTOR")
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("PATIENT", "ADMIN", "DOCTOR")
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                        // Doctor endpoint
+                        .requestMatchers(HttpMethod.GET, "/doctors/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/doctors/**").hasRole("ADMIN")
+                        // Patient endpoint
+                        .requestMatchers(HttpMethod.GET, "/patients/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/patients/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/patients/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/patients/**").hasRole("ADMIN")
+                        // Booking endpoint
+                        .requestMatchers(HttpMethod.GET, "/bookings/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bookings/**").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.PUT, "/bookings/**").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.DELETE, "/bookings/**").hasRole("PATIENT")
+                        // clinic endpoint
+                        .requestMatchers(HttpMethod.GET, "/clinics/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/clinics/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/clinics/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/clinics/**").hasRole("ADMIN")
+                        // role endpoint
+                        .requestMatchers(HttpMethod.GET, "/roles/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/roles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/roles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/roles/**").hasRole("ADMIN")
+                        // shedule endpoint
+                        .requestMatchers(HttpMethod.GET, "/schedules/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/schedules/**").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.PUT, "/schedules/**").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.DELETE, "/schedules/**").hasRole("DOCTOR")
+                        // specializations endpoint
+                        .requestMatchers(HttpMethod.GET, "/specializations/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/specializations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/specializations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/specializations/**").hasRole("ADMIN")
+
+
                         .anyRequest().authenticated()
                 )
                 // Thêm Filter để xác thực token và set user vào SecurityContext

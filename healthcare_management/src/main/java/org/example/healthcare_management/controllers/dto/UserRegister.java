@@ -1,7 +1,5 @@
 package org.example.healthcare_management.controllers.dto;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -11,8 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.Gender;
-import org.example.healthcare_management.repositories.RoleRepo;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
 @Getter
 @Setter

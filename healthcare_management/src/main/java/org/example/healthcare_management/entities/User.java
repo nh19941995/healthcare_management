@@ -44,7 +44,7 @@ public class User {
             @Pattern(regexp = ".*[A-Z].*", message = "Password must contain at least one uppercase letter"),
             @Pattern(regexp = ".*[a-z].*", message = "Password must contain at least one lowercase letter"),
             @Pattern(regexp = ".*[0-9].*", message = "Password must contain at least one number"),
-            @Pattern(regexp = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*", message = "Password must contain at least one special character")
+            @Pattern(regexp = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*", message = "Password must contain at least one special character")
     })
     @Column(name = "password")
     private String password;

@@ -1,4 +1,4 @@
-package org.example.healthcare_management.security;
+package org.example.healthcare_management.controllers.dto;
 
 import lombok.*;
 

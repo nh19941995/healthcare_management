@@ -13,10 +13,6 @@ import org.example.healthcare_management.repositories.PatientStatusRepo;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.SpecializationRepo;
 import org.example.healthcare_management.repositories.UserRepo;
-import org.example.healthcare_management.services.PatientStatusService;
-import org.example.healthcare_management.services.RoleService;
-import org.example.healthcare_management.services.SpecializationService;
-import org.example.healthcare_management.services.UserService;
 import org.springframework.stereotype.Component;
 
 @Component

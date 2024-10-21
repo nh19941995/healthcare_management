@@ -1,6 +1,5 @@
 package org.example.healthcare_management.controllers;
 
-import org.example.healthcare_management.repositories.UserRepo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,11 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class UserController {
 
-    private final UserRepo userRepository;
+//    private final UserRepo userRepository;
 
-    public UserController(UserRepo userRepository) {
-        this.userRepository = userRepository;
-    }
+//    public UserController(UserRepo userRepository) {
+//        this.userRepository = userRepository;
+//    }
 
 //    @GetMapping
 ////    @PreAuthorize("hasRole('ADMIN')")

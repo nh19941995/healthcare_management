@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/models/user.dart';
+import 'package:healthcare_management_app/screens/comons/theme.dart';
+
+import '../../enum.dart';
 
 class EditProfileScreen extends StatelessWidget {
   final User user;
@@ -12,14 +15,14 @@ class EditProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Edit Profile'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back,color: Colors.white,),
           onPressed: () {
             Navigator.pop(context); // Quay lại màn hình trước đó
           },
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppTheme.largeSpacing),
         child: Column(
           children: [
             // Avatar và nút thay đổi ảnh
@@ -30,20 +33,20 @@ class EditProfileScreen extends StatelessWidget {
                     radius: 50,
                     backgroundImage: AssetImage('lib/assets/Avatar.png'), // Sử dụng ảnh từ user
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: AppTheme.mediumSpacing),
                   TextButton(
                     onPressed: () {
                       // Hành động khi nhấn 'Change Picture'
                     },
-                    child: const Text(
+                    child: Text(
                       'Change Picture',
-                      style: TextStyle(decoration: TextDecoration.underline),
+                      style: AppTheme.theme.textTheme.headlineSmall,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppTheme.largeSpacing),
 
             // Form để chỉnh sửa thông tin người dùng
             TextFormField(
@@ -53,7 +56,7 @@ class EditProfileScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppTheme.smallSpacing),
             TextFormField(
               initialValue: user.email, // Email từ đối tượng user
               decoration: const InputDecoration(
@@ -61,7 +64,7 @@ class EditProfileScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppTheme.smallSpacing),
             TextFormField(
               initialValue: user.phone, // Số điện thoại từ đối tượng user
               decoration: const InputDecoration(
@@ -69,7 +72,7 @@ class EditProfileScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppTheme.smallSpacing),
             TextFormField(
               initialValue: user.password, // Mật khẩu từ đối tượng user
               decoration: const InputDecoration(
@@ -78,19 +81,58 @@ class EditProfileScreen extends StatelessWidget {
               ),
               obscureText: true, // Để ẩn mật khẩu
             ),
-            const SizedBox(height: 30),
-
-            // Nút cập nhật
-            ElevatedButton(
-              onPressed: () {
-                // Hành động khi nhấn 'Update'
-              },
-              child: const Text('Update'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
+            const SizedBox(height: AppTheme.smallSpacing),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     Text("Gender", style: TextStyle(fontSize: 16)),
+            //     SizedBox(width: 20),
+            //     Row(
+            //       children: [
+            //         Radio<Gender>(
+            //           value: Gender.MALE, // Sử dụng enum MALE
+            //           groupValue: _selectedGender,
+            //           onChanged: (Gender? value) {
+            //             setState(() {
+            //               _selectedGender = value; // Cập nhật giá trị
+            //             });
+            //           },
+            //         ),
+            //         Text("Male"),
+            //       ],
+            //     ),
+            //     SizedBox(width: AppTheme.largeSpacing),
+            //     Row(
+            //       children: [
+            //         Radio<Gender>(
+            //           value: Gender.FEMALE, // Sử dụng enum FEMALE
+            //           groupValue: _selectedGender,
+            //           onChanged: (Gender? value) {
+            //             setState(() {
+            //               _selectedGender = value; // Cập nhật giá trị
+            //             });
+            //           },
+            //         ),
+            //         Text("Female"),
+            //       ],
+            //     ),
+            //   ],
+            // ),
+            SizedBox(height: AppTheme.smallSpacing),
+            TextFormField(
+              initialValue: user.address, // Mật khẩu từ đối tượng user
+              decoration: const InputDecoration(
+                labelText: 'Address',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: AppTheme.largeSpacing),
+            SizedBox(
+              width: double.infinity, // Chiếm toàn bộ chiều rộng
+              child: ElevatedButton(
+                style: AppTheme.elevatedButtonStyle, // Sử dụng style từ AppTheme
+                onPressed: ()=>{},
+                child: Text('Update'),
               ),
             ),
           ],

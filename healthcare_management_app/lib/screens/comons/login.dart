@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/sign_up.dart';
+import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:healthcare_management_app/screens/customers/home_customer.dart';
 
 
@@ -145,31 +145,26 @@ class _LoginScreenState extends State<Login> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.all(AppTheme.defaultPadding),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 60),
+              SizedBox(height: AppTheme.xLargeSpacing),
               Text(
                 "Welcome",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+                style: AppTheme.theme.textTheme.headlineLarge
               ),
               Text(
                 "Login",
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
-                ),
+                style: AppTheme.theme.textTheme.headlineLarge
               ),
-              SizedBox(height: 40),
+              SizedBox(height: AppTheme.xLargeSpacing),
               // Hình ảnh trung tâm
               Container(
-                height: 200,
                 child: Image.asset('lib/assets/Lifesavers.png'),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: AppTheme.xLargeSpacing),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -179,7 +174,7 @@ class _LoginScreenState extends State<Login> {
                   errorText: _emailError,
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: AppTheme.smallSpacing),
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -199,22 +194,16 @@ class _LoginScreenState extends State<Login> {
                   errorText: _passwordError,
                 ),
               ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: _login,
-                child: Text(
-                  'Login',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+              SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(
+                width: double.infinity, // Chiếm toàn bộ chiều rộng
+                child: ElevatedButton(
+                  style: AppTheme.elevatedButtonStyle, // Sử dụng style từ AppTheme
+                  onPressed: _login,
+                  child: Text('Login'),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: AppTheme.largeSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

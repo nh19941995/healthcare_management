@@ -3,6 +3,7 @@ package org.example.healthcare_management.configs;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.example.healthcare_management.entities.PatientStatus;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.Specialization;
@@ -13,29 +14,28 @@ import org.example.healthcare_management.repositories.PatientStatusRepo;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.SpecializationRepo;
 import org.example.healthcare_management.repositories.UserRepo;
+import org.example.healthcare_management.services.UserService;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
+@AllArgsConstructor
 public class DataInitializer {
+    private final UserService userService;
     private final UserRepo userRepo;
-    private final RoleRepo rolerepo;
+    private final RoleRepo roleRepo;
     private final PatientStatusRepo patientStatusrepo;
     private final SpecializationRepo specializationrepo;
-
-    public DataInitializer(UserRepo userRepo, RoleRepo rolerepo, PatientStatusRepo patientStatusrepo, SpecializationRepo specializationrepo) {
-        this.userRepo = userRepo;
-        this.rolerepo = rolerepo;
-        this.patientStatusrepo = patientStatusrepo;
-        this.specializationrepo = specializationrepo;
-    }
 
     @PostConstruct
     @Transactional
     public void init() {
-        if (rolerepo.count() == 0){
-            rolerepo.save(new Role("ROLE_ADMIN", "Admin role"));
-            rolerepo.save(new Role("ROLE_DOCTOR", "Doctor role"));
-            rolerepo.save(new Role("ROLE_PATIENT", "Patient role"));
+        if (roleRepo.count() == 0){
+            roleRepo.save(new Role("ADMIN", "Admin role"));
+            roleRepo.save(new Role("DOCTOR", "Doctor role"));
+            roleRepo.save(new Role("PATIENT", "Patient role"));
         }
 
         if (patientStatusrepo.count() == 0){
@@ -49,7 +49,12 @@ public class DataInitializer {
             patientStatusrepo.save(new PatientStatus( "Follow-up","Scheduled for follow-up appointment in one week"));
         }
 
-        if (userRepo.count() == 0) {
+        if (userRepo.count() == 0 && roleRepo.count() > 0) {
+            Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(() -> new EntityNotFoundException("Role not found"));
+            Role doctorRole = roleRepo.findByName("DOCTOR").orElseThrow(() -> new EntityNotFoundException("Role not found"));
+            Role patientRole = roleRepo.findByName("PATIENT").orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+
             User user = User.builder()
                     .name("Nguyễn Trung Hiếu")
                     .username("godOfJava@999")
@@ -59,8 +64,14 @@ public class DataInitializer {
                     .phone("0773307333")
                     .gender(Gender.MALE)
                     .status(Status.ACTIVE)
-                    .role(rolerepo.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role not found")))
                     .build();
+            Set<Role> roles = new HashSet<>();
+            roles.add(adminRole);
+            user.setRoles(roles);
+            //userService.addRoleToUser(user, adminRole);
+            //userService.addRoleToUser(user, doctorRole);
+            //userService.addRoleToUser(user, patientRole);
+
             userRepo.save(user);
         }
 

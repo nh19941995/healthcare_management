@@ -1,14 +1,19 @@
 package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Gender;
 import org.example.healthcare_management.enums.Status;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,6 +23,8 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "users") // bảng người dùng
 @ToString
+@SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,11 +76,21 @@ public class User {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    // tên cột chứa khóa phụ trong bảng user là role_id
-    // cột phụ role_id sẽ dc thêm vào bảng user
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany(
+            fetch = FetchType.EAGER,
+            cascade = {
+                    CascadeType.MERGE
+            }
+    )
+    @JoinTable(
+            // tên bảng trung gian
+            name = "user_role",
+            // tên cột chứa khóa phụ trong bảng trung gian của User
+            joinColumns = @JoinColumn(name = "user_id"),
+            // tên cột chứa khóa phụ trong bảng trung gian của Roles
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -109,6 +126,23 @@ public class User {
         this.phone = phone;
         this.gender = gender;
         this.description = description;
+    }
+
+    public Set<Role> getRoles() {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
+        return roles;
+    }
+
+    public void removeRole(Role role) {
+        getRoles().remove(role);
+        role.getUsers().remove(this);
+    }
+
+    public void addRole(Role role) {
+        getRoles().add(role);
+        role.getUsers().add(this);
     }
 }
 

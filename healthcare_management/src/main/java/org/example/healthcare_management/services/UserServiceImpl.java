@@ -1,7 +1,9 @@
 package org.example.healthcare_management.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public User update(User user) {
         log.info("Updating user {} in the database", user.getName());
@@ -40,9 +43,34 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     @Override
     public void delete(Long id) {
         log.info("Deleting user with id {}", id);
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public void addRoleToUser(User user, Role role) {
+        if (user != null && role != null) {
+            log.info("Adding role {} to user {}", role.getName(), user.getName());
+            user.addRole(role);
+            userRepository.save(user);
+        } else {
+            log.warn("Attempted to add null role to user or add role to null user");
+        }
+    }
+
+    @Transactional
+    @Override
+    public void removeRoleFromUser(User user, Role role) {
+        if (user != null && role != null) {
+            log.info("Removing role {} from user {}", role.getName(), user.getName());
+            user.removeRole(role);
+            userRepository.save(user);
+        } else {
+            log.warn("Attempted to remove null role from user or remove role from null user");
+        }
     }
 }

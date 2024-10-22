@@ -1,12 +1,16 @@
 package org.example.healthcare_management.security;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.UserRegister;
+import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.Status;
+import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.RoleService;
+import org.example.healthcare_management.services.UserService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +26,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @AllArgsConstructor
 public class AuthService {
-    private final RoleService roleService;
+    private final RoleRepo roleRepo;
+    private final UserService userService;
     // dùng để thực hiện các thao tác liên quan đến User
     private final UserRepo userRepository;
     // dùng để mã hóa mật khẩu
@@ -64,8 +69,9 @@ public class AuthService {
         });
         User newUser = userRegister.toUser();
         // mặc định role của user mới là PATIENT
+        Role patientRole = roleRepo.findByName("PATIENT").orElseThrow(() -> new EntityNotFoundException("Role not found"));
+        userService.addRoleToUser(newUser, patientRole);
 
-        newUser.setRole(roleService.findByName("ROLE_PATIENT"));
         newUser.setStatus(Status.ACTIVE);
         log.info("Service - Register request for user: {}", newUser);
         // mã hóa mật khẩu trước khi lưu vào database

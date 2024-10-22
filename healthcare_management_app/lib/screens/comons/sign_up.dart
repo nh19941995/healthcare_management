@@ -3,6 +3,7 @@ import 'package:healthcare_management_app/enum.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/login.dart';
+import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:provider/provider.dart';
 
 class SignUp extends StatefulWidget {
@@ -51,7 +52,6 @@ class _SignUpScreenState extends State<SignUp> {
       _rePasswordError = null;
       _addressError = null;
     });
-    await Provider.of<UserProvider>(context, listen: false).getAllUser();
     // Lấy dữ liệu từ các trường điều khiển
     String fullName = _fullNameController.text;
     String phone = _phoneController.text;
@@ -173,27 +173,19 @@ class _SignUpScreenState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.theme.scaffoldBackgroundColor,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.all(AppTheme.defaultPadding),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 60),
-              Text(
-                "Hello Beautiful",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
-              ),
+              SizedBox(height: AppTheme.xLargeSpacing,),
               Text(
                 "Sign Up",
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
-                ),
+                style: AppTheme.headerStyle
               ),
-              SizedBox(height: 30),
+              SizedBox(height: AppTheme.xLargeSpacing),
               TextField(
                 controller: _fullNameController,
                 decoration: InputDecoration(
@@ -202,7 +194,7 @@ class _SignUpScreenState extends State<SignUp> {
                   errorText: _fullNameError,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: AppTheme.smallSpacing),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
@@ -212,7 +204,7 @@ class _SignUpScreenState extends State<SignUp> {
                   errorText: _phoneError,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: AppTheme.smallSpacing),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -222,7 +214,7 @@ class _SignUpScreenState extends State<SignUp> {
                   errorText: _emailError,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: AppTheme.smallSpacing),
               // Trường nhập Password với nút bật/tắt hiển thị mật khẩu
               TextField(
                 controller: _passwordController,
@@ -243,7 +235,7 @@ class _SignUpScreenState extends State<SignUp> {
                   errorText: _passwordError,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: AppTheme.smallSpacing),
               // Trường nhập Re-password với nút bật/tắt hiển thị mật khẩu
               TextField(
                 controller: _rePasswordController,
@@ -264,7 +256,7 @@ class _SignUpScreenState extends State<SignUp> {
                   errorText: _rePasswordError,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: AppTheme.smallSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -284,7 +276,7 @@ class _SignUpScreenState extends State<SignUp> {
                       Text("Male"),
                     ],
                   ),
-                  SizedBox(width: 20),
+                  SizedBox(width: AppTheme.largeSpacing),
                   Row(
                     children: [
                       Radio<Gender>(
@@ -299,10 +291,9 @@ class _SignUpScreenState extends State<SignUp> {
                       Text("Female"),
                     ],
                   ),
-                  SizedBox(width: 20),
                 ],
               ),
-              SizedBox(height: 5),
+              SizedBox(height: AppTheme.smallSpacing),
               TextField(
                 controller: _addressController,
                 decoration: InputDecoration(
@@ -311,22 +302,16 @@ class _SignUpScreenState extends State<SignUp> {
                   errorText: _addressError,
                 ),
               ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: _signUp,
-                child: Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+              SizedBox(height: AppTheme.largeSpacing),
+              SizedBox(
+                width: double.infinity, // Chiếm toàn bộ chiều rộng
+                child: ElevatedButton(
+                  style: AppTheme.elevatedButtonStyle, // Sử dụng style từ AppTheme
+                  onPressed: _signUp,
+                  child: Text('Sign Up'),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: AppTheme.largeSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

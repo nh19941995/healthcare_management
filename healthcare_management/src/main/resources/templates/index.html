@@ -12,11 +12,13 @@
 
 <script>
     function testCORS() {
-        fetch('http://172.27.48.1:8080/public', {
+        fetch('http://localhost:8080/users', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
+
+
         })
             .then(response => response.json())
             .then(data => {

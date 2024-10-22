@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
+import 'package:healthcare_management_app/screens/comons/theme.dart';
 import '../comons/customBottomNavBar.dart';
 
 class HomeCustomer extends StatelessWidget {
@@ -20,11 +21,8 @@ class HomeCustomer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dịch vụ khách hàng'),
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppTheme.defaultPadding),
         child: Column(
           children: [
             // Hiển thị tên người dùng và avatar
@@ -33,7 +31,7 @@ class HomeCustomer extends StatelessWidget {
               children: [
                 Text(
                   'Xin chào ${user.name}',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: AppTheme.theme.textTheme.displayMedium,
                 ),
                 CircleAvatar(
                   backgroundImage: AssetImage('lib/assets/Avatar.png'), // Đường dẫn đến avatar
@@ -41,7 +39,7 @@ class HomeCustomer extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppTheme.largeSpacing),
             Expanded(
               child: Column(
                 children: [
@@ -53,23 +51,17 @@ class HomeCustomer extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Thông tin cá nhân',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    SizedBox(width: 10),
-                                  ],
+                                padding: const EdgeInsets.all(AppTheme.Padding8),
+                                child: Text(
+                                  'Thông tin cá nhân',
+                                  style: AppTheme.theme.textTheme.bodyLarge,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0), // Thêm padding cho ảnh
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Image.asset(
-                                'lib/assets/Stomach.png', // Đường dẫn ảnh
-                                height: double.infinity, // Ảnh sẽ chiếm toàn bộ chiều cao của Card
+                                'lib/assets/Stomach.png',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -90,30 +82,24 @@ class HomeCustomer extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Đặt lịch khám',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    SizedBox(width: 10),
-                                  ],
+                                padding: const EdgeInsets.all(AppTheme.Padding8),
+                                child: Text(
+                                  'Đặt lịch khám',
+                                  style: AppTheme.theme.textTheme.bodyLarge,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Image.asset(
                                 'lib/assets/Bag.png',
-                                height: double.infinity,
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, AppointmentScreen()); // Chuyển đến màn hình đặt lịch khám
+                          //_navigateToScreen(context, AppointmentScreen());
                         },
                       ),
                     ),
@@ -127,30 +113,24 @@ class HomeCustomer extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Chỉ số sức khỏe',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    SizedBox(width: 10),
-                                  ],
+                                padding: const EdgeInsets.all(AppTheme.Padding8),
+                                child: Text(
+                                  'Chỉ số sức khỏe',
+                                  style: AppTheme.theme.textTheme.bodyLarge,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Image.asset(
                                 'lib/assets/Lifesavers Electrocardiogram.png',
-                                height: double.infinity,
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ],
                         ),
                         onTap: () {
-                         // _navigateToScreen(context, HealthMetricsScreen()); // Chuyển đến màn hình chỉ số sức khỏe
+                          //_navigateToScreen(context, HealthMetricsScreen()); // Chuyển đến màn hình chỉ số sức khỏe
                         },
                       ),
                     ),
@@ -164,23 +144,17 @@ class HomeCustomer extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Lịch sử khám',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    SizedBox(width: 10),
-                                  ],
+                                padding: const EdgeInsets.all(AppTheme.Padding8),
+                                child: Text(
+                                  'Lịch sử khám',
+                                  style: AppTheme.theme.textTheme.bodyLarge,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Image.asset(
                                 'lib/assets/Lifesavers Stethoscope.png',
-                                height: double.infinity,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -201,30 +175,24 @@ class HomeCustomer extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Tư vấn online',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    SizedBox(width: 10),
-                                  ],
+                                padding: const EdgeInsets.all(AppTheme.Padding8),
+                                child: Text(
+                                  'Tư vấn online',
+                                  style: AppTheme.theme.textTheme.bodyLarge,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Image.asset(
                                 'lib/assets/Lifesavers Bust.png',
-                                height: double.infinity,
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ],
                         ),
                         onTap: () {
-                         // _navigateToScreen(context, OnlineConsultationScreen()); // Chuyển đến màn hình tư vấn online
+                          //_navigateToScreen(context, OnlineConsultationScreen()); // Chuyển đến màn hình tư vấn online
                         },
                       ),
                     ),

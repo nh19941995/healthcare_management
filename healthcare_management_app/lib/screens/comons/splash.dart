@@ -1,7 +1,7 @@
-// splash.dart
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/sign_up.dart';
+import 'package:healthcare_management_app/screens/comons/theme.dart';
 
 class SplashScreen extends StatelessWidget {
   @override
@@ -35,42 +35,32 @@ class SplashScreen extends StatelessWidget {
               ),
               SizedBox(height: 40),
               // Nút "Sign Up"
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 75, vertical: 15), backgroundColor: Colors.deepPurple, // Màu nền nút
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder:
-                          (content) => SignUp()));
-                },
-                child: Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 18,color: Colors.white),
-
+              SizedBox(
+                width: double.infinity, // Chiếm toàn bộ chiều rộng
+                child: ElevatedButton(
+                  style: AppTheme.elevatedButtonStyle, // Sử dụng style từ AppTheme
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUp()),
+                    );
+                  },
+                  child: Text('Sign Up'),
                 ),
               ),
               SizedBox(height: 20),
               // Nút "Login"
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.deepPurple, padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                  side: BorderSide(color: Colors.deepPurple, width: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder:
-                          (content) => Login()));
-                },
-                child: Text(
-                  'Login',
-                  style: TextStyle(fontSize: 18),
+              SizedBox(
+                width: double.infinity, // Chiếm toàn bộ chiều rộng
+                child: OutlinedButton(
+                  style: AppTheme.outlinedButtonStyle, // Sử dụng style từ AppTheme
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()),
+                    );
+                  },
+                  child: Text('Login'),
                 ),
               ),
             ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/screens/comons/theme.dart';
 
 import 'package:provider/provider.dart';
 import 'package:healthcare_management_app/screens/comons/splash.dart'; // Import màn hình Splash
@@ -24,7 +25,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
+      title: 'Healthcare Management',
+      theme: AppTheme.theme,
       debugShowCheckedModeBanner: false, // Tắt banner debug
       home: SplashScreen(), // Gọi SplashScreen từ splash.dart
 

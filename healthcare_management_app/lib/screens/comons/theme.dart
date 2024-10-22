@@ -16,7 +16,7 @@ class AppTheme {
   static const double Padding8 = 8.0;
   static const double defaultMargin = 16.0;
 
-  static const double smallSpacing = 5.0;
+  static const double smallSpacing = 10.0;
   static const double mediumSpacing = 10.0;
   static const double largeSpacing = 20.0;
   static const double xLargeSpacing = 40.0;

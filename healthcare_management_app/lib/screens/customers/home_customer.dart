@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
+import 'package:healthcare_management_app/screens/customers/booking.dart';
+import 'package:healthcare_management_app/screens/customers/health_index.dart';
+import 'package:healthcare_management_app/screens/customers/online_consultation.dart';
 import '../comons/customBottomNavBar.dart';
 
 class HomeCustomer extends StatelessWidget {
@@ -99,7 +102,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, AppointmentScreen());
+                          _navigateToScreen(context, Booking(user: user));
                         },
                       ),
                     ),
@@ -130,7 +133,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, HealthMetricsScreen()); // Chuyển đến màn hình chỉ số sức khỏe
+                          _navigateToScreen(context, HealthIndex(user: user)); // Chuyển đến màn hình chỉ số sức khỏe
                         },
                       ),
                     ),
@@ -192,7 +195,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, OnlineConsultationScreen()); // Chuyển đến màn hình tư vấn online
+                          _navigateToScreen(context, OnlineConsultation(user:user)); // Chuyển đến màn hình tư vấn online
                         },
                       ),
                     ),

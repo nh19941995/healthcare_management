@@ -1,83 +1,118 @@
 package org.example.healthcare_management.security;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+@Slf4j
+@AllArgsConstructor
 public class SecurityConfig {
+
+    private final UserDetailsService userDetailsService;
+    private final JwtRequestFilter jwtRequestFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     @Bean
-    public UserDetailsManager userDetailsManager(DataSource dataSource) {
-        JdbcUserDetailsManager theUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-
-        // Câu lệnh SQL để lấy thông tin user
-        theUserDetailsManager
-            .setUsersByUsernameQuery(
-                "SELECT username, password, CASE WHEN status = 'ACTIVE' THEN 1 ELSE 0 END as enabled " +
-                        "FROM users WHERE username = ?"
-            );
-
-        // Câu lệnh SQL để lấy thông tin role của user
-        theUserDetailsManager
-            .setAuthoritiesByUsernameQuery(
-                "SELECT users.username, CONCAT('ROLE_', roles.name) as authority " +
-                        "FROM users INNER JOIN roles ON users.role_id = roles.id " +
-                        "WHERE users.username = ?"
-            );
-        return theUserDetailsManager;
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // kích hoạt CORS
-                .cors(Customizer.withDefaults())
-                // kích hoạt bảo mật cho các request
-                .authorizeHttpRequests(authorize -> authorize
-                    // public
-                .requestMatchers("/public/**").permitAll()
-                    // users
-                .requestMatchers(HttpMethod.GET, "/users").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
-                .requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
-                .requestMatchers(HttpMethod.POST, "/users").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/users").hasAnyRole( "DOCTOR", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
+                .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF
+                .cors(AbstractHttpConfigurer::disable) // Tắt CORS
+                // Xác thực tất cả các request
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
+                // Tắt quản lý session
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                // Cấu hình xác thực cho các request
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/auth/login",
+                                "/auth/register",
+                                "/api/public/**"  // Thêm endpoint này nếu bạn có các API công khai khác
+                        ).permitAll()
+                        // Đặt quy tắc phân quyền cho các endpoint của Spring Data REST
 
-                .anyRequest().authenticated()
+                        // User endpoint
+                        .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("PATIENT", "ADMIN", "DOCTOR")
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                        // Doctor endpoint
+                        .requestMatchers(HttpMethod.GET, "/doctors/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/doctors/**").hasRole("ADMIN")
+                        // Patient endpoint
+                        .requestMatchers(HttpMethod.GET, "/patients/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/patients/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/patients/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/patients/**").hasRole("ADMIN")
+                        // Booking endpoint
+                        .requestMatchers(HttpMethod.GET, "/bookings/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/bookings/**").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.PUT, "/bookings/**").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.DELETE, "/bookings/**").hasRole("PATIENT")
+                        // clinic endpoint
+                        .requestMatchers(HttpMethod.GET, "/clinics/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/clinics/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/clinics/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/clinics/**").hasRole("ADMIN")
+                        // role endpoint
+                        .requestMatchers(HttpMethod.GET, "/roles/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/roles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/roles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/roles/**").hasRole("ADMIN")
+                        // shedule endpoint
+                        .requestMatchers(HttpMethod.GET, "/schedules/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/schedules/**").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.PUT, "/schedules/**").hasRole("DOCTOR")
+                        .requestMatchers(HttpMethod.DELETE, "/schedules/**").hasRole("DOCTOR")
+                        // specializations endpoint
+                        .requestMatchers(HttpMethod.GET, "/specializations/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/specializations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/specializations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/specializations/**").hasRole("ADMIN")
 
-
-        );
-
-        http.httpBasic(Customizer.withDefaults());
-        http.csrf(AbstractHttpConfigurer::disable);
+                        .anyRequest().authenticated()
+                )
+                // Thêm Filter để xác thực token và set user vào SecurityContext
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // Nếu bạn có tài nguyên tĩnh cần bảo vệ, hãy giữ phương thức này
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*")); // Cho phép tất cả các origins
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**");
     }
 }

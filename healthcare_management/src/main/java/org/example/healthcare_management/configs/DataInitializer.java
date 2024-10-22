@@ -13,10 +13,6 @@ import org.example.healthcare_management.repositories.PatientStatusRepo;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.SpecializationRepo;
 import org.example.healthcare_management.repositories.UserRepo;
-import org.example.healthcare_management.services.PatientStatusService;
-import org.example.healthcare_management.services.RoleService;
-import org.example.healthcare_management.services.SpecializationService;
-import org.example.healthcare_management.services.UserService;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,9 +33,9 @@ public class DataInitializer {
     @Transactional
     public void init() {
         if (rolerepo.count() == 0){
-            rolerepo.save(new Role("ADMIN", "Admin role"));
-            rolerepo.save(new Role("DOCTOR", "Doctor role"));
-            rolerepo.save(new Role("PATIENT", "Patient role"));
+            rolerepo.save(new Role("ROLE_ADMIN", "Admin role"));
+            rolerepo.save(new Role("ROLE_DOCTOR", "Doctor role"));
+            rolerepo.save(new Role("ROLE_PATIENT", "Patient role"));
         }
 
         if (patientStatusrepo.count() == 0){
@@ -54,76 +50,18 @@ public class DataInitializer {
         }
 
         if (userRepo.count() == 0) {
-            Role adminRole = rolerepo.findById(1L).orElseThrow(() -> new EntityNotFoundException("Role not found"));
-            Role doctorRole = rolerepo.findById(2L).orElseThrow(() -> new EntityNotFoundException("Role not found"));
-            Role patientRole = rolerepo.findById(3L).orElseThrow(() -> new EntityNotFoundException("Role not found"));
-            userRepo.save(
-                    User.builder()
-                    .name("John Doe")
-                    .email("john.doe@example.com")
-                    .username("john")
-                    .password("{noop}securePass123")
-                    .address("123 Main St, Anytown, USA")
-                    .phone("555-1234")
+            User user = User.builder()
+                    .name("Nguyễn Trung Hiếu")
+                    .username("godOfJava@999")
+                    .password("$2a$10$VB8vkPK0KtCMctlmmvlVvO2HKDiO0YXgjxsjtKDNDmEPgbSVCpmBe")
+                    .email("godOfJava@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0773307333")
                     .gender(Gender.MALE)
-                    .description("Senior Software Engineer")
-                    .role(adminRole)
                     .status(Status.ACTIVE)
-                    .build()
-
-            );
-
-            userRepo.save(User.builder()
-                    .name("Jane Smith")
-                    .email("jane.smith@example.com")
-                    .username("jane")
-                    .password("{noop}jane")
-                    .address("456 Elm St, Another City, USA")
-                    .phone("555-5678")
-                    .gender(Gender.FEMALE)
-                    .description("Product Manager")
-                    .role(doctorRole)
-                    .status(Status.ACTIVE)
-                    .build());
-
-            userRepo.save(User.builder()
-                    .name("Alex Johnson")
-                    .email("alex.johnson@example.com")
-                    .username("alex")
-                    .password("{noop}alex")
-                    .address("789 Oak Ave, Somewhere, USA")
-                    .phone("555-9012")
-                    .gender(Gender.FEMALE)
-                    .description("UX Designer")
-                    .role(patientRole)
-                    .status(Status.ACTIVE)
-                    .build());
-
-            userRepo.save(User.builder()
-                    .name("Emily Brown")
-                    .email("emily.brown@example.com")
-                    .username("emily")
-                    .password("{noop}emily")
-                    .address("101 Pine Rd, Elsewhere, USA")
-                    .phone("555-3456")
-                    .gender(Gender.FEMALE)
-                    .description("Data Scientist")
-                    .role(patientRole)
-                    .status(Status.ACTIVE)
-                    .build());
-
-            userRepo.save(User.builder()
-                    .name("Michael Lee")
-                    .email("michael.lee@example.com")
-                    .username("michael")
-                    .password("{noop}michael")
-                    .address("202 Cedar Ln, Nowhere, USA")
-                    .phone("555-7890")
-                    .gender(Gender.MALE)
-                    .description("Marketing Specialist")
-                    .role(patientRole)
-                    .status(Status.ACTIVE)
-                    .build());
+                    .role(rolerepo.findByName("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role not found")))
+                    .build();
+            userRepo.save(user);
         }
 
         if (specializationrepo.count()==0){

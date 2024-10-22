@@ -123,6 +123,7 @@ class _SignUpScreenState extends State<SignUp> {
     );
 
     try {
+      await Provider.of<UserProvider>(context, listen: false).insertUser(newUser);
       _showSignUpSuccessDialog();
     } catch (e) {
       // Xử lý lỗi khi gọi API

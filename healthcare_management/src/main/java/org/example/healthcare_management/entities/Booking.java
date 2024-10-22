@@ -5,7 +5,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.example.healthcare_management.enums.BookingStatus;
-import org.example.healthcare_management.enums.Gender;
 import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;

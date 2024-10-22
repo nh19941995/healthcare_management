@@ -1,4 +1,4 @@
-package org.example.healthcare_management.rest;
+package org.example.healthcare_management.controllers;
 
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.services.UserService;

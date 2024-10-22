@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Table(name = "roles") // bảng vai trò
+@ToString
 public class Role {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)

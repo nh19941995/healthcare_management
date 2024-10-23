@@ -1,5 +1,7 @@
 package org.example.healthcare_management.controllers.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -20,6 +22,7 @@ public class UserRegister {
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters long")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // chỉ cho phép ghi, không cho phép đọc
     private String password;
 
     @NotBlank(message = "Gender is required")

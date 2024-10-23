@@ -54,8 +54,8 @@ public class DataInitializer {
             Role doctorRole = roleRepo.findByName("DOCTOR").orElseThrow(() -> new EntityNotFoundException("Role not found"));
             Role patientRole = roleRepo.findByName("PATIENT").orElseThrow(() -> new EntityNotFoundException("Role not found"));
 
-
-            User user = User.builder()
+            // Admin
+            User admin = User.builder()
                     .name("Nguyễn Trung Hiếu")
                     .username("godOfJava@999")
                     .password("$2a$10$VB8vkPK0KtCMctlmmvlVvO2HKDiO0YXgjxsjtKDNDmEPgbSVCpmBe")
@@ -67,11 +67,25 @@ public class DataInitializer {
                     .build();
             Set<Role> roles = new HashSet<>();
             roles.add(adminRole);
-            user.setRoles(roles);
-            //userService.addRoleToUser(user, adminRole);
-            //userService.addRoleToUser(user, doctorRole);
-            //userService.addRoleToUser(user, patientRole);
+            roles.add(doctorRole);
+            roles.add(patientRole);
+            admin.setRoles(roles);
+            userRepo.save(admin);
 
+            // patient
+            User user = User.builder()
+                    .name("Obama")
+                    .username("ababab@A111")
+                    .password("$2a$10$wrbKk7zf9SONCY17gFOYXOTsv/nW4JtrIGWZBVH4.AemgOptA/NLG")
+                    .email("abama@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0273307333")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .build();
+            Set<Role> rolesUser = new HashSet<>();
+            rolesUser.add(patientRole);
+            user.setRoles(rolesUser);
             userRepo.save(user);
         }
 

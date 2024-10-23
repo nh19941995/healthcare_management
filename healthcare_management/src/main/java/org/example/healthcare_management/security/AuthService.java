@@ -62,24 +62,25 @@ public class AuthService {
     }
 
     // đăng ký tài khoản
-    public User register(UserRegister userRegister) {
-        log.info("Service - Register request for userRegister: {}", userRegister);
-        userRepository.findByUsername(userRegister.getUsername()).ifPresent(u -> {
+    public User register(User user) {
+        log.info("Service - Register request for userRegister: {}", user);
+        userRepository.findByUsername(user.getUsername()).ifPresent(u -> {
+            // kiểm tra xem username đã tồn tại chưa
             throw new BusinessException(
                     "Username already exists",
-                    "The username '" + userRegister.getUsername() + "' is already taken. Please choose a different username.",
+                    "The username '" + user.getUsername() + "' is already taken. Please choose a different username.",
                     HttpStatus.CONFLICT);
         });
-        User newUser = userRegister.toUser();
+
         // mặc định role của user mới là PATIENT
         Role patientRole = roleRepo.findByName("PATIENT").orElseThrow(() -> new EntityNotFoundException("Role not found"));
-        userService.addRoleToUser(newUser, patientRole);
+        userService.addRoleToUser(user, patientRole);
 
-        newUser.setStatus(Status.ACTIVE);
-        log.info("Service - Register request for user: {}", newUser);
+        user.setStatus(Status.ACTIVE);
+        log.info("Service - Register request for user: {}", user);
         // mã hóa mật khẩu trước khi lưu vào database
-        newUser.setPassword(passwordEncoder.encode(userRegister.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         // Lưu user mới vào database thông qua UserRepo.
-        return userRepository.save(newUser);
+        return userRepository.save(user);
     }
 }

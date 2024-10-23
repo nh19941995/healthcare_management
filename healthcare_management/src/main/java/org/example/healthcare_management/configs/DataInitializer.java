@@ -9,6 +9,7 @@ import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.enums.Gender;
 import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.repositories.*;
+import org.example.healthcare_management.services.UserService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
@@ -18,8 +19,11 @@ import java.util.Set;
 @Component
 @AllArgsConstructor
 public class DataInitializer {
+    private final DoctorRepo doctorRepo;
+    private final ClinicRepo clinicRepo;
     private final TimeSlotRepo timeSlotRepo;
     private final UserRepo userRepo;
+    private final UserService userService;
     private final RoleRepo roleRepo;
     private final PatientStatusRepo patientStatusrepo;
     private final SpecializationRepo specializationrepo;
@@ -141,6 +145,23 @@ public class DataInitializer {
             rolesUser.add(patientRole);
             user.setRoles(rolesUser);
             userRepo.save(user);
+
+            // doctor
+            User UserDoctor = User.builder()
+                    .fullName("Nguyễn Văn A")
+                    .username("doctorA@A111")
+                    .password("$2a$10$wrbKk7zf9SONCY17gFOYXOTsv/nW4JtrIGWZBVH4.AemgOptA/NLG")
+                    .email("doctorA@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0273307333")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .build();
+            Doctor doctor1 = new Doctor();
+            doctor1.setUser(UserDoctor);
+            doctorRepo.save(doctor1);
+            userRepo.save(UserDoctor);
+            userService.addRoleToUser(UserDoctor.getUsername(), EnumRole.DOCTOR.getRoleName());
         }
 
         if (specializationrepo.count()==0){
@@ -174,6 +195,36 @@ public class DataInitializer {
                     null
             ));
 
+        }
+
+        if (clinicRepo.count()==0){
+            Clinic clinic = Clinic.builder()
+                    .name("Bệnh viện Đa khoa Quốc tế")
+                    .address("Số 1, Đại Cồ Việt, Hai Bà Trưng, Hà Nội")
+                    .phone("024 3974 3556")
+                    .build();
+            clinicRepo.save(clinic);
+
+            Clinic clinic1 = Clinic.builder()
+                    .name("Bệnh viện Bạch Mai")
+                    .address("Số 78, Đường Giải Phóng, Đồng Tâm, Hai Bà Trưng, Hà Nội")
+                    .phone("024 3869 3736")
+                    .build();
+            clinicRepo.save(clinic1);
+
+            Clinic clinic2 = Clinic.builder()
+                    .name("Bệnh viện Việt Đức")
+                    .address("Số 40, Tràng Tiền, Ho��n Kiếm, Hà Nội")
+                    .phone("024 3826 4135")
+                    .build();
+            clinicRepo.save(clinic2);
+
+            Clinic clinic3 = Clinic.builder()
+                    .name("Bệnh viện E")
+                    .address("Số 87, Đường Giải Phóng, Đồng Tâm, Hai Bà Trưng, Hà Nội")
+                    .phone("024 3869 3736")
+                    .build();
+            clinicRepo.save(clinic3);
         }
 
     }

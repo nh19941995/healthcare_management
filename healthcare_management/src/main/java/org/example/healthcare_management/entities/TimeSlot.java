@@ -2,9 +2,7 @@ package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Getter
@@ -20,10 +18,10 @@ public class TimeSlot {
     private Long id;
 
     @Column(name = "start_at", nullable = false)
-    private LocalDateTime startAt;
+    private LocalTime startAt;
 
     @Column(name = "end_at", nullable = false)
-    private LocalDateTime endAt;
+    private LocalTime endAt;
 
     @OneToMany(
             mappedBy = "timeSlot",

@@ -4,27 +4,21 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.example.healthcare_management.entities.PatientStatus;
-import org.example.healthcare_management.entities.Role;
-import org.example.healthcare_management.entities.Specialization;
-import org.example.healthcare_management.entities.User;
+import org.example.healthcare_management.entities.*;
 import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.enums.Gender;
 import org.example.healthcare_management.enums.Status;
-import org.example.healthcare_management.repositories.PatientStatusRepo;
-import org.example.healthcare_management.repositories.RoleRepo;
-import org.example.healthcare_management.repositories.SpecializationRepo;
-import org.example.healthcare_management.repositories.UserRepo;
-import org.example.healthcare_management.services.UserService;
+import org.example.healthcare_management.repositories.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
 @AllArgsConstructor
 public class DataInitializer {
-    private final UserService userService;
+    private final TimeSlotRepo timeSlotRepo;
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
     private final PatientStatusRepo patientStatusrepo;
@@ -33,6 +27,57 @@ public class DataInitializer {
     @PostConstruct
     @Transactional
     public void init() {
+        if (timeSlotRepo.count() == 0) {
+            TimeSlot timeSlot_1 = TimeSlot.builder()
+                    .startAt(LocalTime.of(7, 30))
+                    .endAt(LocalTime.of(8, 30))
+                    .build();
+
+            TimeSlot timeSlot_2 = TimeSlot.builder()
+                    .startAt(LocalTime.of(8, 30))
+                    .endAt(LocalTime.of(9, 30))
+                    .build();
+
+            TimeSlot timeSlot_3 = TimeSlot.builder()
+                    .startAt(LocalTime.of(9, 30))
+                    .endAt(LocalTime.of(10, 30))
+                    .build();
+
+            TimeSlot timeSlot_4 = TimeSlot.builder()
+                    .startAt(LocalTime.of(10, 30))
+                    .endAt(LocalTime.of(11, 30))
+                    .build();
+
+            TimeSlot timeSlot_5 = TimeSlot.builder()
+                    .startAt(LocalTime.of(13, 30))
+                    .endAt(LocalTime.of(14, 30))
+                    .build();
+
+            TimeSlot timeSlot_6 = TimeSlot.builder()
+                    .startAt(LocalTime.of(14, 30))
+                    .endAt(LocalTime.of(15, 30))
+                    .build();
+
+            TimeSlot timeSlot_7 = TimeSlot.builder()
+                    .startAt(LocalTime.of(15, 30))
+                    .endAt(LocalTime.of(16, 30))
+                    .build();
+
+            TimeSlot timeSlot_8 = TimeSlot.builder()
+                    .startAt(LocalTime.of(16, 30))
+                    .endAt(LocalTime.of(17, 30))
+                    .build();
+
+            timeSlotRepo.save(timeSlot_1);
+            timeSlotRepo.save(timeSlot_2);
+            timeSlotRepo.save(timeSlot_3);
+            timeSlotRepo.save(timeSlot_4);
+            timeSlotRepo.save(timeSlot_5);
+            timeSlotRepo.save(timeSlot_6);
+            timeSlotRepo.save(timeSlot_7);
+            timeSlotRepo.save(timeSlot_8);
+        }
+
         if (roleRepo.count() == 0){
             roleRepo.save(new Role(EnumRole.ADMIN.getRoleName(), "Admin role"));
             roleRepo.save(new Role(EnumRole.DOCTOR.getRoleName(), "Doctor role"));
@@ -130,7 +175,6 @@ public class DataInitializer {
             ));
 
         }
-
 
     }
 }

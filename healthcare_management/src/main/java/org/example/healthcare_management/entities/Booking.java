@@ -33,8 +33,6 @@ public class Booking {
     @JoinColumn(name = "time_slot_id")
     private TimeSlot timeSlot;
 
-
-
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {

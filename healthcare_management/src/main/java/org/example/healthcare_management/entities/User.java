@@ -1,7 +1,7 @@
 package org.example.healthcare_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Gender;
@@ -32,7 +32,7 @@ public class User {
 
     @NotBlank(message = "Name is required")
     @Size(max = 100, message = "Name must be less than 100 characters")
-    @Column(name = "name")
+    @Column(name = "full_name")
     private String fullName;
 
     @NotBlank(message = "Username is required")
@@ -54,6 +54,7 @@ public class User {
             @Pattern(regexp = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*", message = "Password must contain at least one special character")
     })
     @Column(name = "password")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // chỉ cho phép ghi, không cho phép đọc
     private String password;
 
     @Size(max = 255, message = "Address must be less than 255 characters")
@@ -110,23 +111,6 @@ public class User {
     @Column(name = "lock_reason")
     private String lockReason;
 
-    public User(
-            String name,
-            String email,
-            String password,
-            String address,
-            String phone,
-            Gender gender,
-            String description
-    ) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.address = address;
-        this.phone = phone;
-        this.gender = gender;
-        this.description = description;
-    }
 
     public Set<Role> getRoles() {
         if (roles == null) {

@@ -19,14 +19,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-        log.info("Saving new user {} to the database", user.getName());
+        log.info("Saving new user {} to the database", user.getFullName());
         return userRepository.save(user);
     }
 
     @Transactional
     @Override
     public User update(User user) {
-        log.info("Updating user {} in the database", user.getName());
+        log.info("Updating user {} in the database", user.getFullName());
         return userRepository.save(user);
     }
 
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addRoleToUser(User user, Role role) {
         if (user != null && role != null) {
-            log.info("Adding role {} to user {}", role.getName(), user.getName());
+            log.info("Adding role {} to user {}", role.getName(), user.getFullName());
             user.addRole(role);
             userRepository.save(user);
         } else {
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void removeRoleFromUser(User user, Role role) {
         if (user != null && role != null) {
-            log.info("Removing role {} from user {}", role.getName(), user.getName());
+            log.info("Removing role {} from user {}", role.getName(), user.getFullName());
             user.removeRole(role);
             userRepository.save(user);
         } else {

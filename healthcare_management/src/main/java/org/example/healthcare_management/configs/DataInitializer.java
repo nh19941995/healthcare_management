@@ -8,6 +8,7 @@ import org.example.healthcare_management.entities.PatientStatus;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.Specialization;
 import org.example.healthcare_management.entities.User;
+import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.enums.Gender;
 import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.repositories.PatientStatusRepo;
@@ -33,9 +34,9 @@ public class DataInitializer {
     @Transactional
     public void init() {
         if (roleRepo.count() == 0){
-            roleRepo.save(new Role("ADMIN", "Admin role"));
-            roleRepo.save(new Role("DOCTOR", "Doctor role"));
-            roleRepo.save(new Role("PATIENT", "Patient role"));
+            roleRepo.save(new Role(EnumRole.ADMIN.getRoleName(), "Admin role"));
+            roleRepo.save(new Role(EnumRole.DOCTOR.getRoleName(), "Doctor role"));
+            roleRepo.save(new Role(EnumRole.PATIENT.getRoleName(), "Patient role"));
         }
 
         if (patientStatusrepo.count() == 0){
@@ -50,13 +51,21 @@ public class DataInitializer {
         }
 
         if (userRepo.count() == 0 && roleRepo.count() > 0) {
-            Role adminRole = roleRepo.findByName("ADMIN").orElseThrow(() -> new EntityNotFoundException("Role not found"));
-            Role doctorRole = roleRepo.findByName("DOCTOR").orElseThrow(() -> new EntityNotFoundException("Role not found"));
-            Role patientRole = roleRepo.findByName("PATIENT").orElseThrow(() -> new EntityNotFoundException("Role not found"));
+            Role adminRole = roleRepo.findByName(
+                    EnumRole.ADMIN.getRoleName()
+            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+            Role doctorRole = roleRepo.findByName(
+                    EnumRole.DOCTOR.getRoleName()
+            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+            Role patientRole = roleRepo.findByName(
+                    EnumRole.PATIENT.getRoleName()
+            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
 
             // Admin
             User admin = User.builder()
-                    .name("Nguyễn Trung Hiếu")
+                    .fullName("Nguyễn Trung Hiếu")
                     .username("godOfJava@999")
                     .password("$2a$10$VB8vkPK0KtCMctlmmvlVvO2HKDiO0YXgjxsjtKDNDmEPgbSVCpmBe")
                     .email("godOfJava@gmail.com")
@@ -74,7 +83,7 @@ public class DataInitializer {
 
             // patient
             User user = User.builder()
-                    .name("Obama")
+                    .fullName("Obama")
                     .username("ababab@A111")
                     .password("$2a$10$wrbKk7zf9SONCY17gFOYXOTsv/nW4JtrIGWZBVH4.AemgOptA/NLG")
                     .email("abama@gmail.com")

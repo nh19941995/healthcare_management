@@ -1,5 +1,6 @@
 package org.example.healthcare_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Status;
@@ -26,15 +27,15 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonBackReference // tránh lỗi vòng lặp khi chuyển đổi sang JSON
     @OneToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            optional = false // thông tin bác sĩ không thể null
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY
     )
-    // tên cột chứa khóa phụ trong bảng doctors là infor_id
+    // tên cột chứa khóa phụ trong bảng doctors là user_id
     // cột phụ sẽ dc thêm vào bảng doctors
-    @JoinColumn(name = "infor_id")
-    private User doctorInfo;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "achievements")
     private String achievements;

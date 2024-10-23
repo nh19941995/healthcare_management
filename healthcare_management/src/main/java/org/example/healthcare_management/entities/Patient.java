@@ -25,7 +25,6 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {
@@ -61,6 +60,18 @@ public class Patient {
             }, fetch = FetchType.LAZY
     )
     private Set<Booking> bookings = new HashSet<>();
+
+    // mappedBy trỏ tới tên biến patient trong entity MedicalRecord
+    @OneToMany(
+            mappedBy = "patient",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH,
+                    CascadeType.DETACH
+            }, fetch = FetchType.LAZY
+    )
+    private Set<MedicalRecord> medicalRecords = new HashSet<>();
 
 
     @ManyToOne(

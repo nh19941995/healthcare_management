@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
+import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.exceptions.BusinessException;
 import org.example.healthcare_management.repositories.RoleRepo;
@@ -59,7 +60,7 @@ public class AuthService {
     }
 
     // đăng ký tài khoản
-    public User register(User user) {
+    public void register(User user) {
         log.info("Service - Register request for userRegister: {}", user);
         userRepository.findByUsername(user.getUsername()).ifPresent(u -> {
             // kiểm tra xem username đã tồn tại chưa
@@ -68,16 +69,13 @@ public class AuthService {
                     "The username '" + user.getUsername() + "' is already taken. Please choose a different username.",
                     HttpStatus.CONFLICT);
         });
-
-        // mặc định role của user mới là PATIENT
-        Role patientRole = roleRepo.findByName("PATIENT").orElseThrow(() -> new EntityNotFoundException("Role not found"));
-        userService.addRoleToUser(user, patientRole);
-
         user.setStatus(Status.ACTIVE);
         log.info("Service - Register request for user: {}", user);
         // mã hóa mật khẩu trước khi lưu vào database
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // Lưu user mới vào database thông qua UserRepo.
-        return userRepository.save(user);
+        userRepository.save(user);
+        // thêm role cho user
+        userService.addRoleToUser(user.getUsername(), EnumRole.PATIENT.name());
     }
 }

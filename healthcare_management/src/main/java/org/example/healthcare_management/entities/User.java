@@ -93,6 +93,10 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+
+    @OneToOne(mappedBy = "user")
+    private Doctor doctor;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -117,6 +121,11 @@ public class User {
             roles = new HashSet<>();
         }
         return roles;
+    }
+
+    public boolean hasRole(String roleName) {
+        return roles.stream()
+                .anyMatch(role -> role.getName().equals(roleName));
     }
 
     public void removeRole(Role role) {

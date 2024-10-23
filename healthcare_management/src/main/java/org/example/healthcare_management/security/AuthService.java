@@ -1,14 +1,11 @@
 package org.example.healthcare_management.security;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.exceptions.BusinessException;
-import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @AllArgsConstructor
 public class AuthService {
-    private final RoleRepo roleRepo;
     private final UserService userService;
     // dùng để thực hiện các thao tác liên quan đến User
     private final UserRepo userRepository;

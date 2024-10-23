@@ -27,6 +27,14 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    // tên cột chứa khóa phụ trong bảng bookings là time_slot_id
+    // cột phụ time_slot_id sẽ dc thêm vào bảng bookings
+    @JoinColumn(name = "time_slot_id")
+    private TimeSlot timeSlot;
+
+
+
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {

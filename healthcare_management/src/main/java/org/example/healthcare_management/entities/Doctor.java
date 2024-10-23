@@ -83,24 +83,11 @@ public class Doctor {
     )
     private Set<Patient> patients = new HashSet<>();
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.DETACH
-            }
-    )
-    @JoinTable(
-            // tên bảng trung gian
-            name = "doctors_specialization",
-            // tên cột chứa khóa phụ trong bảng trung gian của Doctor
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            // tên cột chứa khóa phụ trong bảng trung gian của Specialization
-            inverseJoinColumns = @JoinColumn(name = "specialization_id")
-    )
-    private Set<Specialization> specializations = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    // tên cột chứa khóa phụ trong bảng doctors là specialization_id
+    // cột phụ specialization_id sẽ dc thêm vào bảng doctors
+    @JoinColumn(name = "specialization_id")
+    private Specialization specialization;
 
     // mappedBy trỏ tới tên biến doctor trong entity Schedule
     @OneToMany(mappedBy = "doctor", cascade = {
@@ -150,17 +137,6 @@ public class Doctor {
     public void removePatient(Patient patient) {
         this.patients.remove(patient);
         patient.getDoctors().remove(this);
-    }
-
-    // Helper methods for Specialization (ManyToMany)
-    public void addSpecialization(Specialization specialization) {
-        this.specializations.add(specialization);
-        specialization.getDoctors().add(this);
-    }
-
-    public void removeSpecialization(Specialization specialization) {
-        this.specializations.remove(specialization);
-        specialization.getDoctors().remove(this);
     }
 
     public void addSchedule(Schedule schedule) {

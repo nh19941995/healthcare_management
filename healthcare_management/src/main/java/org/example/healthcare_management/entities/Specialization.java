@@ -42,7 +42,7 @@ public class Specialization {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @ManyToMany(
+    @OneToMany(
             fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
@@ -50,8 +50,8 @@ public class Specialization {
                     CascadeType.REFRESH,
                     CascadeType.DETACH
             },
-            // tên biến Set<Specialization> trong entity Doctor
-            mappedBy = "specializations"
+            // mappedBy trỏ tới tên biến specialization trong entity Doctor
+            mappedBy = "specialization"
     )
     // tên biến authors trong entity Book
     private Set<Doctor> doctors = new HashSet<>();

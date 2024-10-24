@@ -10,6 +10,7 @@ import org.example.healthcare_management.enums.Gender;
 import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.repositories.*;
 import org.example.healthcare_management.services.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
@@ -27,6 +28,7 @@ public class DataInitializer {
     private final RoleRepo roleRepo;
     private final PatientStatusRepo patientStatusrepo;
     private final SpecializationRepo specializationrepo;
+    private final PasswordEncoder passwordEncoder;
 
     @PostConstruct
     @Transactional
@@ -116,7 +118,7 @@ public class DataInitializer {
             User admin = User.builder()
                     .fullName("Nguyễn Trung Hiếu")
                     .username("godOfJava@999")
-                    .password("$2a$10$VB8vkPK0KtCMctlmmvlVvO2HKDiO0YXgjxsjtKDNDmEPgbSVCpmBe")
+                    .password(passwordEncoder.encode("godOfJava@999"))
                     .email("godOfJava@gmail.com")
                     .address("Trái Đất")
                     .phone("0773307333")
@@ -134,8 +136,7 @@ public class DataInitializer {
             User user = User.builder()
                     .fullName("Obama")
                     .username("ababab@A111")
-                    .password("$2a$10$wrbKk7zf9SONCY17gFOYXOTsv/nW4JtrIGWZBVH4.AemgOptA/NLG")
-                    .email("abama@gmail.com")
+                    .password(passwordEncoder.encode("ababab@A111"))                    .email("abama@gmail.com")
                     .address("Trái Đất")
                     .phone("0273307333")
                     .gender(Gender.MALE)
@@ -150,8 +151,7 @@ public class DataInitializer {
             User UserDoctor = User.builder()
                     .fullName("Nguyễn Văn A")
                     .username("doctorA@A111")
-                    .password("$2a$10$wrbKk7zf9SONCY17gFOYXOTsv/nW4JtrIGWZBVH4.AemgOptA/NLG")
-                    .email("doctorA@gmail.com")
+                    .password(passwordEncoder.encode("doctorA@A111"))                    .email("doctorA@gmail.com")
                     .address("Trái Đất")
                     .phone("0273307333")
                     .gender(Gender.MALE)

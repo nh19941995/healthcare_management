@@ -2,7 +2,11 @@ package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -11,7 +15,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "time_slots") // bảng vai trò
+@Table(name = "time_slots") // bảng thời gian
+@ToString
 public class TimeSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +28,13 @@ public class TimeSlot {
     @Column(name = "end_at", nullable = false)
     private LocalTime endAt;
 
-    @OneToMany(
-            mappedBy = "timeSlot",
-            // chỉ áp dụng với lưu và cập nhật
-            // xóa timeSlot sẽ không ảnh hưởng đến booking
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
-    private Set<Booking> bookings;
+//    @OneToMany(
+//            mappedBy = "timeSlot",
+//            // chỉ áp dụng với lưu và cập nhật
+//            // xóa timeSlot sẽ không ảnh hưởng đến booking
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+//    )
+//    private Set<Booking> bookings = new HashSet<>();
 
 
 }

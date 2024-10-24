@@ -97,6 +97,9 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Doctor doctor;
 
+    @OneToOne(mappedBy = "user")
+    private Patient patient;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;

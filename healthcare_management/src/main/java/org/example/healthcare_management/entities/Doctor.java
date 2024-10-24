@@ -65,25 +65,6 @@ public class Doctor {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.DETACH
-            }
-    )
-    @JoinTable(
-            // tên bảng trung gian
-            name = "doctors_patients",
-            // tên cột chứa khóa phụ trong bảng trung gian của Doctor
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            // tên cột chứa khóa phụ trong bảng trung gian của Specialization
-            inverseJoinColumns = @JoinColumn(name = "patient_id")
-    )
-    private Set<Patient> patients = new HashSet<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     // tên cột chứa khóa phụ trong bảng doctors là specialization_id
     // cột phụ specialization_id sẽ dc thêm vào bảng doctors
@@ -129,16 +110,7 @@ public class Doctor {
         booking.setDoctor(null);
     }
 
-    // Helper methods for Patient (ManyToMany)
-    public void addPatient(Patient patient) {
-        this.patients.add(patient);
-        patient.getDoctors().add(this);
-    }
 
-    public void removePatient(Patient patient) {
-        this.patients.remove(patient);
-        patient.getDoctors().remove(this);
-    }
 
     public void addSchedule(Schedule schedule) {
         this.schedules.add(schedule);

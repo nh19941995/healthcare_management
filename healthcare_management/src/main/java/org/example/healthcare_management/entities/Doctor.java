@@ -1,6 +1,7 @@
 package org.example.healthcare_management.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Status;
@@ -52,6 +53,7 @@ public class Doctor {
     }, fetch = FetchType.LAZY)
     private Set<Booking> bookings = new HashSet<>();
 
+    @JsonBackReference
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {

@@ -27,7 +27,7 @@ public class UserController {
 //    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR') or @userSecurity.isCurrentUser(#username)")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
 
-        // Kiểm tra thêm một lớp bảo mật
+        // Kiểm tra xem người dùng hiện tại có phải là người sở hữu tài khoản không
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 

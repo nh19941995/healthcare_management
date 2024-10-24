@@ -1,5 +1,7 @@
 package org.example.healthcare_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -28,13 +30,14 @@ public class TimeSlot {
     @Column(name = "end_at", nullable = false)
     private LocalTime endAt;
 
-//    @OneToMany(
-//            mappedBy = "timeSlot",
-//            // chỉ áp dụng với lưu và cập nhật
-//            // xóa timeSlot sẽ không ảnh hưởng đến booking
-//            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-//    )
-//    private Set<Booking> bookings = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "timeSlot",
+            // chỉ áp dụng với lưu và cập nhật
+            // xóa timeSlot sẽ không ảnh hưởng đến booking
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    private Set<Booking> bookings = new HashSet<>();
 
 
 }

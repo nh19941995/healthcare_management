@@ -93,7 +93,6 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-
     @OneToOne(mappedBy = "user")
     private Doctor doctor;
 

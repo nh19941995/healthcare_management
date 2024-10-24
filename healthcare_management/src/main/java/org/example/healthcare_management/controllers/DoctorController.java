@@ -34,4 +34,8 @@ public class DoctorController {
         return ResponseEntity.ok(
                 new ApiResponse(true, "Profile updated successfully!"));
     }
+
+
+
+
 }

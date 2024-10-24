@@ -53,7 +53,6 @@ public class Doctor {
     }, fetch = FetchType.LAZY)
     private Set<Booking> bookings = new HashSet<>();
 
-    @JsonBackReference
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {

@@ -22,6 +22,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserRepo userRepo;
     private final DoctorRepo doctorRepo;
     private final ModelMapper modelMapper;
+    private final BookingService bookingService;
 
 
     @Override
@@ -45,37 +46,18 @@ public class DoctorServiceImpl implements DoctorService {
         // chuyển đổi từ Doctor sang DoctorDto
         TypeMap<Doctor, DoctorDto> typeMap = modelMapper.createTypeMap(Doctor.class, DoctorDto.class);
         typeMap.addMappings(mapper -> {
-
-
-//            private String achievements;
-//
-//            private String medicalTraining;
-//
-//            private Set<Booking> bookings = new HashSet<>();
-//
-//            private Clinic clinic;
-//
-//            private Specialization specialization;
-//
-//            private Set<Schedule> schedules = new HashSet<>();
-//
-//            private Status status;
-//
-//            private String lockReason;
-
             mapper.map(Doctor::getAchievements, DoctorDto::setAchievements);
             mapper.map(Doctor::getMedicalTraining, DoctorDto::setMedicalTraining);
             mapper.map(Doctor::getClinic, DoctorDto::setClinic);
             mapper.map(Doctor::getSpecialization, DoctorDto::setSpecialization);
             mapper.map(Doctor::getStatus, DoctorDto::setStatus);
             mapper.map(Doctor::getLockReason, DoctorDto::setLockReason);
-
-
-            // Map students to studentDTOs
+            // Map booking to bookingDTOs
             mapper.map(src -> src.getBookings().stream()
-                            .map(booking -> modelMapper.map(booking, BookingDto.class))
-                            .collect(Collectors.toList()),
+                    .map(bookingService::convertToDTO) // Sử dụng phương thức đã định nghĩa
+                    .collect(Collectors.toList()),
                     DoctorDto::setBookings);
+
         });
 
         return modelMapper.map(doctor, DoctorDto.class);

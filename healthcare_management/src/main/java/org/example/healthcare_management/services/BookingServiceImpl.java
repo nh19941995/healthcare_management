@@ -3,6 +3,7 @@ package org.example.healthcare_management.services;
 import lombok.AllArgsConstructor;
 import org.example.healthcare_management.controllers.dto.BookingDto;
 import org.example.healthcare_management.entities.Booking;
+import org.example.healthcare_management.repositories.BookingRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final ModelMapper modelMapper;
+    private final BookingRepo bookingRepository;
 
     @Override
     public Booking convertToEntity(BookingDto bookingDto) {

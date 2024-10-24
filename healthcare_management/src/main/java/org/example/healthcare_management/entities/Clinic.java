@@ -38,7 +38,7 @@ public class Clinic { // phòng khám
     private String phone;
 
     // mappedBy trỏ tới tên biến clinic trong entity Doctor
-    @JsonManagedReference
+
     @OneToMany(
             mappedBy = "clinic",
             cascade = {

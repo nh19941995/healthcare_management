@@ -4,29 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.healthcare_management.entities.*;
 import org.example.healthcare_management.enums.Status;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class DoctorDto {
-
+    private Long id;
     private String achievements;
-
     private String medicalTraining;
-
     private Long clinicId;
-
     private Long specializationId;
-
-    private Set<Schedule> schedules = new HashSet<>();
-
     private Status status;
-
     private String lockReason;
+    private String username;
+    private String avatar;
 }

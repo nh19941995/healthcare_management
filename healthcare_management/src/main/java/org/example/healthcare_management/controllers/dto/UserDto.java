@@ -39,7 +39,7 @@ public class UserDto {
 
     private Set<Role> roles = new HashSet<>();
 
-    private Doctor doctor;
+    private DoctorDto doctor;
 
     private Patient patient;
 

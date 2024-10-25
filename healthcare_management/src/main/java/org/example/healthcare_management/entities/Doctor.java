@@ -70,14 +70,6 @@ public class Doctor {
     @JoinColumn(name = "specialization_id")
     private Specialization specialization;
 
-    // mappedBy trỏ tới tên biến doctor trong entity Schedule
-    @OneToMany(mappedBy = "doctor", cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.REFRESH,
-            CascadeType.DETACH
-    }, fetch = FetchType.LAZY)
-    private Set<Schedule> schedules = new HashSet<>();
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -109,16 +101,5 @@ public class Doctor {
         booking.setDoctor(null);
     }
 
-
-
-    public void addSchedule(Schedule schedule) {
-        this.schedules.add(schedule);
-        schedule.setDoctor(this);
-    }
-
-    public void removeSchedule(Schedule schedule) {
-        this.schedules.remove(schedule);
-        schedule.setDoctor(null);
-    }
 
 }

@@ -5,6 +5,7 @@ import org.example.healthcare_management.controllers.dto.DoctorDto;
 import org.example.healthcare_management.entities.*;
 import org.example.healthcare_management.repositories.DoctorRepo;
 import org.example.healthcare_management.repositories.UserRepo;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -34,21 +35,17 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorDto convertToDTO(Doctor doctor) {
-        // Cấu hình ModelMapper để handle nested objects
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    public DoctorDto getDoctorProfile(String username) {
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Doctor doctor = user.getDoctor();
 
-        // chuyển đổi từ Doctor sang DoctorDto
-        TypeMap<Doctor, DoctorDto> typeMap = modelMapper.createTypeMap(Doctor.class, DoctorDto.class);
-        typeMap.addMappings(mapper -> {
-            mapper.map(Doctor::getAchievements, DoctorDto::setAchievements);
-            mapper.map(Doctor::getMedicalTraining, DoctorDto::setMedicalTraining);
-            mapper.map(Doctor::getClinic, DoctorDto::setClinicId);
-            mapper.map(Doctor::getSpecialization, DoctorDto::setSpecializationId);
-            mapper.map(Doctor::getStatus, DoctorDto::setStatus);
-            mapper.map(Doctor::getLockReason, DoctorDto::setLockReason);
-        });
-
+        if (doctor == null) {
+            throw new RuntimeException("User is not a doctor");
+        }
+        // load các thông tin lazy liên quan
+        Hibernate.initialize(doctor.getClinic());
+        Hibernate.initialize(doctor.getSpecialization());
         return modelMapper.map(doctor, DoctorDto.class);
     }
 

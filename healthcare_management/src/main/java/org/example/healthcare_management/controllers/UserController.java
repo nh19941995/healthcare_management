@@ -2,6 +2,7 @@ package org.example.healthcare_management.controllers;
 
 import lombok.AllArgsConstructor;
 import org.example.healthcare_management.controllers.dto.ApiResponse;
+import org.example.healthcare_management.entities.Doctor;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.UserService;
@@ -22,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     // get all users
-    // url: localhost:8080/users/username
+    // url:
     @GetMapping("/{username}")
 //    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR') or @userSecurity.isCurrentUser(#username)")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
@@ -43,9 +44,16 @@ public class UserController {
     // url: localhost:8080/users/username
     @PutMapping("/{username}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
-    public ResponseEntity<User> updateUser(@PathVariable String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
-        userService.update(user);
+    public ResponseEntity<User> updateUser(
+            @RequestBody User user, @PathVariable String username
+    ) {
+        // Kiểm tra xem người dùng hiện tại có phải là người sở hữu tài khoản không
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        if (!currentUsername.equals(username)) {
+            throw new RuntimeException("You can only view your own profile");
+        }
+        userService.updateProfile(user, username);
         return ResponseEntity.ok(user);
     }
 

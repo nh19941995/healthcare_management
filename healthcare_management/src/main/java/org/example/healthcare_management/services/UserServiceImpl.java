@@ -3,17 +3,21 @@ package org.example.healthcare_management.services;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.healthcare_management.controllers.dto.UserDto;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.exceptions.BusinessException;
 import org.example.healthcare_management.exceptions.ResourceNotFoundException;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.UserRepo;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,12 +25,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepository;
     private final RoleRepo roleRepository;
+    private final ModelMapper modelMapper;
 
-    @Override
-    public User save(User user) {
-        log.info("Saving new user {} to the database", user.getFullName());
-        return userRepository.save(user);
-    }
 
     @Transactional
     @Override
@@ -46,13 +46,6 @@ public class UserServiceImpl implements UserService {
     public List<User> findAll() {
         log.info("Fetching all users");
         return userRepository.findAll();
-    }
-
-    @Transactional
-    @Override
-    public void delete(Long id) {
-        log.info("Deleting user with id {}", id);
-        userRepository.deleteById(id);
     }
 
     @Transactional
@@ -92,5 +85,37 @@ public class UserServiceImpl implements UserService {
         } else {
             log.warn("Attempted to remove null role from user or remove role from null user");
         }
+    }
+
+    @Override
+    public User convertToEntity(UserDto userDto) {
+        return modelMapper.map(userDto, User.class);
+    }
+
+    @Override
+    public UserDto convertToDTO(User user) {
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public Set<UserDto> convertToDTOs(Set<User> users) {
+        return users.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<User> convertToEntities(Set<UserDto> userDtos) {
+        return userDtos.stream()
+                .map(this::convertToEntity)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void updateProfile(User user, String username) {
+        User oldUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        modelMapper.map(user, oldUser);
+        userRepository.save(oldUser);
     }
 }

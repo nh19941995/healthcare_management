@@ -1,6 +1,7 @@
 package org.example.healthcare_management.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -28,6 +29,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonSerialize(as = Long.class)
     private Long id;
 
     @NotBlank(message = "Name is required")

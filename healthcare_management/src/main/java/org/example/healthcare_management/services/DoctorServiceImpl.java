@@ -47,8 +47,6 @@ public class DoctorServiceImpl implements DoctorService {
             mapper.map(Doctor::getSpecialization, DoctorDto::setSpecializationId);
             mapper.map(Doctor::getStatus, DoctorDto::setStatus);
             mapper.map(Doctor::getLockReason, DoctorDto::setLockReason);
-
-
         });
 
         return modelMapper.map(doctor, DoctorDto.class);

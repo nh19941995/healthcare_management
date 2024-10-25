@@ -18,15 +18,15 @@ public class AdminController {
     private final UserService userService;
 
     // url: localhost:8080/admin/updateRole/ababab@A111/ADMIN
-    @PutMapping("/updateRole/{userName}/{roleName}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> roleUpdate(
-            @PathVariable String userName,
-            @PathVariable @Pattern(regexp = "^(ADMIN|DOCTOR|PATIENT)$", message = "Invalid role name") String roleName
-    ) {
-        userService.addRoleToUser(userName, roleName);
-        return ResponseEntity.ok(new ApiResponse(true, "Role updated successfully!"));
-    }
+//    @PutMapping("/updateRole/{userName}/{roleName}")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<ApiResponse> roleUpdate(
+//            @PathVariable String userName,
+//            @PathVariable @Pattern(regexp = "^(ADMIN|DOCTOR|PATIENT)$", message = "Invalid role name") String roleName
+//    ) {
+//        userService.addRoleToUser(userName, roleName);
+//        return ResponseEntity.ok(new ApiResponse(true, "Role updated successfully!"));
+//    }
 
 
 

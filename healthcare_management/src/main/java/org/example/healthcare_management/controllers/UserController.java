@@ -1,7 +1,9 @@
 package org.example.healthcare_management.controllers;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.ApiResponse;
+import org.example.healthcare_management.controllers.dto.UserDto;
 import org.example.healthcare_management.entities.Doctor;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.repositories.UserRepo;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
@@ -22,30 +25,33 @@ public class UserController {
     private final UserRepo userRepository;
     private final UserService userService;
 
-    // get all users
-    // url:
+    // lấy thông tin user theo username
+    // url: localhost:8080/users/username
     @GetMapping("/{username}")
-//    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR') or @userSecurity.isCurrentUser(#username)")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable String username) {
 
         // Kiểm tra xem người dùng hiện tại có phải là người sở hữu tài khoản không
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
+        log.info("currentUsername: " + currentUsername);
 
         if (!currentUsername.equals(username)) {
             throw new RuntimeException("You can only view your own profile");
         }
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
-        return ResponseEntity.ok(user);
+        UserDto userDto =  userService.convertToDTO(user);
+        return ResponseEntity.ok(userDto);
     }
 
-    // update user
+
+
+
+    // update theo username
     // url: localhost:8080/users/username
     @PutMapping("/{username}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
-    public ResponseEntity<User> updateUser(
-            @RequestBody User user, @PathVariable String username
+    public ResponseEntity<UserDto> updateUser(
+            @RequestBody UserDto userDto, @PathVariable String username
     ) {
         // Kiểm tra xem người dùng hiện tại có phải là người sở hữu tài khoản không
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -53,20 +59,20 @@ public class UserController {
         if (!currentUsername.equals(username)) {
             throw new RuntimeException("You can only view your own profile");
         }
-        userService.updateProfile(user, username);
-        return ResponseEntity.ok(user);
+        UserDto newUser = userService.updateProfile(userDto, username);
+        return ResponseEntity.ok(newUser);
     }
 
     // delete user
     // url: localhost:8080/users/username
-    @DeleteMapping("/{username}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
-        user.setDeletedAt(LocalDateTime.now());
-        userService.update(user);
-        return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully!"));
-    }
+//    @DeleteMapping("/{username}")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
+//    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String username) {
+//        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+//        user.setDeletedAt(LocalDateTime.now());
+//        userService.update(user);
+//        return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully!"));
+//    }
 
 
 

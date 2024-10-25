@@ -1,16 +1,20 @@
 package org.example.healthcare_management.services;
 
 import jakarta.transaction.Transactional;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.UserDto;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
+import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.exceptions.BusinessException;
 import org.example.healthcare_management.exceptions.ResourceNotFoundException;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -28,63 +32,15 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
 
 
-    @Transactional
     @Override
-    public User update(User user) {
-        log.info("Updating user {} in the database", user.getFullName());
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User findById(Long id) {
-        log.info("Fetching user with id {}", id);
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
-    }
-
-    @Override
-    public List<User> findAll() {
-        log.info("Fetching all users");
-        return userRepository.findAll();
-    }
-
-    @Transactional
-    @Override
-    public void addRoleToUser(String username, String roleName) {
-
-        // Get user
-        User user = userRepository.findByUsername(username)
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-
-        // Get role
-        Role newRole = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "roleName", roleName));
-
-        // kiểm tra xem user đã có role chưa
-        if (user.hasRole(roleName)) {
-            throw new BusinessException(
-                    "Role assignment failed",
-                    "User already has the specified role",
-                    HttpStatus.CONFLICT
-            );
-        }
-
-        // Update user roles
-        user.addRole(newRole);
-        userRepository.save(user);
-        log.info("Role {} added to user {}", roleName, user.getFullName());
     }
 
-    @Transactional
     @Override
-    public void removeRoleFromUser(User user, Role role) {
-        if (user != null && role != null) {
-            log.info("Removing role {} from user {}", role.getName(), user.getFullName());
-            user.removeRole(role);
-            userRepository.save(user);
-        } else {
-            log.warn("Attempted to remove null role from user or remove role from null user");
-        }
+    public Page<User> findAll(@NonNull Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override
@@ -112,10 +68,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(User user, String username) {
-        User oldUser = userRepository.findByUsername(username)
+    public UserDto updateProfile(UserDto userDto, String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-        modelMapper.map(user, oldUser);
-        userRepository.save(oldUser);
+//        user.s
+//        user.setLastName(userDto.getLastName());
+//        user.setPhone(userDto.getPhone());
+//        user.setAddress(userDto.getAddress());
+//        user.setGender(userDto.getGender());
+//        user.setDob(userDto.getDob());
+        return convertToDTO(userRepository.save(user));
+    }
+
+
+    @Override
+    public UserDto create(User entity) {
+        Role role = roleRepository.findByName(EnumRole.PATIENT.getRoleName())
+                .orElseThrow(() -> new BusinessException("Role not found",
+                        "No role found with name: " + EnumRole.PATIENT.getRoleName(),
+                        HttpStatus.NOT_FOUND));
+        User user = new User();
+        user.setRoles(Set.of(role));
+        return convertToDTO(userRepository.save(user));
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public UserDto update(Long id, UserDto dtoEntity) {
+        return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return false;
     }
 }

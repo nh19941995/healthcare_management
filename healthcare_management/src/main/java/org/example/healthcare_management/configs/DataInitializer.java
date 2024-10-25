@@ -161,7 +161,8 @@ public class DataInitializer {
             doctor1.setUser(UserDoctor);
             doctorRepo.save(doctor1);
             userRepo.save(UserDoctor);
-            userService.addRoleToUser(UserDoctor.getUsername(), EnumRole.DOCTOR.getRoleName());
+            UserDoctor.getRoles().add(doctorRole);
+            userRepo.save(UserDoctor);
         }
 
         if (specializationrepo.count()==0){

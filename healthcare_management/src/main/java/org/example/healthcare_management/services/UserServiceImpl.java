@@ -1,6 +1,5 @@
 package org.example.healthcare_management.services;
 
-import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,76 +36,56 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAll(@NonNull Pageable pageable) {
-        return userRepository.findAll(pageable);
-    }
-
-    @Override
-    public User convertToEntity(UserDto userDto) {
-        return modelMapper.map(userDto, User.class);
-    }
-
-    @Override
-    public UserDto convertToDTO(User user) {
-        return modelMapper.map(user, UserDto.class);
-    }
-
-    @Override
-    public Set<UserDto> convertToDTOs(Set<User> users) {
-        return users.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<User> convertToEntities(Set<UserDto> userDtos) {
-        return userDtos.stream()
-                .map(this::convertToEntity)
-                .collect(Collectors.toSet());
+    public Page<UserDto> findAll(@NonNull Pageable pageable) {
+        // lấy ra tất cả user
+        Page<User> userPage = userRepository.findAll(pageable);
+        // chuyển đổi từ User sang UserDto
+        return userPage.map(user -> modelMapper.map(user, UserDto.class));
     }
 
     @Override
     public UserDto updateProfile(UserDto userDto, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-//        user.s
-//        user.setLastName(userDto.getLastName());
-//        user.setPhone(userDto.getPhone());
-//        user.setAddress(userDto.getAddress());
-//        user.setGender(userDto.getGender());
-//        user.setDob(userDto.getDob());
-        return convertToDTO(userRepository.save(user));
+        return null;
     }
 
 
     @Override
-    public UserDto create(User entity) {
+    public User create(User entity) {
         Role role = roleRepository.findByName(EnumRole.PATIENT.getRoleName())
                 .orElseThrow(() -> new BusinessException("Role not found",
                         "No role found with name: " + EnumRole.PATIENT.getRoleName(),
                         HttpStatus.NOT_FOUND));
-        User user = new User();
-        user.setRoles(Set.of(role));
-        return convertToDTO(userRepository.save(user));
+        // Set.of(role) tạo ra một Set chỉ chứa một phần tử, đó là đối tượng role.
+        entity.setRoles(Set.of(role));
+        return userRepository.save(entity);
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return Optional.empty();
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
     @Override
     public UserDto update(Long id, UserDto dtoEntity) {
-        return null;
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        modelMapper.map(dtoEntity, user);
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        user.setDeletedAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     @Override
     public boolean exists(Long id) {
-        return false;
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return user.getDeletedAt() == null;
     }
 }

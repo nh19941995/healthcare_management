@@ -8,6 +8,9 @@ import org.example.healthcare_management.entities.Doctor;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -44,9 +47,6 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-
-
-
     // update theo username
     // url: localhost:8080/users/username
     @PutMapping("/{username}")
@@ -62,6 +62,17 @@ public class UserController {
         UserDto newUser = userService.updateProfile(userDto, username);
         return ResponseEntity.ok(newUser);
     }
+
+    @GetMapping("")
+    public ResponseEntity<Page<UserDto>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(userService.findAll(pageable));
+    }
+
+
 
     // delete user
     // url: localhost:8080/users/username

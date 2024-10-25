@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Màu sắc
-  static const Color primaryColor = Color(0xFF6F35A5); // Màu chính
+  static const Color primaryColor = Color(0xFF432C81); // Màu chính
   static const Color secondaryColor = Color(0xFFF1E6FF); // Màu phụ
   static const Color errorColor = Color(0xFFD32F2F); // Màu lỗi
   static const Color backgroundColor = Color(0xFFFFFFFF); // Màu nền
@@ -76,6 +76,11 @@ class AppTheme {
         ),
         displayMedium: TextStyle(
           fontSize: 20.0,
+          fontWeight: FontWeight.bold,
+          color: primaryColor,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 16.0,
           fontWeight: FontWeight.bold,
           color: primaryColor,
         ),

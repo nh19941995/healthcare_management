@@ -34,7 +34,7 @@ class HomeCustomer extends StatelessWidget {
               children: [
                 Text(
                   'Xin chào ${user.name}',
-                  style: AppTheme.theme.textTheme.displayMedium,
+                  style: AppTheme.theme.textTheme.displayLarge,
                 ),
                 CircleAvatar(
                   backgroundImage: AssetImage('lib/assets/Avatar.png'), // Đường dẫn đến avatar
@@ -57,7 +57,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Thông tin cá nhân',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -88,7 +88,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Đặt lịch khám',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -119,7 +119,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Chỉ số sức khỏe',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -150,7 +150,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Lịch sử khám',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -181,7 +181,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Tư vấn online',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),

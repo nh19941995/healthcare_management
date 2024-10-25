@@ -4,6 +4,8 @@ import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import '../comons/customBottomNavBar.dart';
+import 'Choose_Healthcare_Screen.dart';
+import 'list_doctor.dart';
 
 class Booking extends StatelessWidget {
   final User user;
@@ -50,7 +52,7 @@ class Booking extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Doctor',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -67,7 +69,7 @@ class Booking extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
+                          _navigateToScreen(context, DoctorSelectionScreen(user: user,)); // Navigate to the profile information screen
                         },
                       ),
                     ),
@@ -83,7 +85,7 @@ class Booking extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Medical facility',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -100,7 +102,7 @@ class Booking extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
+                          _navigateToScreen(context, ChooseHealthcareScreen()); // Navigate to the profile information screen
                         },
                       ),
                     ),
@@ -115,7 +117,7 @@ class Booking extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Medical Services',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),

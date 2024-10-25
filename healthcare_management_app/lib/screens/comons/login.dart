@@ -1,143 +1,135 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/login_dto.dart';
+import 'package:healthcare_management_app/providers/auth_provider.dart';
 import 'package:healthcare_management_app/screens/comons/sign_up.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
+import 'package:http/http.dart' as http;
 import 'package:healthcare_management_app/screens/customers/home_customer.dart';
-
-
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../apis/auth.dart';
 import '../../models/user.dart';
 import '../admins/admin_home.dart';
-import '../doctor/doctor_home.dart'; // Đảm bảo bạn đã tạo HomeCustomer
+import '../doctor/doctor_home.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart'; // Thêm import này để sử dụng UserProvider
+
 
 class Login extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
+late final Auth authApi;
 
 class _LoginScreenState extends State<Login> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String? _emailError;
+  String? _userNameError;
   String? _passwordError;
 
   // Biến để điều khiển ẩn/hiện mật khẩu
   bool _obscurePassword = true;
+  late SharedPreferences pres;
 
-  // Thông tin người dùng giả
-  // Dữ liệu giả cho người dùng
-  final List<User> fakeUsers = [
-    User(
-      id: '1',
-      name: 'John Doe',
-      email: '1',
-      password: '1',
-      address: '123 Main St',
-      phone: '123-456-7890',
-      avatar: 'path/to/avatar1.png',
-      status: 'ACTIVE',
-      createdAt: DateTime.now(),
-      deletedAt: null,
-      description: 'Regular user',
-      gender: 'Male',
-      lockReason: null,
-      updatedAt: DateTime.now(),
-      roleId: 1, // Vai trò 1 vào HomeCustomer
-    ),
-    User(
-      id: '2',
-      name: 'Jane Smith',
-      email: 'janesmith@example.com',
-      password: 'password123',
-      address: '456 Elm St',
-      phone: '234-567-8901',
-      avatar: 'path/to/avatar2.png',
-      status: 'ACTIVE',
-      createdAt: DateTime.now(),
-      deletedAt: null,
-      description: 'Admin user',
-      gender: 'Female',
-      lockReason: null,
-      updatedAt: DateTime.now(),
-      roleId: 2, // Vai trò 2 vào Admin Home
-    ),
-    User(
-      id: '3',
-      name: 'Mike Johnson',
-      email: 'mikejohnson@example.com',
-      password: 'password123',
-      address: '789 Oak St',
-      phone: '345-678-9012',
-      avatar: 'path/to/avatar3.png',
-      status: 'ACTIVE',
-      createdAt: DateTime.now(),
-      deletedAt: null,
-      description: 'Manager user',
-      gender: 'Male',
-      lockReason: null,
-      updatedAt: DateTime.now(),
-      roleId: 3, // Vai trò 3 vào Manager Home
-    ),
-  ];
-
-
+ User user = User(
+   id: 3,
+   name: 'Mike Johnson',
+   email: 'mikejohnson@example.com',
+   password: 'password123',
+   address: '789 Oak St',
+   phone: '345-678-9012',
+   avatar: 'path/to/avatar3.png',
+   status: 'ACTIVE',
+   createdAt: DateTime.now(),
+   deletedAt: null,
+   description: 'Manager user',
+   gender: 'Male',
+   lockReason: null,
+   updatedAt: DateTime.now(),
+   roleId: 3, // Vai trò 3 vào Manager Home
+ );
+  
   @override
   void dispose() {
-    _emailController.dispose();
+    _userNameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initSheredPref();
+  }
+  void initSheredPref() async {
+    pres = await SharedPreferences.getInstance();
+  }
+  
 
-  void _login() {
+  void _login() async {
     setState(() {
-      _emailError = null;
+      _userNameError = null;
       _passwordError = null;
+    });
 
-      String email = _emailController.text;
-      String password = _passwordController.text;
+    String username = _userNameController.text;
+    String password = _passwordController.text;
 
-      // Kiểm tra thông tin đăng nhập
-      if (email.isEmpty) {
-        _emailError = "Email không được để trống";
-      }
-      if (password.isEmpty) {
+    if (username.isEmpty) {
+      setState(() {
+        _userNameError = "username không được để trống";
+      });
+      return;
+    }
+    if (password.isEmpty) {
+      setState(() {
         _passwordError = "Mật khẩu không được để trống";
-      }
+      });
+      return;
+    }
 
-      // Tìm kiếm người dùng trong danh sách giả
-      User? user;
+    var regBody = {
+      "username": username,
+      "password": password
+    };
 
-      for (var u in fakeUsers) {
-        if (u.email == email && u.password == password) {
-          user = u; // Lưu người dùng tìm thấy
-          break; // Thoát khỏi vòng lặp
-        }
-      }
+    try {
+      var response = await http.post(Uri.parse(loginUrl),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(regBody));
 
-      if (user != null) {
-        // Điều hướng theo vai trò
-        if (user.roleId == 1) {
+      // In ra nội dung phản hồi từ server để kiểm tra
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+
+        // Kiểm tra nếu token tồn tại
+        if (jsonResponse['token'] != null) {
+          var myToken = jsonResponse['token'];
+          pres.setString('token', myToken);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomeCustomer(user: user!)),
+            MaterialPageRoute(builder: (context) => HomeCustomer(user: user)),
           );
-        } else if (user.roleId == 2) {
-          // Điều hướng đến màn hình cho vai trò 2
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AdminHome()),
-          );
-        } else if (user.roleId == 3) {
-          // Điều hướng đến màn hình cho vai trò 3
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => DoctorHome()),
-          );
+        } else {
+          setState(() {
+            _userNameError = "Phản hồi không hợp lệ từ server";
+          });
         }
       } else {
-        _emailError = "Thông tin đăng nhập không đúng";
-        _passwordError = "Thông tin đăng nhập không đúng";
+        setState(() {
+          _userNameError = "Lỗi server: ${response.statusCode}";
+        });
       }
-    });
+    } catch (error) {
+      setState(() {
+        _userNameError = "Đã xảy ra lỗi: $error";
+      });
+    }
   }
 
   @override
@@ -153,11 +145,11 @@ class _LoginScreenState extends State<Login> {
               SizedBox(height: AppTheme.xLargeSpacing),
               Text(
                 "Welcome",
-                style: AppTheme.theme.textTheme.headlineLarge
+                style: AppTheme.theme.textTheme.headlineLarge,
               ),
               Text(
                 "Login",
-                style: AppTheme.theme.textTheme.headlineLarge
+                style: AppTheme.theme.textTheme.headlineLarge,
               ),
               SizedBox(height: AppTheme.xLargeSpacing),
               // Hình ảnh trung tâm
@@ -166,12 +158,11 @@ class _LoginScreenState extends State<Login> {
               ),
               SizedBox(height: AppTheme.xLargeSpacing),
               TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
+                controller: _userNameController,
                 decoration: InputDecoration(
-                  labelText: "Email",
+                  labelText: "Username",
                   border: OutlineInputBorder(),
-                  errorText: _emailError,
+                  errorText: _userNameError,
                 ),
               ),
               SizedBox(height: AppTheme.smallSpacing),

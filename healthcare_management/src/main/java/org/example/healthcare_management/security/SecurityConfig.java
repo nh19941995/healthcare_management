@@ -59,14 +59,21 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/login",
                                 "/auth/register",
-                                "/api/public/**"  // Thêm endpoint này nếu bạn có các API công khai khác
+                                "/api/public/**"
                         ).permitAll()
                         // Đặt quy tắc phân quyền cho các endpoint của Spring Data REST
 
                         // User endpoint
+                        .requestMatchers(HttpMethod.GET, "/timeslots/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/timeslots/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/timeslots/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/timeslots/**").hasRole("ADMIN")
+
+
+                        // User endpoint
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("PATIENT", "ADMIN", "DOCTOR")
+                        .requestMatchers(HttpMethod.POST, "/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                         // Doctor endpoint
                         .requestMatchers(HttpMethod.GET, "/doctors/**").permitAll()

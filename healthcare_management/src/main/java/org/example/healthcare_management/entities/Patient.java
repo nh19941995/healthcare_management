@@ -25,21 +25,6 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.DETACH
-            },
-            // tên biến của set<Patient> trong entity Doctor
-            mappedBy = "patients"
-    )
-    // tên biến authors trong entity Book
-    private Set<Doctor> doctors = new HashSet<>();
-
     @OneToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -61,7 +46,6 @@ public class Patient {
             }, fetch = FetchType.LAZY
     )
     private Set<Booking> bookings = new HashSet<>();
-
 
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -88,16 +72,6 @@ public class Patient {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    // Helper methods for Doctor (ManyToMany)
-    public void addDoctor(Doctor doctor) {
-        this.doctors.add(doctor);
-        doctor.getPatients().add(this);
-    }
-
-    public void removeDoctor(Doctor doctor) {
-        this.doctors.remove(doctor);
-        doctor.getPatients().remove(this);
-    }
 
     // Helper methods for Booking (OneToMany)
     public void addBooking(Booking booking) {

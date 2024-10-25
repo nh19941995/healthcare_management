@@ -5,7 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
+import org.example.healthcare_management.exceptions.BusinessException;
+import org.example.healthcare_management.exceptions.ResourceNotFoundException;
+import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.UserRepo;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,17 +20,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepository;
+    private final RoleRepo roleRepository;
 
     @Override
     public User save(User user) {
-        log.info("Saving new user {} to the database", user.getName());
+        log.info("Saving new user {} to the database", user.getFullName());
         return userRepository.save(user);
     }
 
     @Transactional
     @Override
     public User update(User user) {
-        log.info("Updating user {} in the database", user.getName());
+        log.info("Updating user {} in the database", user.getFullName());
         return userRepository.save(user);
     }
 
@@ -52,21 +57,36 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void addRoleToUser(User user, Role role) {
-        if (user != null && role != null) {
-            log.info("Adding role {} to user {}", role.getName(), user.getName());
-            user.addRole(role);
-            userRepository.save(user);
-        } else {
-            log.warn("Attempted to add null role to user or add role to null user");
+    public void addRoleToUser(String username, String roleName) {
+
+        // Get user
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+
+        // Get role
+        Role newRole = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Role", "roleName", roleName));
+
+        // kiểm tra xem user đã có role chưa
+        if (user.hasRole(roleName)) {
+            throw new BusinessException(
+                    "Role assignment failed",
+                    "User already has the specified role",
+                    HttpStatus.CONFLICT
+            );
         }
+
+        // Update user roles
+        user.addRole(newRole);
+        userRepository.save(user);
+        log.info("Role {} added to user {}", roleName, user.getFullName());
     }
 
     @Transactional
     @Override
     public void removeRoleFromUser(User user, Role role) {
         if (user != null && role != null) {
-            log.info("Removing role {} from user {}", role.getName(), user.getName());
+            log.info("Removing role {} from user {}", role.getName(), user.getFullName());
             user.removeRole(role);
             userRepository.save(user);
         } else {

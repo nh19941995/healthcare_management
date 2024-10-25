@@ -12,7 +12,7 @@ public interface UserService {
 //    User findByUsername(String username);
     List<User> findAll();
     void delete(Long id);
-    void addRoleToUser(User user, Role role);
+    void addRoleToUser(String username, String roleName);
     void removeRoleFromUser(User user, Role role);
 
 }

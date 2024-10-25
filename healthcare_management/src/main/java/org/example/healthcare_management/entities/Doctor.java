@@ -1,5 +1,7 @@
 package org.example.healthcare_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Status;
@@ -26,15 +28,15 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonBackReference // tránh lỗi vòng lặp khi chuyển đổi sang JSON
     @OneToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            optional = false // thông tin bác sĩ không thể null
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY
     )
-    // tên cột chứa khóa phụ trong bảng doctors là infor_id
+    // tên cột chứa khóa phụ trong bảng doctors là user_id
     // cột phụ sẽ dc thêm vào bảng doctors
-    @JoinColumn(name = "infor_id")
-    private User doctorInfo;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "achievements")
     private String achievements;
@@ -64,43 +66,11 @@ public class Doctor {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.DETACH
-            }
-    )
-    @JoinTable(
-            // tên bảng trung gian
-            name = "doctors_patients",
-            // tên cột chứa khóa phụ trong bảng trung gian của Doctor
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            // tên cột chứa khóa phụ trong bảng trung gian của Specialization
-            inverseJoinColumns = @JoinColumn(name = "patient_id")
-    )
-    private Set<Patient> patients = new HashSet<>();
-
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.DETACH
-            }
-    )
-    @JoinTable(
-            // tên bảng trung gian
-            name = "doctors_specialization",
-            // tên cột chứa khóa phụ trong bảng trung gian của Doctor
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            // tên cột chứa khóa phụ trong bảng trung gian của Specialization
-            inverseJoinColumns = @JoinColumn(name = "specialization_id")
-    )
-    private Set<Specialization> specializations = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    // tên cột chứa khóa phụ trong bảng doctors là specialization_id
+    // cột phụ specialization_id sẽ dc thêm vào bảng doctors
+    @JoinColumn(name = "specialization_id")
+    private Specialization specialization;
 
     // mappedBy trỏ tới tên biến doctor trong entity Schedule
     @OneToMany(mappedBy = "doctor", cascade = {
@@ -141,27 +111,7 @@ public class Doctor {
         booking.setDoctor(null);
     }
 
-    // Helper methods for Patient (ManyToMany)
-    public void addPatient(Patient patient) {
-        this.patients.add(patient);
-        patient.getDoctors().add(this);
-    }
 
-    public void removePatient(Patient patient) {
-        this.patients.remove(patient);
-        patient.getDoctors().remove(this);
-    }
-
-    // Helper methods for Specialization (ManyToMany)
-    public void addSpecialization(Specialization specialization) {
-        this.specializations.add(specialization);
-        specialization.getDoctors().add(this);
-    }
-
-    public void removeSpecialization(Specialization specialization) {
-        this.specializations.remove(specialization);
-        specialization.getDoctors().remove(this);
-    }
 
     public void addSchedule(Schedule schedule) {
         this.schedules.add(schedule);

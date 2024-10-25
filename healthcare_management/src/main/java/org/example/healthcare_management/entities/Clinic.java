@@ -1,5 +1,7 @@
 package org.example.healthcare_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,6 +38,7 @@ public class Clinic { // phòng khám
     private String phone;
 
     // mappedBy trỏ tới tên biến clinic trong entity Doctor
+
     @OneToMany(
             mappedBy = "clinic",
             cascade = {

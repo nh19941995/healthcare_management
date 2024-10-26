@@ -1,9 +1,6 @@
 package org.example.healthcare_management.configs;
 
-import org.example.healthcare_management.controllers.dto.ClinicDtoWithDoctor;
-import org.example.healthcare_management.controllers.dto.DoctorDto;
-import org.example.healthcare_management.controllers.dto.RoleDto;
-import org.example.healthcare_management.controllers.dto.UserDto;
+import org.example.healthcare_management.controllers.dto.*;
 import org.example.healthcare_management.entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -88,7 +85,30 @@ public class ModelMapperConfig {
 
     // clinic
     private void configureClinicMapping (ModelMapper modelMapper) {
-        // chiều từ Clinic -> ClinicDto
+        // chiều từ Clinic -> ClinicDto (không chứa Doctor)
+        modelMapper.createTypeMap(Clinic.class, ClinicDtoNoDoctor.class)
+                .addMappings(mapper -> {
+                    mapper.map(Clinic::getId, ClinicDtoNoDoctor::setId);
+                    mapper.map(Clinic::getName, ClinicDtoNoDoctor::setName);
+                    mapper.map(Clinic::getAddress, ClinicDtoNoDoctor::setAddress);
+                    mapper.map(Clinic::getPhone, ClinicDtoNoDoctor::setPhone);
+                    mapper.map(Clinic::getDescription, ClinicDtoNoDoctor::setDescription);
+                    mapper.map(Clinic::getImage, ClinicDtoNoDoctor::setImage);
+                    mapper.map(Clinic::getCreatedAt, ClinicDtoNoDoctor::setCreatedAt);
+                    // Cấu hình đặc biệt cho collection mapping
+//                    mapper.using(ctx -> {
+//                        Object source = ctx.getSource();
+//                        if (source instanceof Set<?>) {
+//                            return ((Set<?>) source).stream()
+//                                    .filter(Doctor.class::isInstance)
+//                                    .map(doctor -> modelMapper.map(doctor, DoctorDto.class))
+//                                    .collect(Collectors.toSet());
+//                        }
+//                        return Collections.emptySet();
+//                    }).map(Clinic::getDoctors, ClinicDtoWithDoctor::setDoctorsDto);
+                });
+
+        // chiều từ Clinic -> ClinicDto (có chứa Doctor)
         modelMapper.createTypeMap(Clinic.class, ClinicDtoWithDoctor.class)
                 .addMappings(mapper -> {
                     mapper.map(Clinic::getId, ClinicDtoWithDoctor::setId);

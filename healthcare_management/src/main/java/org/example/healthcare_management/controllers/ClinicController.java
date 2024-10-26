@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.example.healthcare_management.controllers.dto.ClinicDtoWithDoctor;
 import org.example.healthcare_management.entities.Clinic;
 import org.example.healthcare_management.repositories.ClinicRepo;
-import org.example.healthcare_management.services.ClinicService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

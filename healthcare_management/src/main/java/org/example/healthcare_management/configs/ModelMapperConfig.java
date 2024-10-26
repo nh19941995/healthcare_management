@@ -1,6 +1,5 @@
 package org.example.healthcare_management.configs;
 
-
 import org.example.healthcare_management.controllers.dto.ClinicDtoWithDoctor;
 import org.example.healthcare_management.controllers.dto.DoctorDto;
 import org.example.healthcare_management.controllers.dto.RoleDto;
@@ -10,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,7 +64,6 @@ public class ModelMapperConfig {
                 });
     }
 
-
     // doctor
     private void configureDoctorMapping(ModelMapper modelMapper) {
         // chiều từ Doctor -> DoctorDto
@@ -88,9 +85,6 @@ public class ModelMapperConfig {
                     mapper.map(src -> src.getSpecialization().getId(), DoctorDto::setSpecializationId);
                 });
     }
-
-    // clinic
-
 
     // clinic
     private void configureClinicMapping (ModelMapper modelMapper) {

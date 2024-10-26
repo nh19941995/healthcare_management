@@ -1,6 +1,7 @@
 package org.example.healthcare_management.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,6 +29,7 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @OneToOne(
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
@@ -51,6 +53,7 @@ public class Doctor {
     }, fetch = FetchType.LAZY)
     private Set<Booking> bookings = new HashSet<>();
 
+    @JsonIgnore
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {
@@ -64,6 +67,7 @@ public class Doctor {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     // tên cột chứa khóa phụ trong bảng doctors là specialization_id
     // cột phụ specialization_id sẽ dc thêm vào bảng doctors

@@ -1,7 +1,12 @@
 package org.example.healthcare_management.configs;
 
+import lombok.AllArgsConstructor;
 import org.example.healthcare_management.controllers.dto.*;
 import org.example.healthcare_management.entities.*;
+import org.example.healthcare_management.repositories.ClinicRepo;
+import org.example.healthcare_management.repositories.SpecializationRepo;
+import org.example.healthcare_management.repositories.UserRepo;
+import org.example.healthcare_management.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +17,11 @@ import java.util.stream.Collectors;
 
 
 @Configuration
+@AllArgsConstructor
 public class ModelMapperConfig {
+    private final ClinicRepo clinicRepo;
+    private final SpecializationRepo specializationRepo;
+
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
@@ -26,7 +35,6 @@ public class ModelMapperConfig {
         configureRoleMapping(modelMapper);
         configureDoctorMapping(modelMapper);
         configureClinicMapping(modelMapper);
-
 
         return modelMapper;
     }
@@ -70,6 +78,7 @@ public class ModelMapperConfig {
 
     // doctor
     private void configureDoctorMapping(ModelMapper modelMapper) {
+        // chiều từ Doctor -> DoctorDto
         modelMapper.createTypeMap(Doctor.class, DoctorDto.class)
                 .addMappings(mapper -> {
                     // Map các trường cơ bản
@@ -101,6 +110,39 @@ public class ModelMapperConfig {
 
                     return destination;
                 });
+
+        // chiều từ DoctorDto -> Doctor
+        modelMapper.createTypeMap(DoctorDto.class, Doctor.class)
+                .addMappings(mapper -> {
+                    // Map các trường cơ bản
+                    mapper.map(DoctorDto::getId, Doctor::setId);
+                    mapper.map(DoctorDto::getMedicalTraining, Doctor::setMedicalTraining);
+                    mapper.map(DoctorDto::getAchievements, Doctor::setAchievements);
+                    mapper.map(DoctorDto::getStatus, Doctor::setStatus);
+                    mapper.map(DoctorDto::getLockReason, Doctor::setLockReason);
+                })
+                .setPostConverter(context -> {
+                    DoctorDto source = context.getSource();
+                    Doctor destination = context.getDestination();
+
+                    // không cập nhật User
+
+                    // Map Clinic
+                    if (source.getClinicId() != null) {
+                        Clinic clinic = clinicRepo.findById(source.getClinicId())
+                                .orElseThrow(() -> new RuntimeException("Clinic not found"));
+                        destination.setClinic(clinic);
+                    }
+
+                    // Map Specialization
+                    if (source.getSpecializationId() != null) {
+                        Specialization specialization = specializationRepo.findById(source.getSpecializationId())
+                                .orElseThrow(() -> new RuntimeException("Specialization not found"));
+                        destination.setSpecialization(specialization);
+                    }
+
+                    return destination;
+                });
     }
 
     // clinic
@@ -115,17 +157,6 @@ public class ModelMapperConfig {
                     mapper.map(Clinic::getDescription, ClinicDtoNoDoctor::setDescription);
                     mapper.map(Clinic::getImage, ClinicDtoNoDoctor::setImage);
                     mapper.map(Clinic::getCreatedAt, ClinicDtoNoDoctor::setCreatedAt);
-                    // Cấu hình đặc biệt cho collection mapping
-//                    mapper.using(ctx -> {
-//                        Object source = ctx.getSource();
-//                        if (source instanceof Set<?>) {
-//                            return ((Set<?>) source).stream()
-//                                    .filter(Doctor.class::isInstance)
-//                                    .map(doctor -> modelMapper.map(doctor, DoctorDto.class))
-//                                    .collect(Collectors.toSet());
-//                        }
-//                        return Collections.emptySet();
-//                    }).map(Clinic::getDoctors, ClinicDtoWithDoctor::setDoctorsDto);
                 });
 
         // chiều từ Clinic -> ClinicDto (có chứa Doctor)

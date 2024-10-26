@@ -21,7 +21,7 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public void updateProfile(DoctorDto doctorDto, String username) {
+    public DoctorDto updateProfile(DoctorDto doctorDto, String username) {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -31,7 +31,9 @@ public class DoctorServiceImpl implements DoctorService {
             modelMapper.map(doctorDto, existingDoctor);
             // Lưu thông tin bác sĩ
             doctorRepo.save(existingDoctor);
+            return doctorDto;
         }
+        return null;
     }
 
     @Override

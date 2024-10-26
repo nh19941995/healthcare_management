@@ -24,7 +24,7 @@ public class DoctorController {
 
     // url: localhost:8080/api/doctors/username
     @PutMapping("/{username}")
-    public ResponseEntity<ApiResponse> updateProfile(
+    public ResponseEntity<DoctorDto> updateProfile(
             @RequestBody DoctorDto doctorDto,@PathVariable String username
     ) {
         // Kiểm tra xem người dùng hiện tại có phải là người sở hữu tài khoản không
@@ -34,10 +34,8 @@ public class DoctorController {
         if (!currentUsername.equals(username)) {
             throw new RuntimeException("You can only view your own profile");
         }
-
         doctorService.updateProfile(doctorDto, username);
-        return ResponseEntity.ok(
-                new ApiResponse(true, "Profile updated successfully!"));
+        return ResponseEntity.ok(doctorDto);
     }
 
     // url: localhost:8080/api/doctors/username

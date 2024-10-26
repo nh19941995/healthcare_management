@@ -21,6 +21,13 @@ public class ModelMapperConfig {
                 .setSkipNullEnabled(true)
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+
+        configureUserMapping(modelMapper);
+        configureRoleMapping(modelMapper);
+        configureDoctorMapping(modelMapper);
+        configureClinicMapping(modelMapper);
+
+
         return modelMapper;
     }
 

@@ -8,6 +8,7 @@ import org.example.healthcare_management.entities.Doctor;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ public class UserController {
 
     private final UserRepo userRepository;
     private final UserService userService;
+    private final ModelMapper modelMapper;
 
     // lấy thông tin user theo username
     // url: localhost:8080/users/username
@@ -43,7 +45,7 @@ public class UserController {
         }
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
-        UserDto userDto =  userService.convertToDTO(user);
+        UserDto userDto = modelMapper.map(user, UserDto.class);
         return ResponseEntity.ok(userDto);
     }
 

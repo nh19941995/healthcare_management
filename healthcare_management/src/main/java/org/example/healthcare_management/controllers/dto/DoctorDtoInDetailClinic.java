@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.healthcare_management.enums.Status;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DoctorDto {
+public class DoctorDtoInDetailClinic {
     private Long id;
     private String achievements;
     private String medicalTraining;

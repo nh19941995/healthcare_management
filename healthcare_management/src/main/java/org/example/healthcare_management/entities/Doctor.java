@@ -1,6 +1,7 @@
 package org.example.healthcare_management.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,6 +29,7 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @OneToOne(
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
@@ -51,6 +53,7 @@ public class Doctor {
     }, fetch = FetchType.LAZY)
     private Set<Booking> bookings = new HashSet<>();
 
+    @JsonIgnore
     @ManyToOne(
             fetch = FetchType.LAZY,
             cascade = {
@@ -64,20 +67,13 @@ public class Doctor {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     // tên cột chứa khóa phụ trong bảng doctors là specialization_id
     // cột phụ specialization_id sẽ dc thêm vào bảng doctors
     @JoinColumn(name = "specialization_id")
     private Specialization specialization;
 
-    // mappedBy trỏ tới tên biến doctor trong entity Schedule
-    @OneToMany(mappedBy = "doctor", cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.REFRESH,
-            CascadeType.DETACH
-    }, fetch = FetchType.LAZY)
-    private Set<Schedule> schedules = new HashSet<>();
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -109,16 +105,5 @@ public class Doctor {
         booking.setDoctor(null);
     }
 
-
-
-    public void addSchedule(Schedule schedule) {
-        this.schedules.add(schedule);
-        schedule.setDoctor(this);
-    }
-
-    public void removeSchedule(Schedule schedule) {
-        this.schedules.remove(schedule);
-        schedule.setDoctor(null);
-    }
 
 }

@@ -101,69 +101,7 @@ public class DataInitializer {
             patientStatusrepo.save(new PatientStatus( "Follow-up","Scheduled for follow-up appointment in one week"));
         }
 
-        if (userRepo.count() == 0 && roleRepo.count() > 0) {
-            Role adminRole = roleRepo.findByName(
-                    EnumRole.ADMIN.getRoleName()
-            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
 
-            Role doctorRole = roleRepo.findByName(
-                    EnumRole.DOCTOR.getRoleName()
-            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
-
-            Role patientRole = roleRepo.findByName(
-                    EnumRole.PATIENT.getRoleName()
-            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
-
-            // Admin
-            User admin = User.builder()
-                    .fullName("Nguyễn Trung Hiếu")
-                    .username("godOfJava@999")
-                    .password(passwordEncoder.encode("godOfJava@999"))
-                    .email("godOfJava@gmail.com")
-                    .address("Trái Đất")
-                    .phone("0773307333")
-                    .gender(Gender.MALE)
-                    .status(Status.ACTIVE)
-                    .build();
-            Set<Role> roles = new HashSet<>();
-            roles.add(adminRole);
-            roles.add(doctorRole);
-            roles.add(patientRole);
-            admin.setRoles(roles);
-            userRepo.save(admin);
-
-            // patient
-            User user = User.builder()
-                    .fullName("Obama")
-                    .username("ababab@A111")
-                    .password(passwordEncoder.encode("ababab@A111"))                    .email("abama@gmail.com")
-                    .address("Trái Đất")
-                    .phone("0273307333")
-                    .gender(Gender.MALE)
-                    .status(Status.ACTIVE)
-                    .build();
-            Set<Role> rolesUser = new HashSet<>();
-            rolesUser.add(patientRole);
-            user.setRoles(rolesUser);
-            userRepo.save(user);
-
-            // doctor
-            User UserDoctor = User.builder()
-                    .fullName("Nguyễn Văn A")
-                    .username("doctorA@A111")
-                    .password(passwordEncoder.encode("doctorA@A111"))                    .email("doctorA@gmail.com")
-                    .address("Trái Đất")
-                    .phone("0273307333")
-                    .gender(Gender.MALE)
-                    .status(Status.ACTIVE)
-                    .build();
-            Doctor doctor1 = new Doctor();
-            doctor1.setUser(UserDoctor);
-            doctorRepo.save(doctor1);
-            userRepo.save(UserDoctor);
-            UserDoctor.getRoles().add(doctorRole);
-            userRepo.save(UserDoctor);
-        }
 
         if (specializationrepo.count()==0){
             specializationrepo.save(new Specialization(
@@ -226,6 +164,150 @@ public class DataInitializer {
                     .phone("024 3869 3736")
                     .build();
             clinicRepo.save(clinic3);
+        }
+
+        if (userRepo.count() == 0 && roleRepo.count() > 0) {
+            Role adminRole = roleRepo.findByName(
+                    EnumRole.ADMIN.getRoleName()
+            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+            Role doctorRole = roleRepo.findByName(
+                    EnumRole.DOCTOR.getRoleName()
+            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+            Role patientRole = roleRepo.findByName(
+                    EnumRole.PATIENT.getRoleName()
+            ).orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+            // Admin
+            User admin = User.builder()
+                    .fullName("Nguyễn Trung Hiếu")
+                    .username("godOfJava@999")
+                    .password(passwordEncoder.encode("godOfJava@999"))
+                    .email("godOfJava@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0773307333")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .build();
+            Set<Role> roles = new HashSet<>();
+            roles.add(adminRole);
+            roles.add(doctorRole);
+            roles.add(patientRole);
+            admin.setRoles(roles);
+            userRepo.save(admin);
+
+            // patient
+            User user = User.builder()
+                    .fullName("Obama")
+                    .username("ababab@A111")
+                    .password(passwordEncoder.encode("ababab@A111"))
+                    .email("abama@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0273307333")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .build();
+
+            Set<Role> rolesUser = new HashSet<>();
+            rolesUser.add(patientRole);
+            user.setRoles(rolesUser);
+            userRepo.save(user);
+
+            // doctor
+            Specialization specialization1 = specializationrepo.findById(1L).orElseThrow(() -> new EntityNotFoundException("Specialization not found"));
+            Specialization specialization2 = specializationrepo.findById(2L).orElseThrow(() -> new EntityNotFoundException("Specialization not found"));
+
+            Clinic clinic1 = clinicRepo.findById(1L).orElseThrow(() -> new EntityNotFoundException("Clinic not found"));
+            Clinic clinic2 = clinicRepo.findById(2L).orElseThrow(() -> new EntityNotFoundException("Clinic not found"));
+
+
+            // tạo user cho doctor
+            User UserDoctor = User.builder()
+                    .fullName("Nguyễn Văn A")
+                    .username("doctorA@A111")
+                    .password(passwordEncoder.encode("doctorA@A111"))
+                    .email("doctorA@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0273307333")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .build();
+            // tạo doctor
+            Doctor doctor1 = new Doctor();
+            doctor1.setUser(UserDoctor);
+            doctor1.setSpecialization(specialization1);
+            doctor1.setClinic(clinic1);
+            doctor1.setStatus(Status.ACTIVE);
+            doctor1.setAchievements("Đã có nhiều năm kinh nghiệm");
+            doctor1.setMedicalTraining("Đại học Y Hà Nội");
+
+            // lưu doctor
+            doctorRepo.save(doctor1);
+            // lưu user
+            userRepo.save(UserDoctor);
+            // set role cho user
+            UserDoctor.getRoles().add(doctorRole);
+            // lưu user
+            userRepo.save(UserDoctor);
+
+            // tạo user cho doctor
+            User UserDoctor1 = User.builder()
+                    .fullName("Nguyễn Văn B")
+                    .username("doctorB@A111")
+                    .password(passwordEncoder.encode("doctorB@A111"))
+                    .email("doctorb@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0213377333")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .build();
+            // tạo doctor
+            Doctor doctor2 = new Doctor();
+            doctor2.setUser(UserDoctor1);
+            doctor2.setSpecialization(specialization1);
+            doctor2.setClinic(clinic1);
+            doctor2.setStatus(Status.ACTIVE);
+            doctor2.setAchievements("Đã có nhiều năm kinh nghiệm");
+            doctor2.setMedicalTraining("Đại học Y Đà Nẵng");
+            // lưu doctor
+            doctorRepo.save(doctor2);
+            // lưu user
+            userRepo.save(UserDoctor1);
+            // set role cho user
+            UserDoctor1.getRoles().add(doctorRole);
+            // lưu user
+            userRepo.save(UserDoctor1);
+
+            // tạo user cho doctor
+            User UserDoctor2 = User.builder()
+                    .fullName("Nguyễn Văn C")
+                    .username("doctorC@A111")
+                    .password(passwordEncoder.encode("doctorC@A111"))
+                    .email("doctorc@gmail.com")
+                    .address("Trái Đất")
+                    .phone("0213377383")
+                    .gender(Gender.MALE)
+                    .status(Status.ACTIVE)
+                    .build();
+            // tạo doctor
+            Doctor doctor3 = new Doctor();
+            doctor3.setUser(UserDoctor2);
+            doctor3.setSpecialization(specialization1);
+            doctor3.setClinic(clinic1);
+            doctor3.setStatus(Status.ACTIVE);
+            doctor3.setAchievements("Đã có nhiều năm kinh nghiệm");
+            doctor3.setMedicalTraining("Đại học Y TP Hồ Chí Minh");
+            // lưu doctor
+            doctorRepo.save(doctor3);
+            // lưu user
+            userRepo.save(UserDoctor2);
+            // set role cho user
+            UserDoctor2.getRoles().add(doctorRole);
+            // lưu user
+            userRepo.save(UserDoctor2);
+
+
         }
 
     }

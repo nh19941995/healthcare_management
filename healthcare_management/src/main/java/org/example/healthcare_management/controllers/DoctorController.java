@@ -50,7 +50,8 @@ public class DoctorController {
         if (!currentUsername.equals(username)) {
             throw new RuntimeException("You can only view your own profile");
         }
-        return ResponseEntity.ok(doctorService.getDoctorProfile(username));
+        DoctorDto doctorDto = doctorService.getDoctorProfile(username);
+        return ResponseEntity.ok(doctorDto);
     }
 
 

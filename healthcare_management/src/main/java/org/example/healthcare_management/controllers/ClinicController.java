@@ -1,6 +1,7 @@
 package org.example.healthcare_management.controllers;
 
 import lombok.AllArgsConstructor;
+import org.example.healthcare_management.controllers.dto.ClinicDtoNoDoctor;
 import org.example.healthcare_management.controllers.dto.ClinicDtoWithDoctor;
 import org.example.healthcare_management.entities.Clinic;
 import org.example.healthcare_management.repositories.ClinicRepo;
@@ -23,20 +24,20 @@ public class ClinicController {
 
     // url: localhost:8080/api/clinics
     @GetMapping("")
-    public ResponseEntity<List<ClinicDtoWithDoctor>> getAllClinics() {
+    public ResponseEntity<List<ClinicDtoNoDoctor>> getAllClinics() {
         List<Clinic> clinics = clinicRepository.findAll();
-        List<ClinicDtoWithDoctor> clinicDtoWithDoctor = clinics.stream()
-                .map(clinic -> modelMapper.map(clinic, ClinicDtoWithDoctor.class))
-                .collect(Collectors.toList());
-
+        List<ClinicDtoNoDoctor> clinicDtoWithDoctor = clinics.stream()
+                .map(clinic -> modelMapper.map(clinic, ClinicDtoNoDoctor.class))
+                .toList();
         return ResponseEntity.ok(clinicDtoWithDoctor);
     }
 
     // url: localhost:8080/api/clinics/1
     @GetMapping("/{id}")
-    public ResponseEntity<Clinic> getClinicById(@PathVariable Long id) {
+    public ResponseEntity<ClinicDtoWithDoctor> getClinicById(@PathVariable Long id) {
         Clinic clinic = clinicRepository.findById(id).orElseThrow(() -> new RuntimeException("Clinic not found: " + id));
-        return ResponseEntity.ok(clinic);
+        ClinicDtoWithDoctor ClinicDtoWithDoctor = modelMapper.map(clinic, ClinicDtoWithDoctor.class);
+        return ResponseEntity.ok(ClinicDtoWithDoctor);
     }
 
 

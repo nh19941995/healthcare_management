@@ -63,23 +63,36 @@ public class ModelMapperConfig {
 
     // doctor
     private void configureDoctorMapping(ModelMapper modelMapper) {
-        // chiều từ Doctor -> DoctorDto
         modelMapper.createTypeMap(Doctor.class, DoctorDto.class)
                 .addMappings(mapper -> {
-                    // các trường giống nhau sẽ được ánh xạ tự động
+                    // Map các trường cơ bản
                     mapper.map(Doctor::getId, DoctorDto::setId);
                     mapper.map(Doctor::getMedicalTraining, DoctorDto::setMedicalTraining);
                     mapper.map(Doctor::getAchievements, DoctorDto::setAchievements);
                     mapper.map(Doctor::getStatus, DoctorDto::setStatus);
                     mapper.map(Doctor::getLockReason, DoctorDto::setLockReason);
-                    // ánh xạ các trường đặc biệt
-                    // user -> username và avatar
-                    mapper.map(src -> src.getUser().getUsername(), DoctorDto::setUsername);
-                    mapper.map(src -> src.getUser().getAvatar(), DoctorDto::setAvatar);
-                    // clinic -> clinicId
-                    mapper.map(src -> src.getClinic().getId(), DoctorDto::setClinicId);
-                    // specialization -> specializationId
-                    mapper.map(src -> src.getSpecialization().getId(), DoctorDto::setSpecializationId);
+                })
+                .setPostConverter(context -> {
+                    Doctor source = context.getSource();
+                    DoctorDto destination = context.getDestination();
+
+                    // Map User fields
+                    if (source.getUser() != null) {
+                        destination.setUsername(source.getUser().getUsername());
+                        destination.setAvatar(source.getUser().getAvatar());
+                    }
+
+                    // Map Clinic
+                    if (source.getClinic() != null) {
+                        destination.setClinicId(source.getClinic().getId());
+                    }
+
+                    // Map Specialization
+                    if (source.getSpecialization() != null) {
+                        destination.setSpecializationId(source.getSpecialization().getId());
+                    }
+
+                    return destination;
                 });
     }
 

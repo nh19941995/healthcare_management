@@ -1,6 +1,7 @@
 package org.example.healthcare_management.services;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.DoctorDto;
 import org.example.healthcare_management.entities.*;
 import org.example.healthcare_management.repositories.DoctorRepo;
@@ -12,6 +13,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
@@ -43,9 +45,7 @@ public class DoctorServiceImpl implements DoctorService {
         if (doctor == null) {
             throw new RuntimeException("User is not a doctor");
         }
-        // load các thông tin lazy liên quan
-        Hibernate.initialize(doctor.getClinic());
-        Hibernate.initialize(doctor.getSpecialization());
+        log.info("doctor: {}", doctor);
         return modelMapper.map(doctor, DoctorDto.class);
     }
 

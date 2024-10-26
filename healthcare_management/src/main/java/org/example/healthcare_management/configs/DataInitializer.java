@@ -208,6 +208,7 @@ public class DataInitializer {
                     .gender(Gender.MALE)
                     .status(Status.ACTIVE)
                     .build();
+
             Set<Role> rolesUser = new HashSet<>();
             rolesUser.add(patientRole);
             user.setRoles(rolesUser);
@@ -234,12 +235,13 @@ public class DataInitializer {
                     .build();
             // tạo doctor
             Doctor doctor1 = new Doctor();
-            // set user cho doctor
             doctor1.setUser(UserDoctor);
-            // set specialization cho doctor
             doctor1.setSpecialization(specialization1);
-            // set clinic cho doctor
             doctor1.setClinic(clinic1);
+            doctor1.setStatus(Status.ACTIVE);
+            doctor1.setAchievements("Đã có nhiều năm kinh nghiệm");
+            doctor1.setMedicalTraining("Đại học Y Hà Nội");
+
             // lưu doctor
             doctorRepo.save(doctor1);
             // lưu user
@@ -262,12 +264,12 @@ public class DataInitializer {
                     .build();
             // tạo doctor
             Doctor doctor2 = new Doctor();
-            // set user cho doctor
             doctor2.setUser(UserDoctor1);
-            // set specialization cho doctor
             doctor2.setSpecialization(specialization1);
-            // set clinic cho doctor
             doctor2.setClinic(clinic1);
+            doctor2.setStatus(Status.ACTIVE);
+            doctor2.setAchievements("Đã có nhiều năm kinh nghiệm");
+            doctor2.setMedicalTraining("Đại học Y Đà Nẵng");
             // lưu doctor
             doctorRepo.save(doctor2);
             // lưu user
@@ -290,12 +292,12 @@ public class DataInitializer {
                     .build();
             // tạo doctor
             Doctor doctor3 = new Doctor();
-            // set user cho doctor
             doctor3.setUser(UserDoctor2);
-            // set specialization cho doctor
             doctor3.setSpecialization(specialization1);
-            // set clinic cho doctor
             doctor3.setClinic(clinic1);
+            doctor3.setStatus(Status.ACTIVE);
+            doctor3.setAchievements("Đã có nhiều năm kinh nghiệm");
+            doctor3.setMedicalTraining("Đại học Y TP Hồ Chí Minh");
             // lưu doctor
             doctorRepo.save(doctor3);
             // lưu user

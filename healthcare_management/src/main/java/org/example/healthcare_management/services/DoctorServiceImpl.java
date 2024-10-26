@@ -1,10 +1,8 @@
 package org.example.healthcare_management.services;
 
 import lombok.AllArgsConstructor;
-import org.example.healthcare_management.controllers.dto.BookingDto;
 import org.example.healthcare_management.controllers.dto.DoctorDto;
 import org.example.healthcare_management.entities.*;
-import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.repositories.DoctorRepo;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.modelmapper.ModelMapper;
@@ -12,9 +10,6 @@ import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -48,16 +43,10 @@ public class DoctorServiceImpl implements DoctorService {
         typeMap.addMappings(mapper -> {
             mapper.map(Doctor::getAchievements, DoctorDto::setAchievements);
             mapper.map(Doctor::getMedicalTraining, DoctorDto::setMedicalTraining);
-            mapper.map(Doctor::getClinic, DoctorDto::setClinic);
-            mapper.map(Doctor::getSpecialization, DoctorDto::setSpecialization);
+            mapper.map(Doctor::getClinic, DoctorDto::setClinicId);
+            mapper.map(Doctor::getSpecialization, DoctorDto::setSpecializationId);
             mapper.map(Doctor::getStatus, DoctorDto::setStatus);
             mapper.map(Doctor::getLockReason, DoctorDto::setLockReason);
-            // Map booking to bookingDTOs
-            mapper.map(src -> src.getBookings().stream()
-                    .map(bookingService::convertToDTO) // Sử dụng phương thức đã định nghĩa
-                    .collect(Collectors.toList()),
-                    DoctorDto::setBookings);
-
         });
 
         return modelMapper.map(doctor, DoctorDto.class);

@@ -13,8 +13,5 @@ public class TestRestController {
         this.userService = userService;
     }
 
-    @GetMapping("/public")
-    public User test(){
-        return userService.findById(1L);
-    }
+
 }

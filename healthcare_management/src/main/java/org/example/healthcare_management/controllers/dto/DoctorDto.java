@@ -20,11 +20,9 @@ public class DoctorDto {
 
     private String medicalTraining;
 
-    private Set<Booking> bookings = new HashSet<>();
+    private Long clinicId;
 
-    private Clinic clinic;
-
-    private Specialization specialization;
+    private Long specializationId;
 
     private Set<Schedule> schedules = new HashSet<>();
 

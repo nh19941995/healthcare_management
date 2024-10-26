@@ -28,10 +28,8 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonBackReference // tránh lỗi vòng lặp khi chuyển đổi sang JSON
     @OneToOne(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     // tên cột chứa khóa phụ trong bảng doctors là user_id
     // cột phụ sẽ dc thêm vào bảng doctors

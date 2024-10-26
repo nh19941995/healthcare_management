@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/doctor")
+@RequestMapping("/api/doctors")
 public class DoctorController {
     private final DoctorService doctorService;
 
 
-    // url: localhost:8080/doctor/updateProfile
+    // url: localhost:8080/api/doctors/updateProfile/username
     @PutMapping("/updateProfile/{username}")
     public ResponseEntity<ApiResponse> updateProfile(
             @RequestBody Doctor doctor,@PathVariable String username

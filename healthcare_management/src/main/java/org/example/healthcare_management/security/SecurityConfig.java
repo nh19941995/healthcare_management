@@ -76,13 +76,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
                         // Doctor endpoint
                         .requestMatchers(HttpMethod.GET, "/api/doctors/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/doctors/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/doctors/**").hasAnyRole("ADMIN", "DOCTOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/doctors/**").hasAnyRole("ADMIN", "DOCTOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/doctors/**").hasRole("ADMIN")
                         // Patient endpoint
                         .requestMatchers(HttpMethod.GET, "/api/patients/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/patients/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/patients/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/patients/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/patients/**").hasRole("ADMIN")
                         // Booking endpoint
                         .requestMatchers(HttpMethod.GET, "/api/bookings/**").permitAll()

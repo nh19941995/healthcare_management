@@ -22,10 +22,10 @@ public class DoctorController {
     private final ModelMapper modelMapper;
 
 
-    // url: localhost:8080/api/doctors/updateProfile/username
+    // url: localhost:8080/api/doctors/username
     @PutMapping("/{username}")
     public ResponseEntity<ApiResponse> updateProfile(
-            @RequestBody Doctor doctor,@PathVariable String username
+            @RequestBody DoctorDto doctorDto,@PathVariable String username
     ) {
         // Kiểm tra xem người dùng hiện tại có phải là người sở hữu tài khoản không
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -35,7 +35,7 @@ public class DoctorController {
             throw new RuntimeException("You can only view your own profile");
         }
 
-        doctorService.updateProfile(doctor, username);
+        doctorService.updateProfile(doctorDto, username);
         return ResponseEntity.ok(
                 new ApiResponse(true, "Profile updated successfully!"));
     }

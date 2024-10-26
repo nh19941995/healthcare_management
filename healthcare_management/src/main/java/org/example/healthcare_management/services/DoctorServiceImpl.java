@@ -6,10 +6,7 @@ import org.example.healthcare_management.controllers.dto.DoctorDto;
 import org.example.healthcare_management.entities.*;
 import org.example.healthcare_management.repositories.DoctorRepo;
 import org.example.healthcare_management.repositories.UserRepo;
-import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 
@@ -24,15 +21,16 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public void updateProfile(Doctor doctor, String username) {
+    public void updateProfile(DoctorDto doctorDto, String username) {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Doctor oldDoctor = user.getDoctor();
-        if (oldDoctor != null) {
-            // chuyển dữ liệu từ doctor sang oldDoctor
-            modelMapper.map(doctor, oldDoctor);
-            // lưu lại thông tin doctor để cập nhật vào database
-            doctorRepo.save(oldDoctor);
+
+        Doctor existingDoctor = user.getDoctor();
+        if (existingDoctor != null) {
+            // Trực tiếp map từ doctorDto sang existingDoctor mà không cần tạo đối tượng trung gian
+            modelMapper.map(doctorDto, existingDoctor);
+            // Lưu thông tin bác sĩ
+            doctorRepo.save(existingDoctor);
         }
     }
 

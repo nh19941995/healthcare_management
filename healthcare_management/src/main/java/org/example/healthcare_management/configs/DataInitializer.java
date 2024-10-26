@@ -107,31 +107,31 @@ public class DataInitializer {
             specializationrepo.save(new Specialization(
                     "Cardiology",
                     "Deals with disorders of the heart and the cardiovascular system.",
-                    null
+                    "https://images.pexels.com/photos/28856242/pexels-photo-28856242/free-photo-of-ng-i-ph-n-th-gian-tren-bai-bi-n-nhi-t-d-i-d-y-cat.jpeg"
             ));
 
             specializationrepo.save(new Specialization(
                     "Dermatology",
                     "Deals with the skin, hair, nails, and its diseases.",
-                    null
+                    "https://images.pexels.com/photos/19639386/pexels-photo-19639386/free-photo-of-bi-n-b-bi-n-kinh-ram-k-ngh.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
             ));
 
             specializationrepo.save(new Specialization(
                     "Endocrinology",
                     "Deals with the endocrine system and its specific secretions called hormones.",
-                    null
+                    "https://images.pexels.com/photos/8760437/pexels-photo-8760437.jpeg"
             ));
 
             specializationrepo.save(new Specialization(
                     "Gastroenterology",
                     "Deals with the digestive system and its disorders.",
-                    null
+                    "https://images.pexels.com/photos/12590657/pexels-photo-12590657.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
             ));
 
             specializationrepo.save(new Specialization(
                     "Hematology",
                     "Deals with blood and the blood-forming organs.",
-                    null
+                    "https://images.pexels.com/photos/8907219/pexels-photo-8907219.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
             ));
 
         }
@@ -141,6 +141,8 @@ public class DataInitializer {
                     .name("Bệnh viện Đa khoa Quốc tế")
                     .address("Số 1, Đại Cồ Việt, Hai Bà Trưng, Hà Nội")
                     .phone("024 3974 3556")
+                    .description("Bệnh viện Đa khoa Quốc tế là một trong những bệnh viện hàng đầu tại Hà Nội")
+                    .image("https://phukhoaanviet.com/wp-content/uploads/anh-mong-to-10.jpg")
                     .build();
             clinicRepo.save(clinic);
 
@@ -148,12 +150,16 @@ public class DataInitializer {
                     .name("Bệnh viện Bạch Mai")
                     .address("Số 78, Đường Giải Phóng, Đồng Tâm, Hai Bà Trưng, Hà Nội")
                     .phone("024 3869 3736")
+                    .description("Bệnh viện Bạch Mai là một trong những bệnh viện hàng đầu tại Hà Nội")
+                    .image("https://phukhoaanviet.com/wp-content/uploads/anh-mong-to-50.jpg")
                     .build();
             clinicRepo.save(clinic1);
 
             Clinic clinic2 = Clinic.builder()
                     .name("Bệnh viện Việt Đức")
                     .address("Số 40, Tràng Tiền, Ho��n Kiếm, Hà Nội")
+                    .description("Bệnh viện Việt Đức là một trong những bệnh viện hàng đầu tại Hà Nội")
+                    .image("https://anhgaixinh.vn/wp-content/uploads/2023/02/gai-mac-do-gym-1-1.jpg")
                     .phone("024 3826 4135")
                     .build();
             clinicRepo.save(clinic2);
@@ -161,6 +167,8 @@ public class DataInitializer {
             Clinic clinic3 = Clinic.builder()
                     .name("Bệnh viện E")
                     .address("Số 87, Đường Giải Phóng, Đồng Tâm, Hai Bà Trưng, Hà Nội")
+                    .description("Bệnh viện E là một trong những bệnh viện hàng đầu tại Hà Nội")
+                    .image("https://gaixinhbikini.com/wp-content/uploads/2023/03/body-gai-tap-gym.jpg")
                     .phone("024 3869 3736")
                     .build();
             clinicRepo.save(clinic3);
@@ -188,6 +196,7 @@ public class DataInitializer {
                     .address("Trái Đất")
                     .phone("0773307333")
                     .gender(Gender.MALE)
+                    .avatar("https://photo.znews.vn/w1920/Uploaded/rotnba/2024_03_03/Snapinsta.app_431047292_18331084978106327_9041942873238468114_n_1080.jpg")
                     .status(Status.ACTIVE)
                     .build();
             Set<Role> roles = new HashSet<>();
@@ -205,6 +214,7 @@ public class DataInitializer {
                     .email("abama@gmail.com")
                     .address("Trái Đất")
                     .phone("0273307333")
+                    .avatar("https://images.pexels.com/photos/3622619/pexels-photo-3622619.jpeg")
                     .gender(Gender.MALE)
                     .status(Status.ACTIVE)
                     .build();
@@ -230,6 +240,7 @@ public class DataInitializer {
                     .email("doctorA@gmail.com")
                     .address("Trái Đất")
                     .phone("0273307333")
+                    .avatar("https://images.pexels.com/photos/11545333/pexels-photo-11545333.jpeg")
                     .gender(Gender.MALE)
                     .status(Status.ACTIVE)
                     .build();
@@ -259,6 +270,7 @@ public class DataInitializer {
                     .email("doctorb@gmail.com")
                     .address("Trái Đất")
                     .phone("0213377333")
+                    .avatar("https://images.pexels.com/photos/15793630/pexels-photo-15793630/free-photo-of-bi-n-th-i-trang-b-bi-n-ngay-l.jpeg")
                     .gender(Gender.MALE)
                     .status(Status.ACTIVE)
                     .build();
@@ -286,6 +298,7 @@ public class DataInitializer {
                     .password(passwordEncoder.encode("doctorC@A111"))
                     .email("doctorc@gmail.com")
                     .address("Trái Đất")
+                    .avatar("https://images.pexels.com/photos/28663059/pexels-photo-28663059.jpeg")
                     .phone("0213377383")
                     .gender(Gender.MALE)
                     .status(Status.ACTIVE)

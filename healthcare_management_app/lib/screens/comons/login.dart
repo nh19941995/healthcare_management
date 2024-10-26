@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:healthcare_management_app/providers/auth_provider.dart';
+import 'package:healthcare_management_app/screens/admins/Medical_Examination_Screen.dart';
 import 'package:healthcare_management_app/screens/comons/sign_up.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:http/http.dart' as http;
@@ -113,7 +114,8 @@ class _LoginScreenState extends State<Login> {
           pres.setString('token', myToken);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomeCustomer(user: user)),
+            //MaterialPageRoute(builder: (context) => HomeCustomer(user: user)),
+            MaterialPageRoute(builder: (context) => MedicalExaminationScreen()),
           );
         } else {
           setState(() {

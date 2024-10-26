@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/screens/admins/Medical_Examination_Screen.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 
 import 'package:provider/provider.dart';
@@ -28,8 +29,8 @@ class MyApp extends StatelessWidget {
       title: 'Healthcare Management',
       theme: AppTheme.theme,
       debugShowCheckedModeBanner: false, // Tắt banner debug
-      home: SplashScreen(), // Gọi SplashScreen từ splash.dart
-
+      //home: SplashScreen(), // Gọi SplashScreen từ splash.dart
+     home: MedicalExaminationScreen(),
 
     );
   }

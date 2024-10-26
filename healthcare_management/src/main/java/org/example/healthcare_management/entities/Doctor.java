@@ -44,6 +44,7 @@ public class Doctor {
     @Column(name = "medical_training")
     private String medicalTraining;
 
+    @JsonIgnore
     // mappedBy trỏ tới tên biến doctors trong entity Booking
     @OneToMany(mappedBy = "doctor", cascade = {
             CascadeType.PERSIST,
@@ -54,14 +55,7 @@ public class Doctor {
     private Set<Booking> bookings = new HashSet<>();
 
     @JsonIgnore
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REFRESH,
-                    CascadeType.DETACH
-            })
+    @ManyToOne(fetch = FetchType.LAZY)
     // tên cột chứa khóa phụ trong bảng doctors là clinic_id
     // cột phụ clinic_id sẽ dc thêm vào bảng doctors
     @JoinColumn(name = "clinic_id")

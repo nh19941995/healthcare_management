@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/register.dart';
 import 'package:healthcare_management_app/enum.dart';
 import 'package:healthcare_management_app/models/user.dart';
+import 'package:healthcare_management_app/providers/auth_provider.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
@@ -44,6 +46,7 @@ class _SignUpScreenState extends State<SignUp> {
 
   void _signUp() async {
     // Xóa bỏ các lỗi hiện tại trước khi kiểm tra
+   // await Provider.of<UserProvider>(context, listen: false).getAllUser();
     setState(() {
       _fullNameError = null;
       _phoneError = null;
@@ -104,26 +107,28 @@ class _SignUpScreenState extends State<SignUp> {
     // Nếu không có lỗi, tiến hành tạo user
     String gender = _selectedGender == Gender.MALE ? 'MALE' : 'FEMALE';
 
-    User newUser = User(
-      id: null,
-      address: address,
-      avatar: null,
-      createdAt: DateTime.now(),
-      deletedAt: null,
-      description: null,
-      email: email,
-      gender: gender,
-      lockReason: null,
-      name: fullName,
-      password: password,
-      phone: phone,
-      status: 'ACTIVE',
-      updatedAt: DateTime.now(),
-      roleId: 1,
-    );
+    // User newUser = User(
+    //   id: null,
+    //   address: address,
+    //   avatar: null,
+    //   createdAt: DateTime.now(),
+    //   deletedAt: null,
+    //   description: null,
+    //   email: email,
+    //   gender: gender,
+    //   lockReason: null,
+    //   name: fullName,
+    //   password: password,
+    //   phone: phone,
+    //   status: 'ACTIVE',
+    //   updatedAt: DateTime.now(),
+    //   roleId: 1,
+    // );
+    Register register = Register(username: fullName, password: password, gender: gender, email: email, phone: phone, address: address, fullName: fullName, description: "hello rtrtrwte rrtwtwer");
 
     try {
-      await Provider.of<UserProvider>(context, listen: false).insertUser(newUser);
+
+      await Provider.of<AuthProvider>(context, listen: false).register(register);
       _showSignUpSuccessDialog();
     } catch (e) {
       // Xử lý lỗi khi gọi API

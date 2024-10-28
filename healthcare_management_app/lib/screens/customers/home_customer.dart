@@ -3,12 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
+import 'package:healthcare_management_app/screens/customers/booking.dart';
+import 'package:healthcare_management_app/screens/customers/health_index.dart';
+import 'package:healthcare_management_app/screens/customers/online_consultation.dart';
+import '../comons/TokenManager.dart';
 import '../comons/customBottomNavBar.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
-class HomeCustomer extends StatelessWidget {
+class HomeCustomer extends StatefulWidget {
   final User user;
+  final token;
 
-  const HomeCustomer({super.key, required this.user});
+  const HomeCustomer({super.key, required this.user, required this.token});
+
+  @override
+  _HomeCustomerState createState() => _HomeCustomerState();
+}
+
+class _HomeCustomerState extends State<HomeCustomer> {
+  late String username;
+  @override
+  void initState() {
+    super.initState();
+    username = TokenManager().getUserSub() ?? "Người dùng";
+
+  }
+
 
   // Điều hướng tới màn hình tương ứng
   void _navigateToScreen(BuildContext context, Widget screen) {
@@ -17,6 +37,7 @@ class HomeCustomer extends StatelessWidget {
       MaterialPageRoute(builder: (context) => screen),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +51,8 @@ class HomeCustomer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Xin chào ${user.name}',
-                  style: AppTheme.theme.textTheme.displayMedium,
+                  'Xin chào ${username}',
+                  style: AppTheme.theme.textTheme.displayLarge,
                 ),
                 CircleAvatar(
                   backgroundImage: AssetImage('lib/assets/Avatar.png'), // Đường dẫn đến avatar
@@ -54,7 +75,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Thông tin cá nhân',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -68,7 +89,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: user)); // Chuyển đến màn hình thông tin cá nhân
+                          _navigateToScreen(context, EditProfileScreen(user: widget.user)); // Chuyển đến màn hình thông tin cá nhân
                         },
                       ),
                     ),
@@ -85,7 +106,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Đặt lịch khám',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -99,7 +120,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, AppointmentScreen());
+                          _navigateToScreen(context, Booking(user: widget.user));
                         },
                       ),
                     ),
@@ -116,7 +137,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Chỉ số sức khỏe',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -130,7 +151,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, HealthMetricsScreen()); // Chuyển đến màn hình chỉ số sức khỏe
+                          _navigateToScreen(context, HealthIndex(user: widget.user)); // Chuyển đến màn hình chỉ số sức khỏe
                         },
                       ),
                     ),
@@ -147,7 +168,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Lịch sử khám',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -161,7 +182,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, MedicalHistoryScreen()); // Chuyển đến màn hình lịch sử khám
+                          // _navigateToScreen(context, MedicalHistoryScreen()); // Chuyển đến màn hình lịch sử khám
                         },
                       ),
                     ),
@@ -178,7 +199,7 @@ class HomeCustomer extends StatelessWidget {
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Tư vấn online',
-                                  style: AppTheme.theme.textTheme.bodyLarge,
+                                  style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
@@ -192,7 +213,7 @@ class HomeCustomer extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          //_navigateToScreen(context, OnlineConsultationScreen()); // Chuyển đến màn hình tư vấn online
+                          _navigateToScreen(context, OnlineConsultation(user: widget.user)); // Chuyển đến màn hình tư vấn online
                         },
                       ),
                     ),

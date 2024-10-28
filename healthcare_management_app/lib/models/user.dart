@@ -18,7 +18,7 @@ class User {
     required this.roleId,
   });
 
-  final String? id;
+  final int? id;
   final String? address;
   final String? avatar;
   final DateTime? createdAt;

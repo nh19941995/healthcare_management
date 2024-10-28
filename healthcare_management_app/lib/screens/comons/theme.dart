@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Màu sắc
-  static const Color primaryColor = Color(0xFF6F35A5); // Màu chính
+  static const Color primaryColor = Color(0xFF432C81); // Màu chính
   static const Color secondaryColor = Color(0xFFF1E6FF); // Màu phụ
   static const Color errorColor = Color(0xFFD32F2F); // Màu lỗi
   static const Color backgroundColor = Color(0xFFFFFFFF); // Màu nền
@@ -16,7 +16,7 @@ class AppTheme {
   static const double Padding8 = 8.0;
   static const double defaultMargin = 16.0;
 
-  static const double smallSpacing = 5.0;
+  static const double smallSpacing = 10.0;
   static const double mediumSpacing = 10.0;
   static const double largeSpacing = 20.0;
   static const double xLargeSpacing = 40.0;
@@ -76,6 +76,11 @@ class AppTheme {
         ),
         displayMedium: TextStyle(
           fontSize: 20.0,
+          fontWeight: FontWeight.bold,
+          color: primaryColor,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 16.0,
           fontWeight: FontWeight.bold,
           color: primaryColor,
         ),

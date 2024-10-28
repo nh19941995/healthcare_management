@@ -10,4 +10,5 @@ public interface AppointmentService {
     AppointmentDto convertToDTO(Appointment appointment);
     Set<AppointmentDto> convertToDTOs(Set<Appointment> appointments);
     Set<Appointment> convertToEntities(Set<AppointmentDto> appointmentDtos);
+    Appointment createAppointment(String patient_username, String doctor_username, String timeSlot_id);
 }

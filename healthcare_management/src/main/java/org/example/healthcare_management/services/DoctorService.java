@@ -6,4 +6,6 @@ import org.example.healthcare_management.entities.Doctor;
 public interface DoctorService {
      DoctorDto updateProfile(DoctorDto doctorDto, String username);
      DoctorDto getDoctorProfile(String username);
+     Doctor findByUsername(String username);
+
 }

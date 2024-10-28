@@ -49,5 +49,12 @@ public class DoctorServiceImpl implements DoctorService {
         return modelMapper.map(doctor, DoctorDto.class);
     }
 
+    @Override
+    public Doctor findByUsername(String username) {
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getDoctor();
+    }
+
 
 }

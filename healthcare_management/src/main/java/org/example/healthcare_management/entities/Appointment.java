@@ -7,6 +7,7 @@ import lombok.*;
 import org.example.healthcare_management.enums.AppointmentsStatus;
 import org.hibernate.annotations.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -65,7 +66,7 @@ public class Appointment {
     private Patient patient;
 
     @Column(name = "appointment_date")
-    private LocalDateTime appointmentDate;
+    private LocalDate appointmentDate;
 
     @CreationTimestamp
     @Column(name = "created_at")

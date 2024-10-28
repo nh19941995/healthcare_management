@@ -69,42 +69,48 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/timeslots/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/timeslots/**").hasRole("ADMIN")
 
-
                         // User endpoint
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("ADMIN", "DOCTOR", "PATIENT")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+
                         // Doctor endpoint
                         .requestMatchers(HttpMethod.GET, "/api/doctors/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/doctors/**").hasAnyRole("ADMIN", "DOCTOR")
                         .requestMatchers(HttpMethod.PUT, "/api/doctors/**").hasAnyRole("ADMIN", "DOCTOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/doctors/**").hasRole("ADMIN")
+
                         // Patient endpoint
                         .requestMatchers(HttpMethod.GET, "/api/patients/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/patients/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/patients/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/patients/**").hasRole("ADMIN")
+
                         // Booking endpoint
-                        .requestMatchers(HttpMethod.GET, "/api/bookings/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/bookings/**").hasRole("PATIENT")
-                        .requestMatchers(HttpMethod.PUT, "/api/bookings/**").hasRole("PATIENT")
-                        .requestMatchers(HttpMethod.DELETE, "/api/bookings/**").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.PUT, "/api/appointments/**").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/**").hasRole("PATIENT")
+
                         // clinic endpoint
                         .requestMatchers(HttpMethod.GET, "/api/clinics/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/clinics/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/clinics/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/clinics/**").hasRole("ADMIN")
+
                         // role endpoint
                         .requestMatchers(HttpMethod.GET, "/api/roles/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/roles/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/roles/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/roles/**").hasRole("ADMIN")
+
                         // shedule endpoint
                         .requestMatchers(HttpMethod.GET, "/api/schedules/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/schedules/**").hasRole("DOCTOR")
                         .requestMatchers(HttpMethod.PUT, "/api/schedules/**").hasRole("DOCTOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/schedules/**").hasRole("DOCTOR")
+
                         // specializations endpoint
                         .requestMatchers(HttpMethod.GET, "/api/specializations/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/specializations/**").hasRole("ADMIN")

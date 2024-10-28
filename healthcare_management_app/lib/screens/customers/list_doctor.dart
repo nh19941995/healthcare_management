@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 
 import '../../models/user.dart';
 import 'Doctor_Detail_Screen.dart';
@@ -13,82 +14,57 @@ class DoctorSelectionScreen extends StatefulWidget {
 
 class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
   TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> doctors = [
-    {
-      'name': 'Dr. Bellamy N',
-      'specialty': 'Virologist',
-      'rating': 4.5,
-      'reviews': 135,
-      'image': 'lib/assets/doctor1.png',
-      'description':
-      'Dr. Bellamy N is an expert in viral infections and has over 15 years of experience in treating patients with complex viral diseases. She is known for her research in the field of virology and has contributed to numerous studies on vaccine development.',
-    },
-    {
-      'name': 'Dr. Mensah T',
-      'specialty': 'Oncologist',
-      'rating': 4.3,
-      'reviews': 130,
-      'image': 'lib/assets/doctor2.png',
-      'description':
-      'Dr. Mensah T specializes in oncology and has helped hundreds of patients in their battle against cancer. He is passionate about finding the best treatments tailored to each individual, with a strong focus on research in cancer therapy.',
-    },
-    {
-      'name': 'Dr. Klimisch J',
-      'specialty': 'Surgeon',
-      'rating': 4.5,
-      'reviews': 135,
-      'image': 'lib/assets/doctor3.png',
-      'description':
-      'Dr. Klimisch J is a highly skilled surgeon with expertise in minimally invasive surgeries. He has performed over 1,000 successful operations and is known for his attention to detail and care for his patients.',
-    },
-    {
-      'name': 'Dr. Martinez K',
-      'specialty': 'Pediatrician',
-      'rating': 4.3,
-      'reviews': 130,
-      'image': 'lib/assets/doctor4.png',
-      'description':
-      'Dr. Martinez K has dedicated her career to helping children. She is a compassionate pediatrician who believes in building trust with both the children she treats and their parents. Her focus is on preventive care and childhood development.',
-    },
-    {
-      'name': 'Dr. Klimisch J',
-      'specialty': 'Surgeon',
-      'rating': 4.5,
-      'reviews': 135,
-      'image': 'lib/assets/doctor3.png',
-      'description':
-      'Dr. Klimisch J is a highly skilled surgeon with expertise in minimally invasive surgeries. He has performed over 1,000 successful operations and is known for his attention to detail and care for his patients.',
-    },
-    {
-      'name': 'Dr. Martinez K',
-      'specialty': 'Pediatrician',
-      'rating': 4.3,
-      'reviews': 130,
-      'image': 'lib/assets/doctor4.png',
-      'description':
-      'Dr. Martinez K has dedicated her career to helping children. She is a compassionate pediatrician who believes in building trust with both the children she treats and their parents. Her focus is on preventive care and childhood development.',
-    },
-    {
-      'name': 'Dr. Klimisch J',
-      'specialty': 'Surgeon',
-      'rating': 4.5,
-      'reviews': 135,
-      'image': 'lib/assets/doctor3.png',
-      'description':
-      'Dr. Klimisch J is a highly skilled surgeon with expertise in minimally invasive surgeries. He has performed over 1,000 successful operations and is known for his attention to detail and care for his patients.',
-    },
-    {
-      'name': 'Dr. Martinez K',
-      'specialty': 'Pediatrician',
-      'rating': 4.3,
-      'reviews': 130,
-      'image': 'lib/assets/doctor4.png',
-      'description':
-      'Dr. Martinez K has dedicated her career to helping children. She is a compassionate pediatrician who believes in building trust with both the children she treats and their parents. Her focus is on preventive care and childhood development.',
-    }
+  // Tạo fake data cho DoctorDTO
+  List<DoctorDTO> doctors = [
+    DoctorDTO(
+      id: 1,
+      achievements: 'Published research in viral treatments, Nobel award nominee',
+      medicalTraining: 'Harvard Medical School',
+      clinicId: 101,
+      specializationId: 201,
+      status: 'ACTIVE',
+      lockReason: null,
+      username: 'dr_bellamy',
+      avatar: 'lib/assets/doctor1.png',
+    ),
+    DoctorDTO(
+      id: 2,
+      achievements: 'Awarded Oncologist of the Year, published over 20 studies',
+      medicalTraining: 'Johns Hopkins University',
+      clinicId: 102,
+      specializationId: 202,
+      status: 'ACTIVE',
+      lockReason: null,
+      username: 'dr_mensah',
+      avatar: 'lib/assets/doctor2.png',
+    ),
+    DoctorDTO(
+      id: 3,
+      achievements: 'Performed over 1,000 successful surgeries',
+      medicalTraining: 'Stanford University',
+      clinicId: 103,
+      specializationId: 203,
+      status: 'LOCKED',
+      lockReason: 'Under investigation',
+      username: 'dr_klimisch',
+      avatar: 'lib/assets/doctor3.png',
+    ),
+    DoctorDTO(
+      id: 4,
+      achievements: 'Specialized in child development, awarded Pediatrician of the Year',
+      medicalTraining: 'UCLA Medical School',
+      clinicId: 104,
+      specializationId: 204,
+      status: 'ACTIVE',
+      lockReason: null,
+      username: 'dr_martinez',
+      avatar: 'lib/assets/doctor4.png',
+    ),
+    // Thêm các đối tượng giả khác tương tự...
   ];
 
-  List<Map<String, dynamic>> filteredDoctors = [];
+
+  List<DoctorDTO> filteredDoctors = [];
 
   @override
   void initState() {
@@ -107,7 +83,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
     String query = _searchController.text.toLowerCase();
     setState(() {
       filteredDoctors = doctors.where((doctor) {
-        return doctor['name'].toLowerCase().contains(query);
+        return doctor.username.toLowerCase().contains(query);
       }).toList();
     });
   }
@@ -155,7 +131,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
 }
 
 class DoctorCard extends StatelessWidget {
-  final Map<String, dynamic> doctor;
+  final DoctorDTO doctor;
 
   const DoctorCard({required this.doctor});
 
@@ -180,24 +156,24 @@ class DoctorCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundImage: AssetImage(doctor['image']),
+              backgroundImage: AssetImage(doctor.avatar ?? 'lib/assets/Avatar.png'),
             ),
             SizedBox(height: 10),
             Text(
-              doctor['name'],
+              doctor.username,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(doctor['specialty']),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.star, color: Colors.amber),
-                Text('${doctor['rating']} (${doctor['reviews']} reviews)'),
-              ],
-            ),
+            Text(doctor.achievements),
+            // SizedBox(height: 10),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     Icon(Icons.star, color: Colors.amber),
+            //     Text('${doctor['rating']} (${doctor['reviews']} reviews)'),
+            //   ],
+            // ),
           ],
         ),
       ),

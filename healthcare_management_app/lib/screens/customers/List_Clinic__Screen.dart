@@ -1,35 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:healthcare_management_app/screens/customers/Medical_facility_details.dart';
+import 'package:healthcare_management_app/models/Clinic.dart';
+import 'package:healthcare_management_app/providers/Clinic_Provider.dart';
+import 'package:healthcare_management_app/screens/customers/Clinic_details.dart';
+import 'package:provider/provider.dart';
 
-class HealthcareFacility {
-  final String name;
-  final String imagePath;
-
-  HealthcareFacility(this.name, this.imagePath);
-}
-
-class ChooseHealthcareScreen extends StatefulWidget {
+class ListClinic extends StatefulWidget {
   @override
-  _ChooseHealthcareScreenState createState() => _ChooseHealthcareScreenState();
+  _ListClinic createState() => _ListClinic();
 }
 
-class _ChooseHealthcareScreenState extends State<ChooseHealthcareScreen> {
+class _ListClinic extends State<ListClinic> {
   TextEditingController _searchController = TextEditingController();
-  final List<HealthcareFacility> facilities = [
-    HealthcareFacility('Lifesavers Online', 'lib/assets/Lifesavers Online.png'),
-    HealthcareFacility('City Health Clinic', 'lib/assets/Lifesavers Online.png'),
-    HealthcareFacility('MedCare Hospital', 'lib/assets/Lifesavers Online.png'),
-    HealthcareFacility('Green Valley Clinic', 'lib/assets/Lifesavers Online.png'),
-    // Add more facilities if needed
-  ];
-
-  List<HealthcareFacility> filteredFacilities = [];
+  List<Clinic> filteredFacilities = [];
 
   @override
   void initState() {
     super.initState();
-    filteredFacilities = facilities; // Initialize with the full list
-    _searchController.addListener(_filterFacilities); // Listen for changes in the search bar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final clinicProvider = context.read<ClinicProvider>();
+      clinicProvider.getAllClinic().then((_) {
+        setState(() {
+          filteredFacilities = clinicProvider.list; // Lấy danh sách sau khi đã cập nhật
+        });
+      });
+    });
+    _searchController.addListener(_filterFacilities);
   }
 
   @override
@@ -40,9 +35,10 @@ class _ChooseHealthcareScreenState extends State<ChooseHealthcareScreen> {
 
   void _filterFacilities() {
     String query = _searchController.text.toLowerCase();
+    final listClinic = context.read<ClinicProvider>().list;
     setState(() {
-      filteredFacilities = facilities.where((facility) {
-        return facility.name.toLowerCase().contains(query);
+      filteredFacilities = listClinic.where((facility) {
+        return facility.name!.toLowerCase().contains(query);
       }).toList();
     });
   }
@@ -55,7 +51,7 @@ class _ChooseHealthcareScreenState extends State<ChooseHealthcareScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context); // Navigate back
+            Navigator.pop(context);
           },
         ),
       ),
@@ -81,7 +77,7 @@ class _ChooseHealthcareScreenState extends State<ChooseHealthcareScreen> {
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Number of columns
+                  crossAxisCount: 2,
                   crossAxisSpacing: 16.0,
                   mainAxisSpacing: 16.0,
                 ),
@@ -95,9 +91,6 @@ class _ChooseHealthcareScreenState extends State<ChooseHealthcareScreen> {
                     elevation: 4.0,
                     child: InkWell(
                       onTap: () {
-                        // Handle tap on healthcare facility
-                        print('Tapped on ${facility.name}');
-                        // Điều hướng tới DoctorDetailScreen khi nhấn vào thẻ bác sĩ
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -109,13 +102,14 @@ class _ChooseHealthcareScreenState extends State<ChooseHealthcareScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            facility.imagePath,
+                            //facility.image!,
+                            'lib/assets/Lifesavers Heart.png',
                             height: 80,
                             fit: BoxFit.cover,
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            facility.name,
+                            facility.name!,
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,

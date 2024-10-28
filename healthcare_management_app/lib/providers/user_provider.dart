@@ -1,17 +1,23 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/apis/auth.dart'; // Nhập khẩu Auth API
 import 'package:healthcare_management_app/apis/user_api.dart';
-import 'package:healthcare_management_app/dto/register.dart';
+import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:healthcare_management_app/models/user.dart';
+import 'package:healthcare_management_app/screens/comons/login.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class UserProvider with ChangeNotifier {
   final UserApi userApi;
+  final Auth authApi; // Thêm Auth API vào UserProvider
 
-  UserProvider({required this.userApi});
+  UserProvider({required this.userApi, required this.authApi}); // Cập nhật constructor
 
   final List<User> _list = [];
   List<User> get list => _list;
 
+  User? _currentUser; // Lưu thông tin người dùng hiện tại
+  User? get currentUser => _currentUser; // Getter cho currentUser
 
   // Phương thức để lấy tất cả người dùng từ API
   Future<void> getAllUser() async {
@@ -34,8 +40,6 @@ class UserProvider with ChangeNotifier {
           DateTime createdAt = userJson['createdAt'] != null
               ? DateTime.parse(userJson['createdAt'])
               : DateTime.now(); // Gán giá trị mặc định nếu null
-          // In ra thông tin người dùng ra console
-          print('ID: $id, Name: $name, Username: $username, Email: $email, Status: $status, Created At: $createdAt');
 
           User user = User(
             id: id,
@@ -71,6 +75,25 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // Phương thức để lấy thông tin người dùng dựa trên token
+  Future<void> getUserInfo(String token) async {
+    try {
+      if (token.isNotEmpty) {
+        Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(token);
+        String username = jwtDecodedToken['username'];
+
+        // Tạo một đối tượng User từ thông tin trong token
+        _currentUser = LoginDto(username: username) as User?; // Cập nhật theo cách bạn đã định nghĩa lớp User
+
+        notifyListeners(); // Thông báo cho mọi widget đang lắng nghe
+      } else {
+        throw Exception('Token không hợp lệ');
+      }
+    } catch (error) {
+      print('Error fetching user info: $error');
+      throw error; // Ném lại lỗi để xử lý ở nơi gọi
+    }
+  }
 
   Future<void> insertUser(User user) async {
     final newUser = await userApi.addUser(user);
@@ -87,22 +110,5 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<User?> getUserByUsername(String username, String? token) async {
-    try {
-      return await userApi.getUserByUsername(username, token);
-    } catch (error) {
-      throw error; // Xử lý lỗi nếu cần
-    }
-  }
-
-  // Future<void> lockUser(int id) async {
-  //   await userApi.lockUser(id);
-  //
-  //   // Cập nhật danh sách người dùng
-  //   int index = _list.indexWhere((user) => user.id == id); // Sửa từ 'list.indexWhere' thành '_list.indexWhere'
-  //   if (index != -1) {
-  //     _list[index].status = 'LOCKED'; // Cập nhật trạng thái thành 'LOCKED'
-  //     notifyListeners();
-  //   }
-  // }
+// Bạn có thể thêm các phương thức khác như lockUser ở đây
 }

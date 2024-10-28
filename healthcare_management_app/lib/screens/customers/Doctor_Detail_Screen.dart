@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:healthcare_management_app/screens/customers/Appointment_Booking.dart';
 
 import '../comons/theme.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
-  final Map<String, dynamic> doctor;
+  final DoctorDTO doctor;
 
   DoctorDetailScreen({required this.doctor});
 
@@ -60,11 +61,12 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: AssetImage(widget.doctor['image']),
+                backgroundImage: AssetImage(widget.doctor.avatar ?? 'lib/assets/Avatar.png'),
+
               ),
               SizedBox(height: 20),
               Text(
-                widget.doctor['name'],
+                widget.doctor.username,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -72,22 +74,22 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                widget.doctor['specialty'],
+                widget.doctor.medicalTraining,
                 style: TextStyle(
                   fontSize: 18,
                 ),
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.star, color: Colors.amber),
-                  Text('${widget.doctor['rating']} (${widget.doctor['reviews']} reviews)'),
-                ],
-              ),
-              SizedBox(height: 20),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Icon(Icons.star, color: Colors.amber),
+              //     Text('${widget.doctor['rating']} (${widget.doctor['reviews']} reviews)'),
+              //   ],
+              // ),
+              // SizedBox(height: 20),
               Text(
-                widget.doctor['description'],
+                widget.doctor.achievements,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[700],

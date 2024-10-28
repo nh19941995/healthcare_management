@@ -4,7 +4,7 @@ import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import '../comons/customBottomNavBar.dart';
-import 'Choose_Healthcare_Screen.dart';
+import 'List_Clinic__Screen.dart';
 import 'list_doctor.dart';
 
 class Booking extends StatelessWidget {
@@ -102,7 +102,7 @@ class Booking extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, ChooseHealthcareScreen()); // Navigate to the profile information screen
+                          _navigateToScreen(context, ListClinic()); // Navigate to the profile information screen
                         },
                       ),
                     ),

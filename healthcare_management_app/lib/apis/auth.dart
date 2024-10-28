@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../dto/register.dart';
 import '../models/user.dart';
 
@@ -26,22 +27,6 @@ class Auth {
     }
   }
 
-  Future<http.Response> login(LoginDto loginDto) async {
-    final response = await http.post(
-      Uri.parse(loginUrl),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "username": loginDto.username,
-        "password": loginDto.password,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      return response; // Trả về phản hồi API
-    } else {
-      throw Exception('Đăng nhập thất bại với mã lỗi: ${response.statusCode}');
-    }
-  }
 
   // Phương thức lấy thông tin người dùng
   Future<User> getUserInfo(String token) async {
@@ -61,6 +46,16 @@ class Auth {
     } else {
       throw Exception('Không thể lấy thông tin người dùng');
     }
+  }
+
+  Future<String?> getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
+  }
+
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
   }
 
 }

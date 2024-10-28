@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:intl/intl.dart';
 
+import '../comons/TokenManager.dart';
 import '../comons/theme.dart'; // Import intl để sử dụng DateFormat
 
 class AppointmentBookingScreen extends StatefulWidget {
-  final Map<String, dynamic> doctor;
+  final DoctorDTO doctor;
 
   AppointmentBookingScreen({required this.doctor});
 
@@ -17,11 +19,13 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   String selectedTime = '';
   TextEditingController _descriptionController = TextEditingController();
   List<DateTime> daysInMonth = [];
+  late String username;
 
   @override
   void initState() {
     super.initState();
     daysInMonth = _generateDaysInMonth(selectedDate);
+    username = TokenManager().getUserSub() ?? "Người dùng"; // Lấy giá trị sub
   }
 
   // Hàm tạo danh sách các ngày trong tháng
@@ -44,8 +48,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Bác sĩ: ${widget.doctor['name']}'),
-                Text('Chuyên khoa: ${widget.doctor['specialty']}'),
+                Text('Bác sĩ: ${widget.doctor.username}'),
+                Text('Medical Training: ${widget.doctor.medicalTraining}'),
                 Text('Ngày hẹn: ${DateFormat('dd/MM/yyyy').format(selectedDate)}'),
                 Text('Giờ hẹn: $selectedTime'),
                 SizedBox(height: 8),
@@ -203,8 +207,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                 style: AppTheme.theme.textTheme.displayMedium
             ),
             SizedBox(height: AppTheme.mediumSpacing),
-            Text('Tên bác sĩ: ${widget.doctor['name']}', style: TextStyle(fontSize: 16)),
-            Text('Chuyên khoa: ${widget.doctor['specialty']}', style: TextStyle(fontSize: 16)),
+            Text('Tên bác sĩ: ${widget.doctor.username}', style: TextStyle(fontSize: 16)),
+            Text('Achievements: ${widget.doctor.achievements}', style: TextStyle(fontSize: 16)),
             SizedBox(height: 16),
             // Thông tin bệnh nhân
             Text(
@@ -213,11 +217,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
             ),
             SizedBox(height: AppTheme.mediumSpacing),
             Text(
-              'Họ tên: Nguyễn Đức Khoa',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Tuổi: 18',
+              'Họ tên: ${username}',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 16),

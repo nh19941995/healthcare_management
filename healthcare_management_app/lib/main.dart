@@ -1,26 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/providers/Clinic_Provider.dart';
 import 'package:healthcare_management_app/screens/admins/Medical_Examination_Screen.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
-
 import 'package:provider/provider.dart';
-import 'package:healthcare_management_app/screens/comons/splash.dart'; // Import màn hình Splash
-import 'package:healthcare_management_app/providers/user_provider.dart'; // Import UserProvider
-import 'package:healthcare_management_app/apis/user_api.dart'; // Import UserApi
+import 'package:healthcare_management_app/screens/comons/splash.dart';
+import 'package:healthcare_management_app/providers/user_provider.dart';
+import 'package:healthcare_management_app/apis/user_api.dart';
+import 'apis/auth.dart';
+import 'apis/clinics_api.dart';
 
 void main() {
+  // Khởi tạo danh sách các API
+  final List apis = [
+    UserApi(),
+    ClinicApi(),
+    Auth(), // Thêm Auth API vào danh sách
+    // Các API khác nếu có
+  ];
+
   runApp(
     MultiProvider(
       providers: [
-        // Khởi tạo UserProvider với một instance của UserApi
+        // Khởi tạo UserProvider với danh sách API
         ChangeNotifierProvider(
-          create: (_) => UserProvider(userApi: UserApi()),
+          create: (_) => UserProvider(
+            userApi: apis.firstWhere((api) => api is UserApi) as UserApi,
+            authApi: apis.firstWhere((api) => api is Auth) as Auth, // Cung cấp Auth API
+          ),
+        ),
+        // Khởi tạo ClinicProvider với API cụ thể
+        ChangeNotifierProvider(
+          create: (_) => ClinicProvider(
+            clinicApi: apis.firstWhere((api) => api is ClinicApi) as ClinicApi,
+          ),
         ),
       ],
       child: MyApp(),
     ),
   );
-
 }
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -28,10 +47,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Healthcare Management',
       theme: AppTheme.theme,
-      debugShowCheckedModeBanner: false, // Tắt banner debug
-      //home: SplashScreen(), // Gọi SplashScreen từ splash.dart
-     home: MedicalExaminationScreen(),
-
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+      //home: MedicalExaminationScreen(),
     );
   }
 }

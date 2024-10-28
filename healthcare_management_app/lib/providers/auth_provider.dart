@@ -11,7 +11,7 @@ import '../models/role.dart'; // Giả sử bạn có một model Role
 class AuthProvider with ChangeNotifier {
   final Auth authApi;
   String? _token;
-  User? _currentUser;
+  User? _currentUser; // lay thong tin user
 
   AuthProvider({required this.authApi});
 
@@ -24,28 +24,6 @@ class AuthProvider with ChangeNotifier {
     await authApi.register(regis);
     notifyListeners();
   }
-
-  // Phương thức đăng nhập
-  Future<void> login(LoginDto loginDto) async {
-    try {
-      // Gọi API đăng nhập và nhận phản hồi HTTP
-      final response = await authApi.login(loginDto);
-
-      // Chuyển đổi phản hồi JSON thành Map (giải mã body từ response)
-      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
-      // Kiểm tra nếu phản hồi chứa token
-      if (jsonResponse.containsKey('token')) {
-        _token = jsonResponse['token']; // Gán token
-        notifyListeners();
-      } else {
-        throw Exception('Không tìm thấy token trong phản hồi');
-      }
-    } catch (error) {
-      throw Exception('Đăng nhập thất bại: $error'); // Xử lý lỗi
-    }
-  }
-
 
   // Phương thức để lấy thông tin người dùng dựa trên token
   Future<void> getUserInfo() async {

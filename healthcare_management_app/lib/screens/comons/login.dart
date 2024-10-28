@@ -14,7 +14,8 @@ import '../../models/user.dart';
 import '../admins/admin_home.dart';
 import '../doctor/doctor_home.dart';
 import 'package:provider/provider.dart';
-import '../../providers/user_provider.dart'; // Thêm import này để sử dụng UserProvider
+import '../../providers/user_provider.dart';
+import 'TokenManager.dart'; // Thêm import này để sử dụng UserProvider
 
 
 class Login extends StatefulWidget {
@@ -34,24 +35,24 @@ class _LoginScreenState extends State<Login> {
   bool _obscurePassword = true;
   late SharedPreferences pres;
 
- User user = User(
-   id: 3,
-   name: 'Mike Johnson',
-   email: 'mikejohnson@example.com',
-   password: 'password123',
-   address: '789 Oak St',
-   phone: '345-678-9012',
-   avatar: 'path/to/avatar3.png',
-   status: 'ACTIVE',
-   createdAt: DateTime.now(),
-   deletedAt: null,
-   description: 'Manager user',
-   gender: 'Male',
-   lockReason: null,
-   updatedAt: DateTime.now(),
-   roleId: 3, // Vai trò 3 vào Manager Home
- );
-  
+  User user = User(
+    id: 3,
+    name: 'Mike Johnson',
+    email: 'mikejohnson@example.com',
+    password: 'password123',
+    address: '789 Oak St',
+    phone: '345-678-9012',
+    avatar: 'path/to/avatar3.png',
+    status: 'ACTIVE',
+    createdAt: DateTime.now(),
+    deletedAt: null,
+    description: 'Manager user',
+    gender: 'Male',
+    lockReason: null,
+    updatedAt: DateTime.now(),
+    roleId: 3, // Vai trò 3 vào Manager Home
+  );
+
   @override
   void dispose() {
     _userNameController.dispose();
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<Login> {
   void initSheredPref() async {
     pres = await SharedPreferences.getInstance();
   }
-  
+
 
   void _login() async {
     setState(() {
@@ -80,7 +81,7 @@ class _LoginScreenState extends State<Login> {
 
     if (username.isEmpty) {
       setState(() {
-        _userNameError = "username không được để trống";
+        _userNameError = "Username không được để trống";
       });
       return;
     }
@@ -103,7 +104,7 @@ class _LoginScreenState extends State<Login> {
 
       // In ra nội dung phản hồi từ server để kiểm tra
       print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
@@ -112,10 +113,10 @@ class _LoginScreenState extends State<Login> {
         if (jsonResponse['token'] != null) {
           var myToken = jsonResponse['token'];
           pres.setString('token', myToken);
+          TokenManager().setToken(myToken);
           Navigator.pushReplacement(
             context,
-            //MaterialPageRoute(builder: (context) => HomeCustomer(user: user)),
-            MaterialPageRoute(builder: (context) => MedicalExaminationScreen()),
+            MaterialPageRoute(builder: (context) => HomeCustomer(user: user,token:myToken)),
           );
         } else {
           setState(() {
@@ -133,6 +134,7 @@ class _LoginScreenState extends State<Login> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

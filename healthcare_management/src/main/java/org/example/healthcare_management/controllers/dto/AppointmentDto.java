@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.healthcare_management.entities.Doctor;
 import org.example.healthcare_management.entities.Patient;
-import org.example.healthcare_management.enums.BookingStatus;
+import org.example.healthcare_management.enums.AppointmentsStatus;
 
 import java.time.LocalDateTime;
 
@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDto {
-    private BookingStatus status;
+public class AppointmentDto {
+    private AppointmentsStatus status;
     private Doctor doctor;
     private Patient patient;
     private LocalDateTime appointmentDate;

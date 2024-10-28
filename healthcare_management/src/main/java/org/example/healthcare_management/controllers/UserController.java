@@ -50,7 +50,7 @@ public class UserController {
     }
 
     // update theo username
-    // url: localhost:8080/users/username
+    // url: localhost:8080/api/users/username
     @PutMapping("/{username}")
     public ResponseEntity<UserDto> updateUser(
             @RequestBody UserDto userDto, @PathVariable String username
@@ -75,17 +75,16 @@ public class UserController {
     }
 
 
-
     // delete user
     // url: localhost:8080/users/username
-//    @DeleteMapping("/{username}")
-//    @PreAuthorize("hasAnyRole('ADMIN')")
-//    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String username) {
-//        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
-//        user.setDeletedAt(LocalDateTime.now());
-//        userService.update(user);
-//        return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully!"));
-//    }
+    @DeleteMapping("/{username}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+        user.setDeletedAt(LocalDateTime.now());
+        userService.update(user.getId(), modelMapper.map(user, UserDto.class));
+        return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully!"));
+    }
 
 
 

@@ -9,7 +9,7 @@ import java.util.Set;
 public class PatientDto {
     private Integer id;
     private User user;
-    private Set<BookingDto> bookings = new HashSet<>();
+    private Set<AppointmentDto> bookings = new HashSet<>();
     private PatientStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

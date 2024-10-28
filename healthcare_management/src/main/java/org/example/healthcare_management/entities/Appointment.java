@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
-import org.example.healthcare_management.enums.BookingStatus;
+import org.example.healthcare_management.enums.AppointmentsStatus;
 import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
@@ -15,23 +15,26 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "bookings")  // bảng bác sĩ
-@SQLDelete(sql = "UPDATE bookings SET deleted_at = NOW() WHERE id = ?")
+@Table(name = "appointments")  // bảng bác sĩ
+@SQLDelete(sql = "UPDATE appointments SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
-public class Booking {
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private BookingStatus status;
+    private AppointmentsStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     // tên cột chứa khóa phụ trong bảng bookings là time_slot_id
     // cột phụ time_slot_id sẽ dc thêm vào bảng bookings
     @JoinColumn(name = "time_slot_id")
     private TimeSlot timeSlot;
+
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+    private Prescription medicalRecord;
 
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -79,22 +82,22 @@ public class Booking {
     // Helper method for Doctor
     public void setDoctor(Doctor doctor) {
         if (this.doctor != null) {
-            this.doctor.getBookings().remove(this);
+            this.doctor.getAppointments().remove(this);
         }
         this.doctor = doctor;
         if (doctor != null) {
-            doctor.getBookings().add(this);
+            doctor.getAppointments().add(this);
         }
     }
 
     // Helper method for Patient
     public void setPatient(Patient patient) {
         if (this.patient != null) {
-            this.patient.getBookings().remove(this);
+            this.patient.getAppointments().remove(this);
         }
         this.patient = patient;
         if (patient != null) {
-            patient.getBookings().add(this);
+            patient.getAppointments().add(this);
         }
     }
 }

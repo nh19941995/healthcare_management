@@ -5,12 +5,11 @@ import org.example.healthcare_management.controllers.dto.*;
 import org.example.healthcare_management.entities.*;
 import org.example.healthcare_management.repositories.ClinicRepo;
 import org.example.healthcare_management.repositories.SpecializationRepo;
-import org.example.healthcare_management.repositories.UserRepo;
-import org.example.healthcare_management.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,7 +54,13 @@ public class ModelMapperConfig {
                     mapper.map(User::getDescription, UserDto::setDescription);
                     mapper.map(User::getRoles, UserDto::setRoles);
 
+                    // Map Doctor -> DoctorDto
+//                    mapper.map(User::getDoctor, UserDto::setDoctor);
+
+
                 });
+
+        // chiều từ User -> UserDtoNo
     }
 
     // role
@@ -182,4 +187,6 @@ public class ModelMapperConfig {
                     }).map(Clinic::getDoctors, ClinicDtoWithDoctor::setDoctorsDto);
                 });
     }
+
+
 }

@@ -1,11 +1,8 @@
 package org.example.healthcare_management.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalTime;
 import java.util.HashSet;
@@ -37,7 +34,7 @@ public class TimeSlot {
             // xóa timeSlot sẽ không ảnh hưởng đến booking
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
-    private Set<Booking> bookings = new HashSet<>();
+    private Set<Appointment> appointments = new HashSet<>();
 
 
 }

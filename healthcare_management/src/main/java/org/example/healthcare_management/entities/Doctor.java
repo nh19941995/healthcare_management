@@ -1,8 +1,6 @@
 package org.example.healthcare_management.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.healthcare_management.enums.Status;
@@ -52,7 +50,7 @@ public class Doctor {
             CascadeType.REFRESH,
             CascadeType.DETACH
     }, fetch = FetchType.LAZY)
-    private Set<Booking> bookings = new HashSet<>();
+    private Set<Appointment> appointments = new HashSet<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
@@ -89,14 +87,14 @@ public class Doctor {
 
 
     // Helper methods for Booking (OneToMany)
-    public void addBooking(Booking booking) {
-        this.bookings.add(booking);
-        booking.setDoctor(this);
+    public void addAppointment(Appointment appointment) {
+        this.appointments.add(appointment);
+        appointment.setDoctor(this);
     }
 
-    public void removeBooking(Booking booking) {
-        this.bookings.remove(booking);
-        booking.setDoctor(null);
+    public void removeAppointment(Appointment appointment) {
+        this.appointments.remove(appointment);
+        appointment.setDoctor(null);
     }
 
     @Override

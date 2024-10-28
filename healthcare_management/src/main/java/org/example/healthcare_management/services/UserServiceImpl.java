@@ -48,6 +48,19 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public UserDto addRoleToUser(String username, String roleName) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Role role = roleRepository.findByName(roleName).
+                orElseThrow(() -> new BusinessException("Role not found",
+                        "No role found with name: " + roleName,
+                        HttpStatus.NOT_FOUND));
+        user.getRoles().add(role);
+        User newUser= userRepository.save(user);
+        return modelMapper.map(newUser, UserDto.class);
+    }
+
 
     @Override
     public User create(User entity) {

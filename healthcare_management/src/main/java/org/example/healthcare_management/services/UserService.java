@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 
-import java.util.Set;
 
 public interface UserService extends BaseCrud<User, UserDto> {
     // tìm user theo username
@@ -16,4 +15,6 @@ public interface UserService extends BaseCrud<User, UserDto> {
     Page<UserDto> findAll(@NonNull Pageable pageable);
     // update user
     UserDto updateProfile(UserDto userDto, String username);
+
+    UserDto addRoleToUser(String username, String roleName);
 }

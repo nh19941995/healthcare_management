@@ -17,7 +17,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserRepo userRepo;
     private final DoctorRepo doctorRepo;
     private final ModelMapper modelMapper;
-    private final BookingService bookingService;
+    private final AppointmentService appointmentService;
 
 
     @Override

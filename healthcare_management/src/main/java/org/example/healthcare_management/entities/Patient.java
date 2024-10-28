@@ -27,7 +27,6 @@ public class Patient {
 
     @OneToOne(
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
             optional = false // thông tin bệnh nhân không thể null
     )
     // tên cột chứa khóa phụ trong bảng wife là user_Id
@@ -35,7 +34,7 @@ public class Patient {
     @JoinColumn(name = "user_Id")
     private User user;
 
-    // mappedBy trỏ tới tên biến patient trong entity booking
+    // mappedBy trỏ tới tên biến patient trong entity appointment
     @OneToMany(
             mappedBy = "patient",
             cascade = {
@@ -45,7 +44,7 @@ public class Patient {
                     CascadeType.DETACH
             }, fetch = FetchType.LAZY
     )
-    private Set<Booking> bookings = new HashSet<>();
+    private Set<Appointment> appointments = new HashSet<>();
 
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -74,14 +73,14 @@ public class Patient {
 
 
     // Helper methods for Booking (OneToMany)
-    public void addBooking(Booking booking) {
-        this.bookings.add(booking);
-        booking.setPatient(this);
+    public void addAppointments(Appointment appointment) {
+        this.appointments.add(appointment);
+        appointment.setPatient(this);
     }
 
-    public void removeBooking(Booking booking) {
-        this.bookings.remove(booking);
-        booking.setPatient(null);
+    public void removeAppointments(Appointment appointment) {
+        this.appointments.remove(appointment);
+        appointment.setPatient(null);
     }
 
 }

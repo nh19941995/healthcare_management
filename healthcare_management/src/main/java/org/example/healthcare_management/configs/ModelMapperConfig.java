@@ -34,6 +34,7 @@ public class ModelMapperConfig {
         configureRoleMapping(modelMapper);
         configureDoctorMapping(modelMapper);
         configureClinicMapping(modelMapper);
+        configureAppointmentMapping(modelMapper);
 
         return modelMapper;
     }
@@ -56,8 +57,6 @@ public class ModelMapperConfig {
 
                     // Map Doctor -> DoctorDto
 //                    mapper.map(User::getDoctor, UserDto::setDoctor);
-
-
                 });
 
         // chiều từ User -> UserDtoNo
@@ -185,6 +184,63 @@ public class ModelMapperConfig {
                         }
                         return Collections.emptySet();
                     }).map(Clinic::getDoctors, ClinicDtoWithDoctor::setDoctorsDto);
+                });
+    }
+
+    // appointment
+    private void configureAppointmentMapping(ModelMapper modelMapper) {
+        // chiều từ Appointment -> AppointmentDto
+        modelMapper.createTypeMap(Appointment.class, AppointmentDto.class)
+                .addMappings(mapper -> {
+                    mapper.map(Appointment::getId, AppointmentDto::setId);
+                    mapper.map(Appointment::getAppointmentDate, AppointmentDto::setAppointmentDate);
+                    mapper.map(Appointment::getStatus, AppointmentDto::setStatus);
+                })
+                .setPostConverter(context -> {
+                    Appointment source = context.getSource();
+                    AppointmentDto destination = context.getDestination();
+
+                    // Map Doctor
+                    if (source.getDoctor() != null) {
+                        destination.setDoctor(
+                                modelMapper.map(source.getDoctor(), DoctorDtoNoUser.class)
+                        );
+                    }
+
+                    // Map Patient
+                    if (source.getPatient() != null) {
+                        destination.setPatient(
+                                modelMapper.map(source.getPatient(), Patient.class)
+                        );
+                    }
+
+                    // Map TimeSlot
+                    if (source.getTimeSlot() != null) {
+                        destination.setStartAt(source.getTimeSlot().getStartAt());
+                        destination.setEndAt(source.getTimeSlot().getEndAt());
+                    }
+
+                    return destination;
+                });
+
+        // chiều từ AppointmentDto -> Appointment
+        modelMapper.createTypeMap(AppointmentDto.class, Appointment.class)
+                .addMappings(mapper -> {
+                    mapper.map(AppointmentDto::getId, Appointment::setId);
+                    mapper.map(AppointmentDto::getAppointmentDate, Appointment::setAppointmentDate);
+                    mapper.map(AppointmentDto::getStatus, Appointment::setStatus);
+                })
+                .setPostConverter(context -> {
+                    AppointmentDto source = context.getSource();
+                    Appointment destination = context.getDestination();
+
+                    // không cập nhật Doctor
+
+                    // không cập nhật Patient
+
+                    // không cập nhật TimeSlot
+
+                    return destination;
                 });
     }
 

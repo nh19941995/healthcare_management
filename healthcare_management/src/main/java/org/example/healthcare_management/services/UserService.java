@@ -17,4 +17,6 @@ public interface UserService extends BaseCrud<User, UserDto> {
     UserDto updateProfile(UserDto userDto, String username);
 
     UserDto addRoleToUser(String username, String roleName);
+
+    void checkUsernameExistence (String username);
 }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "medications")  // bảng hồ sơ bệnh án
+@Table(name = "medications")  // dữ liệu thuốc
 @SQLDelete(sql = "UPDATE medications SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class Medication {

@@ -13,10 +13,7 @@ import org.example.healthcare_management.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -29,7 +26,7 @@ public class AppointmentController {
     private final TimeSlotRepo timeSlotRepo;
 
     // tạo một cuộc hẹn mới
-    // url: localhost:8080/api/appointments/patient_username/doctor_username/timeSlot_id
+    // url: localhost:8080/api/appointments/patient_username/doctor_username/timeSlot_id/appointmentDate
     @PostMapping("{patient_username}/{doctor_username}/{timeSlot_id}/{appointmentDate}")
     public ResponseEntity<AppointmentDto> addAppointment(
             @PathVariable String patient_username,
@@ -43,10 +40,16 @@ public class AppointmentController {
         if (!currentUsername.equals(patient_username)) {
             throw new RuntimeException("You can only create appointment for yourself");
         }
-        Appointment appointment = appointmentService.createAppointment(
+        AppointmentDto appointment = appointmentService.createAppointment(
                 patient_username, doctor_username, timeSlot_id, appointmentDate);
-        return ResponseEntity.ok(appointmentService.convertToDTO(appointment));
+        return ResponseEntity.ok(appointment);
     }
+
+
+//    @GetMapping("{username}")
+//    public ResponseEntity<Set<AppointmentDto>> getAppointments(@PathVariable String username) {
+//
+//    }
 
 
 

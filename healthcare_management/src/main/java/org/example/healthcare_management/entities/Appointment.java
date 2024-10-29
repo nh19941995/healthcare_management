@@ -9,6 +9,7 @@ import org.hibernate.annotations.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -35,7 +36,7 @@ public class Appointment {
     private TimeSlot timeSlot;
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
-    private Prescription medicalRecord;
+    private Prescription prescription; // đơn thuốc
 
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -70,11 +71,11 @@ public class Appointment {
 
     @CreationTimestamp
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private LocalTime updatedAt;
 
 
     @Column(name = "deleted_at")

@@ -25,7 +25,7 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "medical_diagnosis", columnDefinition = "TEXT")
     private String medicalDiagnosis;
 
     @OneToOne(
@@ -34,7 +34,7 @@ public class Prescription {
     )
     // tên cột chứa khóa phụ trong bảng medical_records là booking_id
     // cột phụ sẽ dc thêm vào bảng medical_records
-    @JoinColumn(name = "booking_id")
+    @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
     @OneToMany(

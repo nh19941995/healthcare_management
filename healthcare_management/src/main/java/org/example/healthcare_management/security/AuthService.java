@@ -1,12 +1,15 @@
 package org.example.healthcare_management.security;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.healthcare_management.entities.Patient;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.enums.Status;
 import org.example.healthcare_management.exceptions.BusinessException;
+import org.example.healthcare_management.repositories.PatientRepo;
 import org.example.healthcare_management.repositories.RoleRepo;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.UserService;
@@ -25,6 +28,7 @@ import java.util.Set;
 @Slf4j
 @AllArgsConstructor
 public class AuthService {
+    private final PatientRepo patientRepository;
     private final UserService userService;
     // dùng để thực hiện các thao tác liên quan đến User
     private final UserRepo userRepository;
@@ -61,27 +65,35 @@ public class AuthService {
     }
 
     // đăng ký tài khoản
+    @Transactional
     public void register(User user) {
-        log.info("Service - Register request for userRegister: {}", user);
-        userRepository.findByUsername(user.getUsername()).ifPresent(u -> {
-            // kiểm tra xem username đã tồn tại chưa
-            throw new BusinessException(
-                    "Username already exists",
-                    "The username '" + user.getUsername() + "' is already taken. Please choose a different username.",
-                    HttpStatus.CONFLICT);
-        });
-        user.setStatus(Status.ACTIVE);
         log.info("Service - Register request for user: {}", user);
-        // mã hóa mật khẩu trước khi lưu vào database
+
+        // Kiểm tra xem username đã tồn tại chưa
+        userService.checkUsernameExistence(user.getUsername());
+
+        // Đặt trạng thái tài khoản là ACTIVE và mã hóa mật khẩu
+        user.setStatus(Status.ACTIVE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Lưu user mới vào database thông qua UserRepo.
+
+        // Tạo Patient và liên kết với User
+        Patient patient = new Patient();
+        patient.setUser(user);
+        user.setPatient(patient); // liên kết hai chiều nếu cần thiết
+
+        // Lưu User và Patient cùng lúc thông qua cascading
         userRepository.save(user);
-        // thêm role cho user
+
+        // Tạo vai trò bệnh nhân cho người dùng
         Role role = roleRepository.findByName(EnumRole.PATIENT.getRoleName())
                 .orElseThrow(() -> new BusinessException("Role not found",
                         "No role found with name: " + EnumRole.PATIENT.getRoleName(),
                         HttpStatus.NOT_FOUND));
         user.setRoles(Set.of(role));
+
         userRepository.save(user);
+
+        log.info("Service - Registration completed successfully for user: {}", user);
     }
+
 }

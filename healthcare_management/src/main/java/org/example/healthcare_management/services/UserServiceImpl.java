@@ -32,7 +32,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+                .orElseThrow(() -> new BusinessException(
+                        "Username not found",
+                        "The username '" + username + "' does not exist. Please check the username and try again.",
+                        HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -57,8 +60,18 @@ public class UserServiceImpl implements UserService {
                         "No role found with name: " + roleName,
                         HttpStatus.NOT_FOUND));
         user.getRoles().add(role);
-        User newUser= userRepository.save(user);
+        User newUser = userRepository.save(user);
         return modelMapper.map(newUser, UserDto.class);
+    }
+
+    @Override
+    public void checkUsernameExistence (String username) {
+        userRepository.findByUsername(username).ifPresent(u -> {
+            throw new BusinessException(
+                    "Username already exists",
+                    "The username '" + username + "' is already taken. Please choose a different username.",
+                    HttpStatus.CONFLICT);
+        });
     }
 
 

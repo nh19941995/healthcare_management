@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.DoctorDto;
 import org.example.healthcare_management.entities.*;
+import org.example.healthcare_management.enums.EnumRole;
 import org.example.healthcare_management.repositories.DoctorRepo;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.modelmapper.ModelMapper;
@@ -17,7 +18,7 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserRepo userRepo;
     private final DoctorRepo doctorRepo;
     private final ModelMapper modelMapper;
-    private final AppointmentService appointmentService;
+    private final RoleService roleService;
 
 
     @Override
@@ -51,8 +52,11 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor findByUsername(String username) {
+        // Tìm user theo username
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        // Kiểm tra xem user có phải là bác sĩ không
+        roleService.checkUserRole(username, EnumRole.DOCTOR.name());
         return user.getDoctor();
     }
 

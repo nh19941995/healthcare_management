@@ -25,13 +25,8 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(
-            cascade = CascadeType.ALL,
-            optional = false // thông tin bệnh nhân không thể null
-    )
-    // tên cột chứa khóa phụ trong bảng wife là user_Id
-    // cột phụ sẽ dc thêm vào bảng patients
-    @JoinColumn(name = "user_Id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false) // Tên cột chứa khóa ngoại trong bảng patients
     private User user;
 
     // mappedBy trỏ tới tên biến patient trong entity appointment

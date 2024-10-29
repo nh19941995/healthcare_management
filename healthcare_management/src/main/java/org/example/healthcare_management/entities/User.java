@@ -1,5 +1,6 @@
 package org.example.healthcare_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
@@ -56,7 +57,6 @@ public class User {
             @Pattern(regexp = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*", message = "Password must contain at least one special character")
     })
     @Column(name = "password")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // chỉ cho phép ghi, không cho phép đọc
     private String password;
 
     @Size(max = 255, message = "Address must be less than 255 characters")
@@ -98,6 +98,7 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Doctor doctor;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Patient patient;
 
@@ -118,6 +119,13 @@ public class User {
 
     @Column(name = "lock_reason")
     private String lockReason;
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+        if (patient != null) {
+            patient.setUser(this);
+        }
+    }
 
 
     public Set<Role> getRoles() {

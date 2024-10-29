@@ -20,33 +20,18 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserDto {
     private Long id;
-
     private String fullName;
-
     private String username;
-
     private String email;
-
     private String address;
-
     private String phone;
-
     private String avatar;
-
     private Gender gender;
-
     private String description;
-
     private Set<Role> roles = new HashSet<>();
-
     private DoctorDto doctor;
-
     private Patient patient;
-
     private LocalDateTime createdAt;
-
     private Status status;
-
     private String lockReason;
-
 }

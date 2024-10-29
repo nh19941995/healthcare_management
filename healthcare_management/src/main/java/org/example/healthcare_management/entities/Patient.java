@@ -1,5 +1,6 @@
 package org.example.healthcare_management.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,8 +26,10 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", nullable = false) // Tên cột chứa khóa ngoại trong bảng patients
+    @OneToOne
+    // Tên cột chứa khóa ngoại trong bảng patients
+    // bắt buộc phải có một user_id trong bảng patients
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // mappedBy trỏ tới tên biến patient trong entity appointment

@@ -39,6 +39,7 @@ public class ModelMapperConfig {
         return modelMapper;
     }
 
+
     // user
     private void configureUserMapping(ModelMapper modelMapper) {
         // chiều từ User -> UserDto
@@ -59,7 +60,23 @@ public class ModelMapperConfig {
 //                    mapper.map(User::getDoctor, UserDto::setDoctor);
                 });
 
-        // chiều từ User -> UserDtoNo
+        // chiều từ UserDto -> User
+        modelMapper.createTypeMap(UserDto.class, User.class)
+                .addMappings(mapper -> {
+                    mapper.map(UserDto::getId, User::setId);
+                    mapper.map(UserDto::getFullName, User::setFullName);
+                    mapper.map(UserDto::getUsername, User::setUsername);
+                    mapper.map(UserDto::getEmail, User::setEmail);
+                    mapper.map(UserDto::getAddress, User::setAddress);
+                    mapper.map(UserDto::getPhone, User::setPhone);
+                    mapper.map(UserDto::getAvatar, User::setAvatar);
+                    mapper.map(UserDto::getGender, User::setGender);
+                    mapper.map(UserDto::getDescription, User::setDescription);
+                    mapper.map(UserDto::getRoles, User::setRoles);
+
+                    // không cập nhật Doctor
+                });
+
     }
 
     // role

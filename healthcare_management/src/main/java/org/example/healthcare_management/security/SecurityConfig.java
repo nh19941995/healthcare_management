@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/login",
-                                "/auth/register",
+                                "/auth/register/**",
                                 "/api/public/**"
                         ).permitAll()
                         // Đặt quy tắc phân quyền cho các endpoint của Spring Data REST

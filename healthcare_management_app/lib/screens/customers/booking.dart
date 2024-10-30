@@ -8,9 +8,8 @@ import 'List_Clinic__Screen.dart';
 import 'list_doctor.dart';
 
 class Booking extends StatelessWidget {
-  final User user;
 
-  const Booking({super.key, required this.user});
+  const Booking({super.key});
 
   // Điều hướng tới màn hình tương ứng
   void _navigateToScreen(BuildContext context, Widget screen) {
@@ -69,7 +68,7 @@ class Booking extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, DoctorSelectionScreen(user: user,)); // Navigate to the profile information screen
+                          _navigateToScreen(context, DoctorSelectionScreen()); // Navigate to the profile information screen
                         },
                       ),
                     ),
@@ -134,7 +133,7 @@ class Booking extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
+                         // _navigateToScreen(context, EditProfileScreen()); // Navigate to the profile information screen
                         },
                       ),
                     ),

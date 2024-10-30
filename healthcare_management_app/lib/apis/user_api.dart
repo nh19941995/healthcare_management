@@ -2,11 +2,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_management_app/models/user.dart';
 
+import '../dto/user_dto.dart';
 import '../models/role.dart';
+import '../screens/comons/TokenManager.dart';
 
 const baseURL = "http://localhost:8080/users";
 
 class UserApi {
+  late String username;
+
   // Phương thức để lấy tất cả người dùng
   Future<String> getAllUsers() async {
     try {
@@ -51,7 +55,7 @@ class UserApi {
   }
 
   // Phương thức để cập nhật thông tin người dùng
-  Future<User> updateUser(User user) async {
+  Future<User> updateUser(UserDTO user) async {
     final response = await http.put(
       Uri.parse('$baseURL/${user.id}'),
       headers: {
@@ -83,40 +87,31 @@ class UserApi {
   // }
 
   // Phương thức để lấy thông tin người dùng theo username
-  Future<User> getUserByUsername(String username, String? token) async {
+  Future<UserDTO> getUserByUserName() async {
+    final String? username = TokenManager().getUserSub();
+    final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
+
+    print('Username: $username');
+    print('Token: $token'); // In token ra để kiểm tra nếu cần
+
+    final String urlGetUser = 'http://localhost:8080/api/users/$username';
+
     final response = await http.get(
-      Uri.parse('$baseURL?username=$username'),
+      Uri.parse(urlGetUser),
       headers: {
-        'Authorization': 'Bearer $token', // Gửi token trong header
+        'Authorization': 'Bearer $token', // Thêm token vào header
       },
     );
 
     if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
+      // Chuyển đổi phản hồi sang UTF-8
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      print('Data from API: $data'); // In ra dữ liệu từ API để kiểm tra
+
+      return UserDTO.fromJson(data);
     } else {
-      throw Exception('Failed to load user by username');
-    }
-  }
-  Future<List<Role>> getRolesByUserId(int userId, String? token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseURL/$userId/roles'), // Đường dẫn lấy vai trò
-        headers: {
-          'Authorization': 'Bearer $token', // Thêm token vào header
-        },
-      );
-
-      if (response.statusCode == 200) {
-        // In ra phản hồi để kiểm tra
-        print('Response body: ${response.body}');
-
-        final List<dynamic> rolesJson = jsonDecode(response.body); // Giải mã JSON
-        return List<Role>.from(rolesJson.map((data) => Role.fromJson(data))); // Chuyển đổi thành List<Role>
-      } else {
-        throw Exception('Failed to load roles for user: ${response.statusCode}');
-      }
-    } catch (error) {
-      throw Exception('Error fetching roles: $error');
+      print('Failed to load user data. Status code: ${response.statusCode}');
+      throw Exception('Failed to load user data');
     }
   }
 

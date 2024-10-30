@@ -48,8 +48,8 @@ class MyApp extends StatelessWidget {
       title: 'Healthcare Management',
       theme: AppTheme.theme,
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
-      //home: MedicalExaminationScreen(),
+      //home: SplashScreen(),
+      home: MedicalExaminationScreen(),
     );
   }
 }

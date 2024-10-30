@@ -1,10 +1,9 @@
-// models/doctor_dto.dart
 class DoctorDTO {
-  final int? id;
+  final int id;
   final String achievements;
   final String medicalTraining;
-  final int clinicId;
-  final int specializationId;
+  final int? clinicId;
+  final int? specializationId;
   final String status;
   final String? lockReason;
   final String username;
@@ -14,26 +13,30 @@ class DoctorDTO {
     required this.id,
     required this.achievements,
     required this.medicalTraining,
-    required this.clinicId,
-    required this.specializationId,
+    this.clinicId,
+    this.specializationId,
     required this.status,
     this.lockReason,
     required this.username,
     this.avatar,
   });
 
-  // Factory method để tạo một đối tượng DoctorDTO từ JSON
   factory DoctorDTO.fromJson(Map<String, dynamic> json) {
-    return DoctorDTO(
-      id: json['id'],
-      achievements: json['achievements'] ?? '',
-      medicalTraining: json['medicalTraining'] ?? '',
-      clinicId: json['clinicId'],
-      specializationId: json['specializationId'],
-      status: json['status'],
-      lockReason: json['lockReason'],
-      username: json['username'],
-      avatar: json['avatar'],
-    );
+    try {
+      return DoctorDTO(
+        id: json['id'] as int? ?? 0,
+        achievements: json['achievements'] as String? ?? '',
+        medicalTraining: json['medicalTraining'] as String? ?? '',
+        clinicId: json['clinicId'] as int?,
+        specializationId: json['specializationId'] as int?,
+        status: json['status'] as String? ?? 'unknown',
+        lockReason: json['lockReason'] as String?,
+        username: json['username'] as String? ?? 'defaultUser',
+        avatar: json['avatar'] as String?,
+      );
+    } catch (e) {
+      throw Exception("Error parsing DoctorDTO: $e");
+    }
   }
+
 }

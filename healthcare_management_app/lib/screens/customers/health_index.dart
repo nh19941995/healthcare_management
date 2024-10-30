@@ -67,7 +67,7 @@ class HealthIndex extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
+                          //_navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
                         },
                       ),
                     ),
@@ -100,7 +100,7 @@ class HealthIndex extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
+                         // _navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
                         },
                       ),
                     ),
@@ -132,7 +132,7 @@ class HealthIndex extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
+                          //_navigateToScreen(context, EditProfileScreen(user: user)); // Navigate to the profile information screen
                         },
                       ),
                     ),

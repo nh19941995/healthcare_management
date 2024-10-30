@@ -59,7 +59,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
     String query = _searchController.text.toLowerCase();
     setState(() {
       filteredDoctors = filteredDoctors.where((doctor) {
-        return doctor.username.toLowerCase().contains(query);
+        return doctor.username!.toLowerCase().contains(query);
       }).toList();
     });
   }

@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/user_dto.dart';
 import 'package:healthcare_management_app/models/user.dart';
+import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:healthcare_management_app/screens/customers/booking.dart';
 import 'package:healthcare_management_app/screens/customers/health_index.dart';
 import 'package:healthcare_management_app/screens/customers/online_consultation.dart';
+import 'package:provider/provider.dart';
 import '../comons/TokenManager.dart';
 import '../comons/customBottomNavBar.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -21,11 +24,21 @@ class HomeCustomer extends StatefulWidget {
 }
 
 class _HomeCustomerState extends State<HomeCustomer> {
+  late UserProvider userProvider;
+  UserDTO? userDto;
   late String username;
   @override
   void initState() {
     super.initState();
     username = TokenManager().getUserSub() ?? "Người dùng";
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    // Bắt đầu fetch user và cập nhật trạng thái
+    userProvider.fetchUser().then((_) {
+      setState(() {
+        userDto = userProvider.user; // Cập nhật user sau khi fetch
+      });
+    });
 
   }
 
@@ -51,7 +64,7 @@ class _HomeCustomerState extends State<HomeCustomer> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Xin chào ${username}',
+                  'Xin chào ${userDto?.fullName}',
                   style: AppTheme.theme.textTheme.displayLarge,
                 ),
                 CircleAvatar(
@@ -89,7 +102,7 @@ class _HomeCustomerState extends State<HomeCustomer> {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(user: widget.user)); // Chuyển đến màn hình thông tin cá nhân
+                          _navigateToScreen(context, EditProfileScreen(userDTO: userDto)); // Chuyển đến màn hình thông tin cá nhân
                         },
                       ),
                     ),
@@ -120,7 +133,7 @@ class _HomeCustomerState extends State<HomeCustomer> {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, Booking(user: widget.user));
+                          _navigateToScreen(context, Booking());
                         },
                       ),
                     ),

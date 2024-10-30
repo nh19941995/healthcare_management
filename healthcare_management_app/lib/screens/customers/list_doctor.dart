@@ -5,9 +5,9 @@ import '../../models/user.dart';
 import 'Doctor_Detail_Screen.dart';
 
 class DoctorSelectionScreen extends StatefulWidget {
-  final User user;
 
-  const DoctorSelectionScreen({super.key, required this.user});
+
+  const DoctorSelectionScreen({super.key});
   @override
   _DoctorSelectionScreenState createState() => _DoctorSelectionScreenState();
 }

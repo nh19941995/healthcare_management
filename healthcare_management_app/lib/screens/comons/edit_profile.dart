@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/user_dto.dart';
 import 'package:provider/provider.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
@@ -8,9 +9,9 @@ import '../../enum.dart';
 import 'customBottomNavBar.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final User user;
+  final UserDTO? userDTO;
 
-  const EditProfileScreen({super.key, required this.user});
+  const EditProfileScreen({super.key, required this.userDTO});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
@@ -21,14 +22,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _rePasswordController = TextEditingController();
   final _addressController = TextEditingController();
 
   String? _fullNameError;
   String? _phoneError;
   String? _emailError;
   String? _passwordError;
-  String? _rePasswordError;
   String? _addressError;
   Gender? _selectedGender;
 
@@ -36,12 +35,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     // Initialize the text fields with the current user data
-    _fullNameController.text = widget.user.name ?? '';
-    _phoneController.text = widget.user.phone ?? '';
-    _emailController.text = widget.user.email ?? '';
-    _passwordController.text = widget.user.password ?? '';
-    _addressController.text = widget.user.address ?? '';
-    _selectedGender = widget.user.gender == 'MALE' ? Gender.MALE : Gender.FEMALE;
+    _fullNameController.text = widget.userDTO?.username ?? '';
+    _phoneController.text = widget.userDTO?.phone ?? '';
+    _emailController.text = widget.userDTO?.email ?? '';
+    _passwordController.text = widget.userDTO?.password ?? '';
+    _addressController.text = widget.userDTO?.address ?? '';
+    _selectedGender = widget.userDTO?.gender == 'MALE' ? Gender.MALE : Gender.FEMALE;
   }
 
   @override
@@ -109,22 +108,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // If no errors, update user
     String gender = _selectedGender == Gender.MALE ? 'MALE' : 'FEMALE';
 
-    User updatedUser = User(
-      id: widget.user.id,
+    UserDTO updatedUser = UserDTO(
       address: address,
-      avatar: widget.user.avatar,
-      createdAt: widget.user.createdAt,
-      deletedAt: widget.user.deletedAt,
-      description: widget.user.description,
+      avatar: widget.userDTO?.avatar,
+      createdAt: widget.userDTO!.createdAt,
+      description: widget.userDTO!.description,
       email: email,
       gender: gender,
-      lockReason: widget.user.lockReason,
-      name: fullName,
+      lockReason: widget.userDTO?.lockReason,
+      fullName: fullName,
       password: password,
       phone: phone,
-      status: widget.user.status,
-      updatedAt: DateTime.now(),
-      roleId: widget.user.roleId,
+      username: fullName,
     );
 
     try {

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/apis/user_api.dart';
 import 'package:healthcare_management_app/dto/Doctor_dto.dart';
+import 'package:healthcare_management_app/dto/user_dto.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../providers/user_provider.dart';
 import '../comons/TokenManager.dart';
-import '../comons/theme.dart'; // Import intl để sử dụng DateFormat
+import '../comons/theme.dart';
+import 'Appointment_Booking.dart'; // Import intl để sử dụng DateFormat
 
 class AppointmentBookingScreen extends StatefulWidget {
   final DoctorDTO doctor;
@@ -15,18 +20,28 @@ class AppointmentBookingScreen extends StatefulWidget {
 }
 
 class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
+  late UserApi userApi;
+  late UserProvider userProvider;
+  UserDTO? user;
   DateTime selectedDate = DateTime.now();
   String selectedTime = '';
   TextEditingController _descriptionController = TextEditingController();
   List<DateTime> daysInMonth = [];
-  late String username;
 
   @override
   void initState() {
     super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    // Bắt đầu fetch user và cập nhật trạng thái
+    userProvider.fetchUser().then((_) {
+      setState(() {
+        user = userProvider.user; // Cập nhật user sau khi fetch
+      });
+    });
     daysInMonth = _generateDaysInMonth(selectedDate);
-    username = TokenManager().getUserSub() ?? "Người dùng"; // Lấy giá trị sub
   }
+
 
   // Hàm tạo danh sách các ngày trong tháng
   List<DateTime> _generateDaysInMonth(DateTime date) {
@@ -34,7 +49,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     return List.generate(daysCount, (index) => DateTime(date.year, date.month, index + 1));
   }
 
-  // Hiển thị dialog xác nhận
   // Hiển thị dialog xác nhận
   void _showConfirmationDialog(BuildContext context) {
     showDialog(
@@ -50,6 +64,11 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
               children: [
                 Text('Bác sĩ: ${widget.doctor.username}'),
                 Text('Medical Training: ${widget.doctor.medicalTraining}'),
+                SizedBox(height: 8),
+                Text('Thong tin khach hang'),
+                Text('Name: ${user?.fullName}'),
+                Text('Phone: ${user?.phone}'),
+                SizedBox(height: 8),
                 Text('Ngày hẹn: ${DateFormat('dd/MM/yyyy').format(selectedDate)}'),
                 Text('Giờ hẹn: $selectedTime'),
                 SizedBox(height: 8),
@@ -76,7 +95,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       },
     );
   }
-
 
   // Hiển thị thông báo "Đặt lịch thành công"
   void _showSuccessSnackBar(BuildContext context) {
@@ -182,7 +200,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
             // Thời gian có sẵn
             Text(
               'Thời gian có sẵn',
-              style: AppTheme.theme.textTheme.displayMedium
+              style: AppTheme.theme.textTheme.displayMedium,
             ),
             SizedBox(height: AppTheme.mediumSpacing),
             Row(
@@ -201,25 +219,33 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
               ],
             ),
             SizedBox(height: 16),
-            // Hiển thị thông tin bác sĩ
+// Hiển thị thông tin bác sĩ
             Text(
               'Thông tin bác sĩ:',
-                style: AppTheme.theme.textTheme.displayMedium
+              style: AppTheme.theme.textTheme.displayMedium,
             ),
             SizedBox(height: AppTheme.mediumSpacing),
             Text('Tên bác sĩ: ${widget.doctor.username}', style: TextStyle(fontSize: 16)),
             Text('Achievements: ${widget.doctor.achievements}', style: TextStyle(fontSize: 16)),
             SizedBox(height: 16),
-            // Thông tin bệnh nhân
+// Thông tin bệnh nhân
             Text(
               'Thông tin bệnh nhân:',
-                style: AppTheme.theme.textTheme.displayMedium
+              style: AppTheme.theme.textTheme.displayMedium,
             ),
             SizedBox(height: AppTheme.mediumSpacing),
-            Text(
-              'Họ tên: ${username}',
-              style: TextStyle(fontSize: 16),
+            user == null // Kiểm tra nếu user chưa được tải
+                ? Center(child: CircularProgressIndicator()) // Hiển thị spinner
+                : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Họ tên: ${user!.fullName}', style: TextStyle(fontSize: 16)), // Sử dụng trường đúng từ UserDTO
+                Text('Số điện thoại: ${user!.phone}', style: TextStyle(fontSize: 16)), // Thêm trường Số điện thoại
+              ],
             ),
+
+
+
             SizedBox(height: 16),
             // Mô tả bệnh với TextArea
             Text(
@@ -235,7 +261,6 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                 hintText: 'Nhập mô tả triệu chứng...',
               ),
             ),
-
             // Nút đặt lịch khám
             SizedBox(height: AppTheme.largeSpacing),
             SizedBox(
@@ -257,28 +282,39 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
 
   Widget buildDateButton(String day, String weekDay, DateTime date,
       {bool isSelected = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            selectedDate = date;
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.blue : Colors.white,
-          foregroundColor: isSelected ? Colors.white : Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedDate = date; // Cập nhật ngày được chọn
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryColor : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? AppTheme.primaryColor : Colors.grey.shade400,
           ),
         ),
         child: Column(
           children: [
             Text(
               day,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? Colors.white : Colors.black,
+              ),
             ),
-            Text(weekDay),
+            const SizedBox(height: 4),
+            Text(
+              weekDay,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black54,
+              ),
+            ),
           ],
         ),
       ),
@@ -286,23 +322,28 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   }
 
   Widget buildTimeButton(String time) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Thêm padding ngang
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            selectedTime = time;
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-          backgroundColor: selectedTime == time ? Colors.blue : Colors.white,
-          foregroundColor: selectedTime == time ? Colors.white : Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedTime = time; // Cập nhật giờ được chọn
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: selectedTime == time ? AppTheme.primaryColor : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: selectedTime == time ? AppTheme.primaryColor : Colors.grey.shade400,
           ),
         ),
-        child: Text(time),
+        child: Text(
+          time,
+          style: TextStyle(
+            fontSize: 16,
+            color: selectedTime == time ? Colors.white : Colors.black,
+          ),
+        ),
       ),
     );
   }

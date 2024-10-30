@@ -1,9 +1,10 @@
 package org.example.healthcare_management.exceptions.payload;
 
 
-import java.time.LocalDateTime;
-import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.time.LocalDateTime;
 
 // lớp này chứa thông tin lỗi trả về cho client
 

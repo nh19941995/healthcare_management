@@ -1,11 +1,12 @@
 package org.example.healthcare_management.entities;
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Table;
 import lombok.*;
 import org.example.healthcare_management.enums.AppointmentsStatus;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.time.LocalTime;
 @Builder
 @Table(name = "appointments")  // bảng bác sĩ
 @SQLDelete(sql = "UPDATE appointments SET deleted_at = NOW() WHERE id = ?")
-@SQLRestriction("deleted_at IS NULL")
+@Where(clause = "deleted_at IS NULL AND status = 'CONFIRMED'")
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

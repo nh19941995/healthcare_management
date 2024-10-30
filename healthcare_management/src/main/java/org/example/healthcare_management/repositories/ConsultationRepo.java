@@ -1,19 +1,16 @@
 package org.example.healthcare_management.repositories;
 
-import org.example.healthcare_management.entities.User;
+import org.example.healthcare_management.entities.Consultation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.util.Optional;
-
 @CrossOrigin(origins = "*")
-public interface UserRepo extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
+public interface ConsultationRepo extends JpaRepository<Consultation, Long> {
 
     @Override
     @NonNull
-    Page<User> findAll(@NonNull Pageable pageable);
+    Page<Consultation> findAll(@NonNull Pageable pageable);
 }

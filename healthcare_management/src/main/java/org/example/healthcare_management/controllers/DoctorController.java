@@ -1,10 +1,7 @@
 package org.example.healthcare_management.controllers;
 
 import lombok.AllArgsConstructor;
-import org.example.healthcare_management.controllers.dto.ApiResponse;
 import org.example.healthcare_management.controllers.dto.DoctorDto;
-import org.example.healthcare_management.entities.Doctor;
-import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.DoctorService;
 import org.modelmapper.ModelMapper;

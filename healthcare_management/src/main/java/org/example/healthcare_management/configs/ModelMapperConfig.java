@@ -2,6 +2,7 @@ package org.example.healthcare_management.configs;
 
 import lombok.AllArgsConstructor;
 import org.example.healthcare_management.controllers.dto.*;
+import org.example.healthcare_management.controllers.dto.user.UserDto;
 import org.example.healthcare_management.entities.*;
 import org.example.healthcare_management.repositories.ClinicRepo;
 import org.example.healthcare_management.repositories.SpecializationRepo;

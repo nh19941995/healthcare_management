@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 
 @Service
@@ -54,7 +55,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Page<Appointment> findAllByUsername(@NonNull Pageable pageable) {
+    public Page<Appointment> findAllByUsername(@NonNull Pageable pageable, String username) {
+
+
         return appointmentRepository.findAll(pageable);
     }
 }

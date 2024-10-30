@@ -3,8 +3,8 @@ package org.example.healthcare_management.controllers;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.ApiResponse;
-import org.example.healthcare_management.controllers.dto.UserDto;
-import org.example.healthcare_management.entities.Doctor;
+import org.example.healthcare_management.controllers.dto.user.UpdateDto;
+import org.example.healthcare_management.controllers.dto.user.UserDto;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.repositories.UserRepo;
 import org.example.healthcare_management.services.UserService;
@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -49,20 +50,14 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    // update theo username
-    // url: localhost:8080/api/users/username
-    @PutMapping("/{username}")
-    public ResponseEntity<UserDto> updateUser(
-            @RequestBody UserDto userDto, @PathVariable String username
+    // update theo userId
+    // url: localhost:8080/api/users
+    @PutMapping("")
+    public ResponseEntity<UpdateDto> updateUser(
+            @RequestBody UpdateDto userDto
     ) {
-        // Kiểm tra xem người dùng hiện tại có phải là người sở hữu tài khoản không
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName();
-        if (!currentUsername.equals(username)) {
-            throw new RuntimeException("You can only view your own profile");
-        }
-        UserDto newUser = userService.updateProfile(userDto, username);
-        return ResponseEntity.ok(newUser);
+        userService.updateProfile(userDto.getId(), userDto);
+        return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("")
@@ -82,9 +77,18 @@ public class UserController {
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
         user.setDeletedAt(LocalDateTime.now());
-        userService.update(user.getId(), modelMapper.map(user, UserDto.class));
+        userRepository.save(user);
         return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully!"));
     }
+
+//    @DeleteMapping("/upload")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
+//    public ResponseEntity<ApiResponse> uploadImage(@RequestPart("file") MultipartFile file) {
+//        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+//        user.setDeletedAt(LocalDateTime.now());
+//        userRepository.save(user);
+//        return ResponseEntity.ok(new ApiResponse(true, "User deleted successfully!"));
+//    }
 
 
 

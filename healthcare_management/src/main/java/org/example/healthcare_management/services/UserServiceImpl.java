@@ -1,9 +1,12 @@
 package org.example.healthcare_management.services;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.healthcare_management.controllers.dto.UserDto;
+import org.example.healthcare_management.controllers.dto.user.UpdateDto;
+import org.example.healthcare_management.controllers.dto.user.UserDto;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.EnumRole;
@@ -15,10 +18,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -46,13 +51,24 @@ public class UserServiceImpl implements UserService {
         return userPage.map(user -> modelMapper.map(user, UserDto.class));
     }
 
-    @Override
-    public UserDto updateProfile(UserDto userDto, String username) {
-        return null;
-    }
+//    @Transactional
+//    @Override
+//    public User updateProfile(User user, Long userId) {
+//        try {
+//            User oldUser = userRepository.findById(userId)
+//                    .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+//            user.setId(userId);
+//            user.setRoles(oldUser.getRoles());
+//            return userRepository.save(user);
+//        }catch (Exception e) {
+//            log.error("Error: ", e);
+//        }
+//        return null;
+//    }
 
+    @Transactional
     @Override
-    public UserDto addRoleToUser(String username, String roleName) {
+    public void addRoleToUser(String username, String roleName) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         Role role = roleRepository.findByName(roleName).
@@ -61,7 +77,7 @@ public class UserServiceImpl implements UserService {
                         HttpStatus.NOT_FOUND));
         user.getRoles().add(role);
         User newUser = userRepository.save(user);
-        return modelMapper.map(newUser, UserDto.class);
+        modelMapper.map(newUser, UserDto.class);
     }
 
     @Override
@@ -74,44 +90,33 @@ public class UserServiceImpl implements UserService {
         });
     }
 
-
     @Override
-    public User create(User entity) {
-        Role role = roleRepository.findByName(EnumRole.PATIENT.getRoleName())
-                .orElseThrow(() -> new BusinessException("Role not found",
-                        "No role found with name: " + EnumRole.PATIENT.getRoleName(),
-                        HttpStatus.NOT_FOUND));
-        // Set.of(role) tạo ra một Set chỉ chứa một phần tử, đó là đối tượng role.
-        entity.setRoles(Set.of(role));
-        return userRepository.save(entity);
+    public User validateOwnership(Long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + currentUsername));
+
+        if (isPatientOnly(currentUser) && !currentUser.getId().equals(userId)) {
+            throw new AccessDeniedException("You can only action your own profile");
+        }
+
+        return currentUser;
     }
 
     @Override
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+    public void updateProfile(Long userId, UpdateDto userDto) {
+        User oldUser = validateOwnership(userId);
+        modelMapper.map(userDto, oldUser);
+        userRepository.save(oldUser);
     }
 
-    @Override
-    public UserDto update(Long id, UserDto dtoEntity) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        modelMapper.map(dtoEntity, user);
-        return modelMapper.map(userRepository.save(user), UserDto.class);
+    private boolean isPatientOnly(User user) {
+        Role patientRole = roleRepository.findByName(EnumRole.PATIENT.getRoleName())
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+        return user.getRoles().contains(patientRole) && user.getRoles().size() == 1;
     }
 
-    @Override
-    public void delete(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        user.setDeletedAt(LocalDateTime.now());
-        userRepository.save(user);
-    }
 
-    @Override
-    public boolean exists(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        return user.getDeletedAt() == null;
-    }
 }

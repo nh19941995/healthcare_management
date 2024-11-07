@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/models/user.dart';
-import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
+import 'package:healthcare_management_app/screens/comons/Edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import '../comons/customBottomNavBar.dart';
 import 'List_Clinic__Screen.dart';
-import 'list_doctor.dart';
+import 'Doctor_selection_screen.dart';
 
 class Booking extends StatelessWidget {
-
   const Booking({super.key});
 
   // Điều hướng tới màn hình tương ứng
@@ -27,7 +26,7 @@ class Booking extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Go back to the previous screen
+            Navigator.pop(context); // Quay lại màn hình trước đó
           },
         ),
       ),
@@ -35,13 +34,14 @@ class Booking extends StatelessWidget {
         padding: const EdgeInsets.all(AppTheme.defaultPadding),
         child: Column(
           children: [
-            // Hiển thị tên người dùng và avatar
+            // Hiển thị tên người dùng và avatar (có thể thêm ở đây)
             SizedBox(height: AppTheme.largeSpacing),
             Expanded(
               child: Column(
                 children: [
                   // Mục Thông tin cá nhân
-                  Expanded(
+                  SizedBox(
+                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -56,25 +56,28 @@ class Booking extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0), // Minimum padding
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Align(
-                                alignment: Alignment.center, // Center the image
+                                alignment: Alignment.center,
                                 child: Image.asset(
-                                  'lib/assets/Stomach.png',
-                                  fit: BoxFit.cover,
+                                  'lib/assets/doctor.png',
+                                  width: 100, // Chỉnh kích thước width theo nhu cầu
+                                  height: 100, // Chỉnh kích thước height theo nhu cầu
+                                  fit: BoxFit.cover, // Hoặc BoxFit.contain tùy vào cách bạn muốn hiển thị
                                 ),
                               ),
                             ),
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, DoctorSelectionScreen()); // Navigate to the profile information screen
+                          _navigateToScreen(context, DoctorSelectionScreen());
                         },
                       ),
                     ),
                   ),
-                  // Mục Đặt co so y te
-                  Expanded(
+                  // Mục Đặt cơ sở y tế
+                  SizedBox(
+                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -89,11 +92,13 @@ class Booking extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0), // Minimum padding
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Align(
-                                alignment: Alignment.center, // Center the image
+                                alignment: Alignment.center,
                                 child: Image.asset(
-                                  'lib/assets/Bag.png',
+                                  'lib/assets/hospital-facility.png',
+                                  width: 100, // Chỉnh kích thước width theo nhu cầu
+                                  height: 100, // Chỉnh kích thước height theo nhu cầu
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -101,12 +106,16 @@ class Booking extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, ListClinic()); // Navigate to the profile information screen
+                          _navigateToScreen(context, ListClinic());
                         },
                       ),
                     ),
                   ),
-                  Expanded(
+                  // Uncomment the following section to add Medical Services option
+                  // Mục Dịch vụ y tế
+                  /*
+                  SizedBox(
+                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -121,9 +130,9 @@ class Booking extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0), // Minimum padding
+                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
                               child: Align(
-                                alignment: Alignment.center, // Center the image
+                                alignment: Alignment.center,
                                 child: Image.asset(
                                   'lib/assets/Lifesavers Electrocardiogram.png',
                                   fit: BoxFit.cover,
@@ -133,23 +142,25 @@ class Booking extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                         // _navigateToScreen(context, EditProfileScreen()); // Navigate to the profile information screen
+                          // _navigateToScreen(context, EditProfileScreen());
                         },
                       ),
                     ),
                   ),
+                  */
                 ],
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 0,
-        onTap: (index) {
-          // Handle bottom navigation
-        },
-      ),
+      // Uncomment the following section to add bottom navigation bar
+      // bottomNavigationBar: CustomBottomNavBar(
+      //   currentIndex: 0,
+      //   onTap: (index) {
+      //     // Handle bottom navigation
+      //   },
+      // ),
     );
   }
 }

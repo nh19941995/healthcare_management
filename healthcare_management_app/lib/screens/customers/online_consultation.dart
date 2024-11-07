@@ -118,9 +118,9 @@ List<Question> questions = [
 ];
 
 class OnlineConsultation extends StatelessWidget {
-  final User user;
 
-  const OnlineConsultation({super.key, required this.user});
+
+  const OnlineConsultation({super.key});
 
   @override
   Widget build(BuildContext context) {

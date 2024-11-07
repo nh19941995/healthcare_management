@@ -1,10 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
-
 import '../../enum.dart';
 import 'customBottomNavBar.dart';
 
@@ -21,26 +22,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _fullNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _addressController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  String? _imagePath;
+  File? _image;
 
+  // Error variables
   String? _fullNameError;
   String? _phoneError;
   String? _emailError;
-  String? _passwordError;
   String? _addressError;
   Gender? _selectedGender;
+  String? _descriptionError;
+  int? id;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the text fields with the current user data
+    id = widget.userDTO?.id;
     _fullNameController.text = widget.userDTO?.username ?? '';
     _phoneController.text = widget.userDTO?.phone ?? '';
     _emailController.text = widget.userDTO?.email ?? '';
-    _passwordController.text = widget.userDTO?.password ?? '';
     _addressController.text = widget.userDTO?.address ?? '';
     _selectedGender = widget.userDTO?.gender == 'MALE' ? Gender.MALE : Gender.FEMALE;
+    _descriptionController.text = widget.userDTO?.description ?? '';
+    _imagePath = widget.userDTO?.avatar ?? '';
   }
 
   @override
@@ -48,29 +55,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _fullNameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
-    _passwordController.dispose();
     _addressController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
   void _update() async {
-    // Clear previous errors
     setState(() {
       _fullNameError = null;
       _phoneError = null;
       _emailError = null;
-      _passwordError = null;
       _addressError = null;
     });
 
-    // Get data from controllers
     String fullName = _fullNameController.text;
     String phone = _phoneController.text;
     String email = _emailController.text;
-    String password = _passwordController.text;
     String address = _addressController.text;
 
-    // Validate fields
     bool hasError = false;
 
     if (fullName.length < 5 || fullName.length > 50) {
@@ -94,7 +96,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       hasError = true;
     }
 
-
     if (address.length < 1 || address.length > 300) {
       setState(() {
         _addressError = 'Address must be between 10 and 300 characters';
@@ -102,22 +103,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       hasError = true;
     }
 
-    // Stop if there are errors
     if (hasError) return;
 
-    // If no errors, update user
     String gender = _selectedGender == Gender.MALE ? 'MALE' : 'FEMALE';
 
     UserDTO updatedUser = UserDTO(
+      id: id,
       address: address,
-      avatar: widget.userDTO?.avatar,
+      avatar: _imagePath,
       createdAt: widget.userDTO!.createdAt,
-      description: widget.userDTO!.description,
+      description: _descriptionController.text,
       email: email,
       gender: gender,
       lockReason: widget.userDTO?.lockReason,
       fullName: fullName,
-      password: password,
       phone: phone,
       username: fullName,
     );
@@ -127,8 +126,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await Provider.of<UserProvider>(context, listen: false).updateUser(updatedUser);
       _showUpdateSuccessDialog();
     } catch (e) {
-      // Handle API error
       print("Error updating user: $e");
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
     }
   }
 
@@ -143,7 +151,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.pop(context); // Close EditProfileScreen
+                Navigator.pop(context);
               },
               child: const Text('OK'),
             ),
@@ -161,7 +169,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Go back to the previous screen
+            Navigator.pop(context);
           },
         ),
       ),
@@ -170,19 +178,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Avatar and Change Picture Button
               Center(
                 child: Column(
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage('lib/assets/Avatar.png'), // Use user's avatar
+                      backgroundImage: _image != null
+                          ? FileImage(_image!)
+                          : AssetImage('lib/assets/Avatar.png') as ImageProvider,
                     ),
                     const SizedBox(height: AppTheme.mediumSpacing),
                     TextButton(
-                      onPressed: () {
-                        // Action for changing picture
-                      },
+                      onPressed: _pickImage,
                       child: Text(
                         'Change Picture',
                         style: AppTheme.theme.textTheme.headlineSmall,
@@ -192,8 +199,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: AppTheme.largeSpacing),
-
-              // Form for editing user information
               TextFormField(
                 controller: _fullNameController,
                 decoration: InputDecoration(
@@ -221,18 +226,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: AppTheme.smallSpacing),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  errorText: _passwordError,
-                  border: const OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: AppTheme.smallSpacing),
-
-              // Gender Selection
               Row(
                 children: [
                   const Text("Gender"),
@@ -268,7 +261,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ],
               ),
               const SizedBox(height: AppTheme.smallSpacing),
-
               TextFormField(
                 controller: _addressController,
                 decoration: InputDecoration(
@@ -277,9 +269,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: const OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: AppTheme.smallSpacing),
+              TextFormField(
+                controller: _descriptionController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  errorText: _descriptionError,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
               const SizedBox(height: AppTheme.largeSpacing),
-
-              // Update Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -292,12 +292,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 0,
-        onTap: (index) {
-          // Handle bottom navigation
-        },
-      ),
+      // bottomNavigationBar: CustomBottomNavBar(
+      //   currentIndex: 0,
+      //   onTap: (index) {},
+      // ),
     );
   }
 }

@@ -28,7 +28,7 @@ class UserDTO {
     this.avatar,
     required this.gender,
     this.description,
-    this.roles,
+     this.roles,
     this.doctor,
     required this.createdAt,
     this.status,
@@ -38,6 +38,7 @@ class UserDTO {
 
   factory UserDTO.fromJson(Map<String, dynamic> json) {
     return UserDTO(
+      id: json['id'] as int,
       fullName: json['fullName'] as String,
       username: json['username'] as String,
       email: json['email'] as String?,
@@ -46,11 +47,11 @@ class UserDTO {
       avatar: json['avatar'] as String?,
       gender: json['gender'] as String,
       description: json['description'] as String?,
-      roles: json['roles'] != null
-          ? (json['roles'] as List<dynamic>)
+      roles:
+           (json['roles'] as List<dynamic>)
           .map((role) => RoleDTO.fromJson(role))
           .toList()
-          : null,
+          ,
       doctor: json['doctor'] != null ? DoctorDTO.fromJson(json['doctor']) : null,
       createdAt: DateTime.parse(json['createdAt']),
       status: json['status'] as String,

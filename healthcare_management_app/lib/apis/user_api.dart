@@ -7,6 +7,7 @@ import '../models/role.dart';
 import '../screens/comons/TokenManager.dart';
 
 const baseURL = "http://localhost:8080/users";
+const baseUpdateUser = "http://localhost:8080/api/users";
 
 class UserApi {
   late String username;
@@ -55,21 +56,28 @@ class UserApi {
   }
 
   // Phương thức để cập nhật thông tin người dùng
+  // Phương thức để cập nhật thông tin người dùng
   Future<User> updateUser(UserDTO user) async {
+    final String? token = TokenManager().getToken();
+
     final response = await http.put(
-      Uri.parse('$baseURL/${user.id}'),
+      Uri.parse(baseUpdateUser), // Địa chỉ API để cập nhật người dùng
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Thêm token vào header
+        'Content-Type': 'application/json', // Định dạng nội dung
       },
-      body: jsonEncode(user.toJson()),
+      body: jsonEncode(user.toJson()), // Chuyển đổi UserDTO thành JSON
     );
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
+      print('Failed to update user. Status code: ${response.statusCode}');
       throw Exception('Failed to update user');
     }
   }
+
+
 
   // // Phương thức để khóa người dùng
   // Future<void> lockUser(int id) async {
@@ -114,5 +122,6 @@ class UserApi {
       throw Exception('Failed to load user data');
     }
   }
+  //
 
 }

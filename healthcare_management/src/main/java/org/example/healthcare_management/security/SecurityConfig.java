@@ -19,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Configuration
 @EnableWebSecurity
@@ -62,6 +61,12 @@ public class SecurityConfig {
                                 "/api/public/**"
                         ).permitAll()
                         // Đặt quy tắc phân quyền cho các endpoint của Spring Data REST
+
+                        // Consultation endpoint
+                        .requestMatchers(HttpMethod.GET, "/api/consultations/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/consultations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/consultations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/consultations/**").hasRole("ADMIN")
 
                         // User endpoint
                         .requestMatchers(HttpMethod.GET, "/api/timeslots/**").permitAll()

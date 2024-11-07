@@ -124,7 +124,7 @@ class _SignUpScreenState extends State<SignUp> {
     //   updatedAt: DateTime.now(),
     //   roleId: 1,
     // );
-    Register register = Register(username: fullName, password: password, gender: gender, email: email, phone: phone, address: address, fullName: fullName, description: "hello rtrtrwte rrtwtwer");
+    Register register = Register(username: fullName, password: password, gender: gender, email: email, phone: phone, address: address, fullName: fullName, description: "hello rtrtrwte rrtwtwer", avatar: 'url-to-avatar-image.jpg');
 
     try {
 

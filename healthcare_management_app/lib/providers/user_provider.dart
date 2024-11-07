@@ -91,6 +91,7 @@ class UserProvider with ChangeNotifier {
   Future<void> fetchUser() async {
     UserDTO fetchedUser = await UserApi().getUserByUserName();
     _user = fetchedUser;
+    print("id: ${fetchedUser.id}");
     notifyListeners();
   }
 
@@ -101,4 +102,8 @@ class UserProvider with ChangeNotifier {
   //   _list.clear();
   //   notifyListeners();
   // }
+  void logout() {
+    _user = null; // Xóa thông tin người dùng
+    notifyListeners(); // Thông báo cho UI rằng thông tin người dùng đã thay đổi
+  }
 }

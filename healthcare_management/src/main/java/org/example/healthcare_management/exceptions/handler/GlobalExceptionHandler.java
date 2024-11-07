@@ -1,5 +1,6 @@
 package org.example.healthcare_management.exceptions.handler;
 
+import jakarta.validation.ConstraintViolationException;
 import org.example.healthcare_management.exceptions.*;
 import org.example.healthcare_management.exceptions.payload.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 

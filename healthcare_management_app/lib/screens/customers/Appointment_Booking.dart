@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/apis/user_api.dart';
 import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
+import 'package:healthcare_management_app/models/Time_slot.dart';
+import 'package:healthcare_management_app/providers/Clinic_Provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +30,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   TextEditingController _descriptionController = TextEditingController();
   List<DateTime> daysInMonth = [];
 
+
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +44,9 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       });
     });
     daysInMonth = _generateDaysInMonth(selectedDate);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ClinicProvider>().getAllTimeSlot();
+    });
   }
 
 
@@ -108,7 +115,9 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
+    final timeslots = context.watch<ClinicProvider>().listtime;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Booking information'),
@@ -119,166 +128,151 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Hiển thị tháng hiện tại và cho phép cuộn qua các tháng và năm
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_left),
-                    onPressed: () {
-                      setState(() {
-                        if (selectedDate.month == 1) {
-                          selectedDate = DateTime(
-                            selectedDate.year - 1,
-                            12,
-                            selectedDate.day,
-                          );
-                        } else {
-                          selectedDate = DateTime(
-                            selectedDate.year,
-                            selectedDate.month - 1,
-                            selectedDate.day,
-                          );
-                        }
-                        daysInMonth = _generateDaysInMonth(selectedDate);
-                      });
-                    },
-                  ),
-                  Text(
-                    DateFormat('MMMM, yyyy').format(selectedDate),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(AppTheme.defaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_left),
+                      onPressed: () {
+                        setState(() {
+                          if (selectedDate.month == 1) {
+                            selectedDate = DateTime(
+                              selectedDate.year - 1,
+                              12,
+                              selectedDate.day,
+                            );
+                          } else {
+                            selectedDate = DateTime(
+                              selectedDate.year,
+                              selectedDate.month - 1,
+                              selectedDate.day,
+                            );
+                          }
+                          daysInMonth = _generateDaysInMonth(selectedDate);
+                        });
+                      },
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.arrow_right),
-                    onPressed: () {
-                      setState(() {
-                        if (selectedDate.month == 12) {
-                          selectedDate = DateTime(
-                            selectedDate.year + 1,
-                            1,
-                            selectedDate.day,
-                          );
-                        } else {
-                          selectedDate = DateTime(
-                            selectedDate.year,
-                            selectedDate.month + 1,
-                            selectedDate.day,
-                          );
-                        }
-                        daysInMonth = _generateDaysInMonth(selectedDate);
-                      });
-                    },
-                  ),
-                ],
+                    Text(
+                      DateFormat('MMMM, yyyy').format(selectedDate),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.arrow_right),
+                      onPressed: () {
+                        setState(() {
+                          if (selectedDate.month == 12) {
+                            selectedDate = DateTime(
+                              selectedDate.year + 1,
+                              1,
+                              selectedDate.day,
+                            );
+                          } else {
+                            selectedDate = DateTime(
+                              selectedDate.year,
+                              selectedDate.month + 1,
+                              selectedDate.day,
+                            );
+                          }
+                          daysInMonth = _generateDaysInMonth(selectedDate);
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: AppTheme.defaultMargin),
-            // Chọn ngày từ các ngày trong tháng bằng thanh cuộn ngang
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: daysInMonth.map((date) {
-                  return buildDateButton(
-                    DateFormat('d').format(date),
-                    DateFormat('E').format(date).toUpperCase(),
-                    date,
-                    isSelected: selectedDate.day == date.day,
-                  );
+              SizedBox(height: AppTheme.defaultMargin),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: daysInMonth.map((date) {
+                    return buildDateButton(
+                      DateFormat('d').format(date),
+                      DateFormat('E').format(date).toUpperCase(),
+                      date,
+                      isSelected: selectedDate.day == date.day,
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: AppTheme.defaultMargin),
+              Text(
+                'Thời gian có sẵn',
+                style: AppTheme.theme.textTheme.displayMedium,
+              ),
+              SizedBox(height: AppTheme.mediumSpacing),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: timeslots.map((timeslot) {
+                  final startAt = DateFormat('hh:mm a').format(DateFormat("HH:mm:ss").parse(timeslot.startAt));
+                  return buildTimeButton(startAt);
                 }).toList(),
               ),
-            ),
-            SizedBox(height: AppTheme.defaultMargin),
-            // Thời gian có sẵn
-            Text(
-              'Thời gian có sẵn',
-              style: AppTheme.theme.textTheme.displayMedium,
-            ),
-            SizedBox(height: AppTheme.mediumSpacing),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                buildTimeButton('09:00 AM'),
-                buildTimeButton('10:30 AM'),
-              ],
-            ),
-            SizedBox(height: AppTheme.smallSpacing),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                buildTimeButton('01:30 PM'),
-                buildTimeButton('03:30 PM'),
-              ],
-            ),
-            SizedBox(height: 16),
-// Hiển thị thông tin bác sĩ
-            Text(
-              'Thông tin bác sĩ:',
-              style: AppTheme.theme.textTheme.displayMedium,
-            ),
-            SizedBox(height: AppTheme.mediumSpacing),
-            Text('Tên bác sĩ: ${widget.doctor.username}', style: TextStyle(fontSize: 16)),
-            Text('Achievements: ${widget.doctor.achievements}', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 16),
-// Thông tin bệnh nhân
-            Text(
-              'Thông tin bệnh nhân:',
-              style: AppTheme.theme.textTheme.displayMedium,
-            ),
-            SizedBox(height: AppTheme.mediumSpacing),
-            user == null // Kiểm tra nếu user chưa được tải
-                ? Center(child: CircularProgressIndicator()) // Hiển thị spinner
-                : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Họ tên: ${user!.fullName}', style: TextStyle(fontSize: 16)), // Sử dụng trường đúng từ UserDTO
-                Text('Số điện thoại: ${user!.phone}', style: TextStyle(fontSize: 16)), // Thêm trường Số điện thoại
-              ],
-            ),
-
-
-
-            SizedBox(height: 16),
-            // Mô tả bệnh với TextArea
-            Text(
-              'Mô tả triệu chứng:',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 8),
-            TextField(
-              controller: _descriptionController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Nhập mô tả triệu chứng...',
+              SizedBox(height: 16),
+              Text(
+                'Thông tin bác sĩ:',
+                style: AppTheme.theme.textTheme.displayMedium,
               ),
-            ),
-            // Nút đặt lịch khám
-            SizedBox(height: AppTheme.largeSpacing),
-            SizedBox(
-              width: double.infinity, // Chiếm toàn bộ chiều rộng
-              child: ElevatedButton(
-                style: AppTheme.elevatedButtonStyle, // Sử dụng style từ AppTheme
-                onPressed: () {
-                  // Hiện popup thông tin hóa đơn
-                  _showConfirmationDialog(context);
-                },
-                child: Text('Đặt lịch khám'),
+              SizedBox(height: AppTheme.mediumSpacing),
+              Text('Tên bác sĩ: ${widget.doctor.username}', style: TextStyle(fontSize: 16)),
+              Text('Achievements: ${widget.doctor.achievements}', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 16),
+              Text(
+                'Thông tin bệnh nhân:',
+                style: AppTheme.theme.textTheme.displayMedium,
               ),
-            ),
-          ],
+              SizedBox(height: AppTheme.mediumSpacing),
+              user == null
+                  ? Center(child: CircularProgressIndicator())
+                  : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Họ tên: ${user!.fullName}', style: TextStyle(fontSize: 16)),
+                  Text('Số điện thoại: ${user!.phone}', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Mô tả triệu chứng:',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                controller: _descriptionController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Nhập mô tả triệu chứng...',
+                ),
+              ),
+              SizedBox(height: AppTheme.largeSpacing),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: AppTheme.elevatedButtonStyle,
+                  onPressed: () {
+                    _showConfirmationDialog(context);
+                  },
+                  child: Text('Đặt lịch khám'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
 
   Widget buildDateButton(String day, String weekDay, DateTime date,
       {bool isSelected = false}) {

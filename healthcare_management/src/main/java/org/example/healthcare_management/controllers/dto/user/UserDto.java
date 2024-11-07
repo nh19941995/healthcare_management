@@ -1,15 +1,16 @@
-package org.example.healthcare_management.controllers.dto;
+package org.example.healthcare_management.controllers.dto.user;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.healthcare_management.entities.Doctor;
+import org.example.healthcare_management.controllers.dto.DoctorDto;
 import org.example.healthcare_management.entities.Patient;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.enums.Gender;
 import org.example.healthcare_management.enums.Status;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;

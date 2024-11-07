@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.entities.Patient;
-import org.example.healthcare_management.entities.PatientStatus;
 import org.example.healthcare_management.entities.Role;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.enums.EnumRole;

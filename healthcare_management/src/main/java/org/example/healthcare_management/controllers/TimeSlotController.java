@@ -1,7 +1,6 @@
 package org.example.healthcare_management.controllers;
 
 import lombok.AllArgsConstructor;
-import org.example.healthcare_management.controllers.dto.UserDto;
 import org.example.healthcare_management.entities.TimeSlot;
 import org.example.healthcare_management.repositories.TimeSlotRepo;
 import org.springframework.http.ResponseEntity;

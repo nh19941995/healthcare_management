@@ -3,16 +3,18 @@ package org.example.healthcare_management.controllers;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.healthcare_management.controllers.dto.ApiResponse;
-import org.example.healthcare_management.controllers.dto.RegisterDto;
-import org.example.healthcare_management.controllers.dto.UserDto;
+import org.example.healthcare_management.controllers.dto.LoginRequest;
+import org.example.healthcare_management.controllers.dto.user.RegisterDto;
 import org.example.healthcare_management.entities.User;
 import org.example.healthcare_management.security.AuthService;
 import org.example.healthcare_management.security.JwtResponse;
-import org.example.healthcare_management.controllers.dto.LoginRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController

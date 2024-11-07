@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
-import 'package:healthcare_management_app/screens/comons/edit_profile.dart';
+import 'package:healthcare_management_app/screens/comons/Edit_profile.dart';
+import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
-import 'package:healthcare_management_app/screens/customers/booking.dart';
+import 'package:healthcare_management_app/screens/customers/Make_an_appointment.dart';
 import 'package:healthcare_management_app/screens/customers/health_index.dart';
 import 'package:healthcare_management_app/screens/customers/online_consultation.dart';
 import 'package:provider/provider.dart';
@@ -13,11 +14,12 @@ import '../comons/TokenManager.dart';
 import '../comons/customBottomNavBar.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-class HomeCustomer extends StatefulWidget {
-  final User user;
-  final token;
+import '../comons/show_vertical_menu.dart';
 
-  const HomeCustomer({super.key, required this.user, required this.token});
+class HomeCustomer extends StatefulWidget {
+
+
+  const HomeCustomer({super.key});
 
   @override
   _HomeCustomerState createState() => _HomeCustomerState();
@@ -26,11 +28,10 @@ class HomeCustomer extends StatefulWidget {
 class _HomeCustomerState extends State<HomeCustomer> {
   late UserProvider userProvider;
   UserDTO? userDto;
-  late String username;
+
   @override
   void initState() {
     super.initState();
-    username = TokenManager().getUserSub() ?? "Người dùng";
     userProvider = Provider.of<UserProvider>(context, listen: false);
 
     // Bắt đầu fetch user và cập nhật trạng thái
@@ -41,7 +42,6 @@ class _HomeCustomerState extends State<HomeCustomer> {
     });
 
   }
-
 
   // Điều hướng tới màn hình tương ứng
   void _navigateToScreen(BuildContext context, Widget screen) {
@@ -63,9 +63,12 @@ class _HomeCustomerState extends State<HomeCustomer> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Xin chào ${userDto?.fullName}',
-                  style: AppTheme.theme.textTheme.displayLarge,
+                Flexible(
+                  child: Text(
+                    'Welcome ${userDto?.fullName}',
+                    style: AppTheme.theme.textTheme.displayLarge,
+                    overflow: TextOverflow.ellipsis, // Hiển thị dấu "..." nếu văn bản quá dài
+                  ),
                 ),
                 CircleAvatar(
                   backgroundImage: AssetImage('lib/assets/Avatar.png'), // Đường dẫn đến avatar
@@ -78,7 +81,8 @@ class _HomeCustomerState extends State<HomeCustomer> {
               child: Column(
                 children: [
                   // Mục Thông tin cá nhân
-                  Expanded(
+                  SizedBox(
+                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -87,16 +91,21 @@ class _HomeCustomerState extends State<HomeCustomer> {
                               child: Padding(
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
-                                  'Thông tin cá nhân',
+                                  'Information',
                                   style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(4.0), // Padding tối thiểu
-                              child: Image.asset(
-                                'lib/assets/Stomach.png',
-                                fit: BoxFit.cover,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Image.asset(
+                                  'lib/assets/office-man.png',
+                                  width: 100, // Chỉnh kích thước width theo nhu cầu
+                                  height: 100, // Chỉnh kích thước height theo nhu cầu
+                                  fit: BoxFit.cover, // Hoặc BoxFit.contain tùy vào cách bạn muốn hiển thị
+                                ),
                               ),
                             ),
                           ],
@@ -109,7 +118,8 @@ class _HomeCustomerState extends State<HomeCustomer> {
                   ),
 
                   // Mục Đặt lịch khám
-                  Expanded(
+                  SizedBox(
+                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -125,9 +135,12 @@ class _HomeCustomerState extends State<HomeCustomer> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(4.0), // Padding tối thiểu
-                              child: Image.asset(
-                                'lib/assets/Bag.png',
-                                fit: BoxFit.cover,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Image.asset(
+                                  'lib/assets/Bag.png',
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ],
@@ -139,39 +152,9 @@ class _HomeCustomerState extends State<HomeCustomer> {
                     ),
                   ),
 
-                  // Mục Chỉ số sức khỏe
-                  Expanded(
-                    child: Card(
-                      child: ListTile(
-                        title: Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(AppTheme.Padding8),
-                                child: Text(
-                                  'Chỉ số sức khỏe',
-                                  style: AppTheme.theme.textTheme.displayMedium,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
-                              child: Image.asset(
-                                'lib/assets/Lifesavers Electrocardiogram.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          _navigateToScreen(context, HealthIndex(user: widget.user)); // Chuyển đến màn hình chỉ số sức khỏe
-                        },
-                      ),
-                    ),
-                  ),
-
                   // Mục Lịch sử khám
-                  Expanded(
+                  SizedBox(
+                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -187,9 +170,12 @@ class _HomeCustomerState extends State<HomeCustomer> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(4.0), // Padding tối thiểu
-                              child: Image.asset(
-                                'lib/assets/Lifesavers Stethoscope.png',
-                                fit: BoxFit.cover,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Image.asset(
+                                  'lib/assets/Lifesavers Stethoscope.png',
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ],
@@ -202,7 +188,8 @@ class _HomeCustomerState extends State<HomeCustomer> {
                   ),
 
                   // Mục Tư vấn online
-                  Expanded(
+                  SizedBox(
+                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -211,22 +198,25 @@ class _HomeCustomerState extends State<HomeCustomer> {
                               child: Padding(
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
-                                  'Tư vấn online',
+                                  'Q&A',
                                   style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(4.0), // Padding tối thiểu
-                              child: Image.asset(
-                                'lib/assets/Lifesavers Bust.png',
-                                fit: BoxFit.cover,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Image.asset(
+                                  'lib/assets/Lifesavers Bust.png',
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, OnlineConsultation(user: widget.user)); // Chuyển đến màn hình tư vấn online
+                          _navigateToScreen(context, OnlineConsultation()); // Chuyển đến màn hình tư vấn online
                         },
                       ),
                     ),
@@ -234,13 +224,17 @@ class _HomeCustomerState extends State<HomeCustomer> {
                 ],
               ),
             ),
+
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar:CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {
-          // Handle bottom navigation
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
         },
       ),
     );

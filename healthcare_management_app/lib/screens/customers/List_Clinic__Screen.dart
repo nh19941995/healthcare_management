@@ -20,12 +20,15 @@ class _ListClinic extends State<ListClinic> {
       final clinicProvider = context.read<ClinicProvider>();
       clinicProvider.getAllClinic().then((_) {
         setState(() {
+          print(clinicProvider.list);
           filteredFacilities = clinicProvider.list; // Lấy danh sách sau khi đã cập nhật
         });
       });
     });
     _searchController.addListener(_filterFacilities);
   }
+
+
 
   @override
   void dispose() {
@@ -103,8 +106,9 @@ class _ListClinic extends State<ListClinic> {
                         children: [
                           Image.asset(
                             //facility.image!,
-                            'lib/assets/Lifesavers Heart.png',
-                            height: 80,
+                            'lib/assets/hospital-facility.png',
+                            width: 80, // Chỉnh kích thước width theo nhu cầu
+                            height: 80, // Chỉnh kích thước height theo nhu cầu
                             fit: BoxFit.cover,
                           ),
                           const SizedBox(height: 8.0),

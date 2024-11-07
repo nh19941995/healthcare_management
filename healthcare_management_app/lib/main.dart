@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/providers/Clinic_Provider.dart';
-import 'package:healthcare_management_app/screens/admins/Medical_Examination_Screen.dart';
+
 import 'package:healthcare_management_app/screens/comons/theme.dart';
+import 'package:healthcare_management_app/screens/customers/Appointment_Booking.dart';
 import 'package:provider/provider.dart';
 import 'package:healthcare_management_app/screens/comons/splash.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
@@ -48,8 +49,8 @@ class MyApp extends StatelessWidget {
       title: 'Healthcare Management',
       theme: AppTheme.theme,
       debugShowCheckedModeBanner: false,
-      //home: SplashScreen(),
-      home: MedicalExaminationScreen(),
+      home: SplashScreen(),
+      //home: MedicalExaminationScreen(),
     );
   }
 }

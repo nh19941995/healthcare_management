@@ -1,4 +1,4 @@
-package org.example.healthcare_management.controllers.dto;
+package org.example.healthcare_management.controllers.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

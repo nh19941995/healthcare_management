@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:healthcare_management_app/models/Clinic.dart';
+import 'package:healthcare_management_app/models/Time_slot.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 const clinicsUrl = "http://localhost:8080/api/clinics";
+const timeslotsUrl = "http://localhost:8080/api/timeslots";
+
 
 class ClinicApi {
   // Phương thức để lấy username từ SharedPreferences
@@ -46,6 +49,31 @@ class ClinicApi {
     } catch (e) {
       throw Exception('Error fetching clinics: $e');
     }
+  }
+
+  Future<List<Timeslots>> getAllTimeSlots() async {
+    // try {
+    //   final response = await http.get(Uri.parse(timeslotsUrl));
+    //
+    //   if (response.statusCode == 200) {
+    //     // Kiểm tra mã hóa
+    //     final contentType = response.headers['content-type'];
+    //     if (contentType != null) {
+    //       // Dữ liệu đã được mã hóa đúng
+    //       final decodeResponse = jsonDecode(response.body) as List;
+    //       return decodeResponse.map((timeJson) => Timeslots.fromJson(timeJson)).toList();
+    //   } else {
+    //     throw Exception('Failed to load timeslot: ${response.statusCode}');
+    //   }
+    // } catch (e) {
+    //   throw Exception('Error fetching timeslot: $e');
+    // }
+    final response = await http.get(Uri.parse(timeslotsUrl));
+    // print(response.statusCode);
+    final decodeResponse = jsonDecode(response.body) as List;
+    return decodeResponse
+        .map((timeslots) => Timeslots.fromJson(timeslots))
+        .toList();
   }
 
   // Phương thức để lấy clinics của bác sĩ

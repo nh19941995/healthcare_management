@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import '../../enum.dart';
-import 'customBottomNavBar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserDTO? userDTO;
@@ -47,7 +45,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _addressController.text = widget.userDTO?.address ?? '';
     _selectedGender = widget.userDTO?.gender == 'MALE' ? Gender.MALE : Gender.FEMALE;
     _descriptionController.text = widget.userDTO?.description ?? '';
-    _imagePath = widget.userDTO?.avatar ?? '';
+    _imagePath = widget.userDTO?.avatar;
   }
 
   @override
@@ -82,7 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       hasError = true;
     }
 
-    if (phone.length < 1 || phone.length > 12 || !RegExp(r'^[0-9]+$').hasMatch(phone)) {
+    if (phone.length < 9 || phone.length > 12 || !RegExp(r'^[0-9]+$').hasMatch(phone)) {
       setState(() {
         _phoneError = 'Phone number must be numeric and between 9 to 12 characters';
       });
@@ -96,7 +94,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       hasError = true;
     }
 
-    if (address.length < 1 || address.length > 300) {
+    if (address.length < 10 || address.length > 300) {
       setState(() {
         _addressError = 'Address must be between 10 and 300 characters';
       });
@@ -111,18 +109,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       id: id,
       address: address,
       avatar: _imagePath,
-      createdAt: widget.userDTO!.createdAt,
       description: _descriptionController.text,
       email: email,
       gender: gender,
-      lockReason: widget.userDTO?.lockReason,
       fullName: fullName,
       phone: phone,
       username: fullName,
+      roles: [],
     );
 
     try {
-      print(updatedUser.toString());
       await Provider.of<UserProvider>(context, listen: false).updateUser(updatedUser);
       _showUpdateSuccessDialog();
     } catch (e) {
@@ -136,6 +132,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        _imagePath = pickedFile.path;
       });
     }
   }
@@ -185,7 +182,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       radius: 50,
                       backgroundImage: _image != null
                           ? FileImage(_image!)
-                          : AssetImage('lib/assets/Avatar.png') as ImageProvider,
+                          : (_imagePath != null && _imagePath!.isNotEmpty
+                          ? NetworkImage(_imagePath!)
+                          : AssetImage('lib/assets/Avatar.png')) as ImageProvider,
                     ),
                     const SizedBox(height: AppTheme.mediumSpacing),
                     TextButton(
@@ -292,10 +291,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
-      // bottomNavigationBar: CustomBottomNavBar(
-      //   currentIndex: 0,
-      //   onTap: (index) {},
-      // ),
     );
   }
 }

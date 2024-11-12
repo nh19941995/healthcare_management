@@ -2,73 +2,92 @@ import 'role_dto.dart';
 import 'doctor_dto.dart';
 
 class UserDTO {
-  final int? id;
-  final String fullName;
-  final String username;
-  final String? email;
-  final String? address;
-  final String? phone;
-  final String? avatar;
-  final String gender;
-  final String? description;
-  final List<RoleDTO>? roles;
-  final DoctorDTO? doctor;
-  final DateTime createdAt;
-  final String? status;
-  final String? lockReason;
-  final String? password;
-
   UserDTO({
-   this.id,
+     this.id,
     required this.fullName,
     required this.username,
     required this.email,
     required this.address,
     required this.phone,
-    this.avatar,
+    required this.avatar,
     required this.gender,
-    this.description,
-     this.roles,
-    this.doctor,
-    required this.createdAt,
-    this.status,
-    this.lockReason,
-    this.password
+    required this.description,
+    required this.roles,
   });
 
-  factory UserDTO.fromJson(Map<String, dynamic> json) {
+  final int? id;
+  final String? fullName;
+  final String? username;
+  final String? email;
+  final String? address;
+  final String? phone;
+  final String? avatar;
+  final String? gender;
+  final String? description;
+  late final List<Role> roles;
+
+  factory UserDTO.fromJson(Map<String, dynamic> json){
     return UserDTO(
-      id: json['id'] as int,
-      fullName: json['fullName'] as String,
-      username: json['username'] as String,
-      email: json['email'] as String?,
-      address: json['address'] as String?,
-      phone: json['phone'] as String?,
-      avatar: json['avatar'] as String?,
-      gender: json['gender'] as String,
-      description: json['description'] as String?,
-      roles:
-           (json['roles'] as List<dynamic>)
-          .map((role) => RoleDTO.fromJson(role))
-          .toList()
-          ,
-      doctor: json['doctor'] != null ? DoctorDTO.fromJson(json['doctor']) : null,
-      createdAt: DateTime.parse(json['createdAt']),
-      status: json['status'] as String,
-      lockReason: json['lockReason'] as String?,
+      id: json["id"],
+      fullName: json["fullName"],
+      username: json["username"],
+      email: json["email"],
+      address: json["address"],
+      phone: json["phone"],
+      avatar: json["avatar"],
+      gender: json["gender"],
+      description: json["description"],
+      roles: json["roles"] == null ? [] : List<Role>.from(json["roles"]!.map((x) => Role.fromJson(x))),
     );
   }
+
   Map<String, dynamic> toJson() => {
     "id": id,
-    "address": address,
-    "avatar": avatar,
-    "created_at": createdAt?.toIso8601String(),
-    "description": description,
+    "fullName": fullName,
+    "username": username,
     "email": email,
-    "gender": gender,
-    "lock_reason": lockReason,
-    "password": password,
+    "address": address,
     "phone": phone,
-    "status": status,
+    "avatar": avatar,
+    "gender": gender,
+    "description": description,
+    "roles": roles.map((x) => x?.toJson()).toList(),
   };
+
+  @override
+  String toString(){
+    return "$id, $fullName, $username, $email, $address, $phone, $avatar, $gender, $description, $roles, ";
+  }
 }
+
+class Role {
+  Role({
+     this.id,
+     this.name,
+    this.description,
+  });
+
+  final int? id;
+   final String? name;
+  final String? description;
+
+  factory Role.fromJson(Map<String, dynamic> json){
+    return Role(
+      id: json["id"],
+      name: json["name"],
+      description: json["description"],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "description": description,
+  };
+
+  @override
+  String toString(){
+    return "$id, $name, $description, ";
+  }
+}
+

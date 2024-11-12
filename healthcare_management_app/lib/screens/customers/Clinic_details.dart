@@ -42,7 +42,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-        final List<dynamic> doctorsDto = data['doctorsDto'];
+        final List<dynamic> doctorsDto = data['doctors'];
 
         setState(() {
           filteredDoctors = doctorsDto.map((doctorJson) => DoctorDTO.fromJson(doctorJson)).toList();
@@ -59,7 +59,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
     String query = _searchController.text.toLowerCase();
     setState(() {
       filteredDoctors = filteredDoctors.where((doctor) {
-        return doctor.username!.toLowerCase().contains(query);
+        return doctor.fullName!.toLowerCase().contains(query);
       }).toList();
     });
   }
@@ -140,25 +140,35 @@ class DoctorCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage(doctor.avatar ?? 'lib/assets/default_avatar.png'),
+              backgroundImage: doctor.avatar != null
+                  ? NetworkImage(doctor.avatar!)
+                  : AssetImage('lib/assets/Avatar.png') as ImageProvider,
+              radius: 40, // Kích thước của avatar
             ),
             SizedBox(height: 10),
             Text(
-              doctor.username,
-              style: TextStyle(
+              doctor.fullName ?? '',
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              doctor.medicalTraining ?? '',
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
               ),
             ),
-            Text(doctor.specializationId.toString()), // Hiển thị ID chuyên môn
-            SizedBox(height: 10),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     Icon(Icons.star, color: Colors.amber),
-            //     Text('Chưa có đánh giá'), // Có thể thêm thông tin đánh giá nếu có
-            //   ],
-            // ),
+            Text(
+              doctor.achievements ?? '',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

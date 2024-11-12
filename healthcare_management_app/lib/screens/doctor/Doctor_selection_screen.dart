@@ -1,89 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/Doctor_dto.dart';
+import 'package:healthcare_management_app/providers/Doctor_provider.dart';
+import 'package:provider/provider.dart';
 
-import '../../models/user.dart';
-import 'Doctor_Detail_Screen.dart';
+import '../customers/Doctor_Detail_Screen.dart';
 
 class DoctorSelectionScreen extends StatefulWidget {
-
-
   const DoctorSelectionScreen({super.key});
+
   @override
   _DoctorSelectionScreenState createState() => _DoctorSelectionScreenState();
 }
 
 class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
-  TextEditingController _searchController = TextEditingController();
-  // Tạo fake data cho DoctorDTO
-  List<DoctorDTO> doctors = [
-    DoctorDTO(
-      id: 1,
-      achievements: 'Published research in viral treatments, Nobel award nominee',
-      medicalTraining: 'Harvard Medical School',
-      clinicId: 101,
-      specializationId: 201,
-      status: 'ACTIVE',
-      lockReason: null,
-      username: 'dr_bellamy',
-      avatar: 'lib/assets/doctor1.png',
-    ),
-    DoctorDTO(
-      id: 2,
-      achievements: 'Awarded Oncologist of the Year, published over 20 studies',
-      medicalTraining: 'Johns Hopkins University',
-      clinicId: 102,
-      specializationId: 202,
-      status: 'ACTIVE',
-      lockReason: null,
-      username: 'dr_mensah',
-      avatar: 'lib/assets/doctor2.png',
-    ),
-    DoctorDTO(
-      id: 3,
-      achievements: 'Performed over 1,000 successful surgeries',
-      medicalTraining: 'Stanford University',
-      clinicId: 103,
-      specializationId: 203,
-      status: 'LOCKED',
-      lockReason: 'Under investigation',
-      username: 'dr_klimisch',
-      avatar: 'lib/assets/doctor3.png',
-    ),
-    DoctorDTO(
-      id: 4,
-      achievements: 'Specialized in child development, awarded Pediatrician of the Year',
-      medicalTraining: 'UCLA Medical School',
-      clinicId: 104,
-      specializationId: 204,
-      status: 'ACTIVE',
-      lockReason: null,
-      username: 'dr_martinez',
-      avatar: 'lib/assets/doctor4.png',
-    ),
-    // Thêm các đối tượng giả khác tương tự...
-  ];
-
-
+  final TextEditingController _searchController = TextEditingController();
   List<DoctorDTO> filteredDoctors = [];
 
   @override
   void initState() {
     super.initState();
-    filteredDoctors = doctors;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final doctorProvider = context.read<DoctorProvider>();
+      doctorProvider.getAllDoctor().then((_) {
+        setState(() {
+          filteredDoctors = doctorProvider.list;
+        });
+      });
+    });
     _searchController.addListener(_filterDoctors);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_filterDoctors);
     _searchController.dispose();
     super.dispose();
   }
 
   void _filterDoctors() {
     String query = _searchController.text.toLowerCase();
+    final listDoctor = context.read<DoctorProvider>().list;
     setState(() {
-      filteredDoctors = doctors.where((doctor) {
-        return doctor.username.toLowerCase().contains(query);
+      filteredDoctors = listDoctor.where((doctor) {
+        return doctor.fullName?.toLowerCase().contains(query) ?? false;
       }).toList();
     });
   }
@@ -92,7 +51,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chọn thông tin bác sĩ'),
+        title: const Text('Chọn thông tin bác sĩ'),
       ),
       body: Column(
         children: [
@@ -102,7 +61,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Tìm kiếm bác sĩ',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -112,7 +71,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(16.0),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
@@ -139,7 +98,6 @@ class DoctorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Điều hướng tới DoctorDetailScreen khi nhấn vào thẻ bác sĩ
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -155,25 +113,35 @@ class DoctorCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage(doctor.avatar ?? 'lib/assets/Avatar.png'),
+              backgroundImage: doctor.avatar != null
+                  ? NetworkImage(doctor.avatar!) as ImageProvider
+                  : const AssetImage('lib/assets/Avatar.png'),
+              radius: 30, // Kích thước avatar
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
-              doctor.username,
-              style: TextStyle(
+              doctor.fullName ?? '',
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              doctor.medicalTraining ?? '',
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
               ),
             ),
-            Text(doctor.achievements),
-            // SizedBox(height: 10),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     Icon(Icons.star, color: Colors.amber),
-            //     Text('${doctor['rating']} (${doctor['reviews']} reviews)'),
-            //   ],
-            // ),
+            Text(
+              doctor.achievements ?? '',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

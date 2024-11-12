@@ -6,6 +6,7 @@ import 'package:healthcare_management_app/dto/role_dto.dart';
 import 'package:healthcare_management_app/models/role.dart';
 import 'package:healthcare_management_app/providers/auth_provider.dart';
 import 'package:healthcare_management_app/screens/admins/Booking_Table_Screen.dart';
+import 'package:healthcare_management_app/screens/comons/Role_Receptionist.dart';
 import 'package:healthcare_management_app/screens/comons/Role_selection_screen.dart';
 import 'package:healthcare_management_app/screens/comons/sign_up.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
@@ -58,9 +59,9 @@ class _LoginScreenState extends State<Login> {
   }
 
   void _navigateBasedOnRole(UserDTO user) {
-    List<int>? roleIds = user.roles?.map((role) => role.id).toList();
+    List<int?> roleIds = user.roles.map((role) => role.id).toList();
 
-    if (roleIds!.contains(1)) {
+    if (roleIds.contains(1)) {
       // Nếu là Admin, hiển thị màn hình "Chọn vai trò"
       Navigator.pushReplacement(
         context,
@@ -78,8 +79,15 @@ class _LoginScreenState extends State<Login> {
         context,
         MaterialPageRoute(builder: (context) => HomeCustomer()),
       );
+    } else if (roleIds.contains(4)) {
+      // Nếu là Receptionist, chuyển đến màn hình ReceptionistHome
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => RoleReceptionistScreen()),
+      );
     }
   }
+
 
 
   void _login() async {
@@ -131,9 +139,14 @@ class _LoginScreenState extends State<Login> {
           setState(() {
             userDTO = userProvider.user;
           });
+          if (userDTO != null) {
+            _navigateBasedOnRole(userDTO!);
+          } else {
+            setState(() {
+              _userNameError = "Không thể lấy thông tin người dùng";
+            });
+          }
 
-          // Điều hướng người dùng dựa trên vai trò
-          _navigateBasedOnRole(userDTO!);
         } else {
           setState(() {
             _userNameError = "Phản hồi không hợp lệ từ server";

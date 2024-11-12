@@ -5,7 +5,7 @@ import 'package:healthcare_management_app/screens/comons/Edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import '../comons/customBottomNavBar.dart';
 import 'List_Clinic__Screen.dart';
-import 'Doctor_selection_screen.dart';
+import '../doctor/Doctor_selection_screen.dart';
 
 class Booking extends StatelessWidget {
   const Booking({super.key});

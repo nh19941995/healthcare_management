@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,11 +7,12 @@ import '../dto/register.dart';
 import '../models/user.dart';
 
 
-const registerUrl = "http://localhost:8080/auth/register";
+const registerUrl = "http://localhost:8080/auth/simpleRegister";
 const loginUrl = "http://localhost:8080/auth/login";
 const fixUserUrl = "http://localhost:8080/users";
 
 class Auth {
+
 
   Future<Register> register(Register register) async  {
     final response = await http.post(
@@ -26,6 +28,7 @@ class Auth {
       throw Exception('Failed to add user');
     }
   }
+
 
 
   // Phương thức lấy thông tin người dùng

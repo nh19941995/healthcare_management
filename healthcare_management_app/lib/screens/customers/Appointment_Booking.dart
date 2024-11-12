@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:healthcare_management_app/apis/user_api.dart';
-import 'package:healthcare_management_app/dto/Doctor_dto.dart';
-import 'package:healthcare_management_app/dto/user_dto.dart';
-import 'package:healthcare_management_app/models/Time_slot.dart';
-import 'package:healthcare_management_app/providers/Clinic_Provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../dto/Api_appointment_dto.dart';
+import '../../dto/Doctor_dto.dart';
+import '../../dto/user_dto.dart';
+import '../../models/Time_slot.dart';
+import '../../providers/Appointment_provider.dart';
+import '../../providers/Clinic_Provider.dart';
 import '../../providers/user_provider.dart';
 import '../comons/TokenManager.dart';
 import '../comons/theme.dart';
-import 'Appointment_Booking.dart'; // Import intl để sử dụng DateFormat
 
 class AppointmentBookingScreen extends StatefulWidget {
   final DoctorDTO doctor;
@@ -22,88 +22,104 @@ class AppointmentBookingScreen extends StatefulWidget {
 }
 
 class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
-  late UserApi userApi;
   late UserProvider userProvider;
   UserDTO? user;
   DateTime selectedDate = DateTime.now();
   String selectedTime = '';
+  int? selectedTimeId; // Lưu ID của timeslot đã chọn
   TextEditingController _descriptionController = TextEditingController();
   List<DateTime> daysInMonth = [];
-
-
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    // Bắt đầu fetch user và cập nhật trạng thái
+    // Fetch user khi initState
     userProvider.fetchUser().then((_) {
       setState(() {
-        user = userProvider.user; // Cập nhật user sau khi fetch
+        user = userProvider.user;
       });
     });
+
     daysInMonth = _generateDaysInMonth(selectedDate);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ClinicProvider>().getAllTimeSlot();
+
+      // Cuộn đến ngày hôm nay khi giao diện hiển thị lần đầu
+      int todayIndex = daysInMonth.indexWhere((day) => _isSameDay(day, DateTime.now()));
+      if (todayIndex != -1) {
+        _scrollController.jumpTo(todayIndex * 60.0); // Điều chỉnh khoảng cách này theo khoảng cách giữa các ngày
+      }
     });
   }
 
-
-  // Hàm tạo danh sách các ngày trong tháng
+  // Tạo danh sách ngày trong tháng
   List<DateTime> _generateDaysInMonth(DateTime date) {
     int daysCount = DateTime(date.year, date.month + 1, 0).day;
     return List.generate(daysCount, (index) => DateTime(date.year, date.month, index + 1));
+  }
+
+  // Kiểm tra hai ngày có giống nhau không
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
   }
 
   // Hiển thị dialog xác nhận
   void _showConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Xác nhận phiếu đặt'),
-          content: Container(
-            width: 400, // Thiết lập chiều rộng
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Bác sĩ: ${widget.doctor.username}'),
-                Text('Medical Training: ${widget.doctor.medicalTraining}'),
-                SizedBox(height: 8),
-                Text('Thong tin khach hang'),
-                Text('Name: ${user?.fullName}'),
-                Text('Phone: ${user?.phone}'),
-                SizedBox(height: 8),
-                Text('Ngày hẹn: ${DateFormat('dd/MM/yyyy').format(selectedDate)}'),
-                Text('Giờ hẹn: $selectedTime'),
-                SizedBox(height: 8),
-                Text('Mô tả: ${_descriptionController.text}'),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Hủy'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Đóng popup khi nhấn hủy
-              },
-            ),
-            ElevatedButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Đóng popup sau khi nhấn OK
-                _showSuccessSnackBar(context); // Hiển thị thông báo thành công
-              },
-            ),
+      builder: (_) => AlertDialog(
+        title: Text('Xác nhận phiếu đặt'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Bác sĩ: ${widget.doctor.fullName}'),
+            Text('Medical Training: ${widget.doctor.medicalTraining}'),
+            SizedBox(height: 8),
+            Text('Thông tin khách hàng'),
+            Text('Name: ${user?.fullName}'),
+            Text('Phone: ${user?.phone}'),
+            SizedBox(height: 8),
+            Text('Ngày hẹn: ${DateFormat('dd/MM/yyyy').format(selectedDate)}'),
+            Text('Giờ hẹn: $selectedTime'),
+            SizedBox(height: 8),
+            Text('Mô tả: ${_descriptionController.text}'),
           ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            child: Text('Hủy'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          ElevatedButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              _createAppointment();
+            },
+          ),
+        ],
+      ),
     );
   }
 
-  // Hiển thị thông báo "Đặt lịch thành công"
+  // Tạo cuộc hẹn
+  void _createAppointment() {
+    final apiAppointmentDTO = ApiAppointmentDTO(
+      patientUsername: user?.username ?? '',
+      doctorUsername: widget.doctor.username!,
+      timeSlotId: selectedTimeId!,
+      appointmentDate: DateFormat('yyyy-MM-dd').format(selectedDate),
+    );
+
+    context.read<AppointmentProvider>().createAppointmentProvider(apiAppointmentDTO);
+    _showSuccessSnackBar(context);
+  }
+
+  // Hiển thị thông báo thành công
   void _showSuccessSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -114,231 +130,221 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     );
   }
 
-  @override
+  // Hiển thị lỗi nếu ngày đã chọn trước ngày hôm nay
+  void _showDateErrorSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Không thể chọn ngày trước hôm nay'),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final timeslots = context.watch<ClinicProvider>().listtime;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Booking information'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Go back to the previous screen
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_left),
-                      onPressed: () {
-                        setState(() {
-                          if (selectedDate.month == 1) {
-                            selectedDate = DateTime(
-                              selectedDate.year - 1,
-                              12,
-                              selectedDate.day,
-                            );
-                          } else {
-                            selectedDate = DateTime(
-                              selectedDate.year,
-                              selectedDate.month - 1,
-                              selectedDate.day,
-                            );
-                          }
-                          daysInMonth = _generateDaysInMonth(selectedDate);
-                        });
-                      },
-                    ),
-                    Text(
-                      DateFormat('MMMM, yyyy').format(selectedDate),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_right),
-                      onPressed: () {
-                        setState(() {
-                          if (selectedDate.month == 12) {
-                            selectedDate = DateTime(
-                              selectedDate.year + 1,
-                              1,
-                              selectedDate.day,
-                            );
-                          } else {
-                            selectedDate = DateTime(
-                              selectedDate.year,
-                              selectedDate.month + 1,
-                              selectedDate.day,
-                            );
-                          }
-                          daysInMonth = _generateDaysInMonth(selectedDate);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: AppTheme.defaultMargin),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: daysInMonth.map((date) {
-                    return buildDateButton(
-                      DateFormat('d').format(date),
-                      DateFormat('E').format(date).toUpperCase(),
-                      date,
-                      isSelected: selectedDate.day == date.day,
-                    );
-                  }).toList(),
-                ),
-              ),
-              SizedBox(height: AppTheme.defaultMargin),
-              Text(
-                'Thời gian có sẵn',
-                style: AppTheme.theme.textTheme.displayMedium,
-              ),
-              SizedBox(height: AppTheme.mediumSpacing),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: timeslots.map((timeslot) {
-                  final startAt = DateFormat('hh:mm a').format(DateFormat("HH:mm:ss").parse(timeslot.startAt));
-                  return buildTimeButton(startAt);
-                }).toList(),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Thông tin bác sĩ:',
-                style: AppTheme.theme.textTheme.displayMedium,
-              ),
-              SizedBox(height: AppTheme.mediumSpacing),
-              Text('Tên bác sĩ: ${widget.doctor.username}', style: TextStyle(fontSize: 16)),
-              Text('Achievements: ${widget.doctor.achievements}', style: TextStyle(fontSize: 16)),
-              SizedBox(height: 16),
-              Text(
-                'Thông tin bệnh nhân:',
-                style: AppTheme.theme.textTheme.displayMedium,
-              ),
-              SizedBox(height: AppTheme.mediumSpacing),
-              user == null
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Họ tên: ${user!.fullName}', style: TextStyle(fontSize: 16)),
-                  Text('Số điện thoại: ${user!.phone}', style: TextStyle(fontSize: 16)),
-                ],
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Mô tả triệu chứng:',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 8),
-              TextField(
-                controller: _descriptionController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Nhập mô tả triệu chứng...',
-                ),
-              ),
-              SizedBox(height: AppTheme.largeSpacing),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: AppTheme.elevatedButtonStyle,
-                  onPressed: () {
-                    _showConfirmationDialog(context);
-                  },
-                  child: Text('Đặt lịch khám'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  Widget buildDateButton(String day, String weekDay, DateTime date,
-      {bool isSelected = false}) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedDate = date; // Cập nhật ngày được chọn
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : Colors.grey.shade400,
-          ),
-        ),
+        padding: const EdgeInsets.all(AppTheme.defaultPadding),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              day,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isSelected ? Colors.white : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              weekDay,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black54,
-              ),
-            ),
+            _buildDateSelector(),
+            SizedBox(height: AppTheme.defaultMargin),
+            _buildTimeSlots(timeslots),
+            SizedBox(height: AppTheme.defaultMargin),
+            _buildDoctorInfo(),
+            _buildPatientInfo(),
+            _buildDescriptionField(),
+            SizedBox(height: AppTheme.largeSpacing),
+            _buildBookingButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget buildTimeButton(String time) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedTime = time; // Cập nhật giờ được chọn
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: selectedTime == time ? AppTheme.primaryColor : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: selectedTime == time ? AppTheme.primaryColor : Colors.grey.shade400,
+  // Component: Chọn ngày
+  Widget _buildDateSelector() => Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: Icon(Icons.arrow_left),
+            onPressed: () {
+              setState(() {
+                selectedDate = DateTime(selectedDate.year, selectedDate.month - 1, selectedDate.day);
+                daysInMonth = _generateDaysInMonth(selectedDate);
+              });
+            },
+          ),
+          Text(
+            DateFormat('MMMM, yyyy').format(selectedDate),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+            icon: Icon(Icons.arrow_right),
+            onPressed: () {
+              setState(() {
+                selectedDate = DateTime(selectedDate.year, selectedDate.month + 1, selectedDate.day);
+                daysInMonth = _generateDaysInMonth(selectedDate);
+              });
+            },
+          ),
+        ],
+      ),
+      SizedBox(height: 8),
+      SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: daysInMonth.map((day) {
+            bool isToday = _isSameDay(day, DateTime.now());
+            bool isSelected = selectedDate == day;
+            return GestureDetector(
+              onTap: () {
+                if (day.isBefore(DateTime.now())) {
+                  _showDateErrorSnackBar(context);
+                } else {
+                  setState(() {
+                    selectedDate = day;
+                  });
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.blue : (isToday ? Colors.green : Colors.grey[300]),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Text(
+                  DateFormat('dd').format(day),
+                  style: TextStyle(
+                    color: isSelected || isToday ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    ],
+  );
+
+  // Component: Hiển thị các khung giờ
+  Widget _buildTimeSlots(List<Timeslots> timeslots) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Chọn khung giờ:',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: timeslots.map((slot) {
+            bool isSelected = selectedTimeId == slot.id;
+            return ChoiceChip(
+              label: Text(slot.startAt),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() {
+                  selectedTime = slot.startAt;
+                  selectedTimeId = slot.id;
+                });
+              },
+              selectedColor: Colors.blue,
+              labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+// Component: Thông tin bác sĩ
+  Widget _buildDoctorInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Thông tin bác sĩ:',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 8),
+        Text('Bác sĩ: ${widget.doctor.fullName}'),
+        Text('Medical Training: ${widget.doctor.medicalTraining}'),
+      ],
+    );
+  }
+
+// Component: Thông tin bệnh nhân
+  Widget _buildPatientInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Thông tin khách hàng:',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 8),
+        Text('Name: ${user?.fullName ?? ''}'),
+        Text('Phone: ${user?.phone ?? ''}'),
+      ],
+    );
+  }
+
+// Component: Trường nhập mô tả cuộc hẹn
+  Widget _buildDescriptionField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Mô tả (Tùy chọn):',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 8),
+        TextField(
+          controller: _descriptionController,
+          maxLines: 4,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Nhập mô tả chi tiết nếu có',
           ),
         ),
-        child: Text(
-          time,
-          style: TextStyle(
-            fontSize: 16,
-            color: selectedTime == time ? Colors.white : Colors.black,
-          ),
+      ],
+    );
+  }
+
+// Component: Nút đặt lịch
+  Widget _buildBookingButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: selectedTimeId == null
+            ? null
+            : () {
+          _showConfirmationDialog(context);
+        },
+        child: Text('Đặt lịch'),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12), backgroundColor: selectedTimeId == null ? Colors.grey : Colors.blue,
+          textStyle: TextStyle(fontSize: 18),
         ),
       ),
     );
   }
+
 }

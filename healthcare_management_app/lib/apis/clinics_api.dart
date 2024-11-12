@@ -40,8 +40,10 @@ class ClinicApi {
         } else {
           // Chuyển đổi sang UTF-8 nếu không phải UTF-8
           final responseBody = utf8.decode(response.bodyBytes);
-          final decodeResponse = jsonDecode(responseBody) as List;
-          return decodeResponse.map((clinicJson) => Clinic.fromJson(clinicJson)).toList();
+          final decodeResponse = jsonDecode(responseBody);
+
+          final clinicsData = decodeResponse['content'] as List;
+          return clinicsData.map((clinicJson) => Clinic.fromJson(clinicJson)).toList();
         }
       } else {
         throw Exception('Failed to load clinics: ${response.statusCode}');
@@ -52,22 +54,6 @@ class ClinicApi {
   }
 
   Future<List<Timeslots>> getAllTimeSlots() async {
-    // try {
-    //   final response = await http.get(Uri.parse(timeslotsUrl));
-    //
-    //   if (response.statusCode == 200) {
-    //     // Kiểm tra mã hóa
-    //     final contentType = response.headers['content-type'];
-    //     if (contentType != null) {
-    //       // Dữ liệu đã được mã hóa đúng
-    //       final decodeResponse = jsonDecode(response.body) as List;
-    //       return decodeResponse.map((timeJson) => Timeslots.fromJson(timeJson)).toList();
-    //   } else {
-    //     throw Exception('Failed to load timeslot: ${response.statusCode}');
-    //   }
-    // } catch (e) {
-    //   throw Exception('Error fetching timeslot: $e');
-    // }
     final response = await http.get(Uri.parse(timeslotsUrl));
     // print(response.statusCode);
     final decodeResponse = jsonDecode(response.body) as List;

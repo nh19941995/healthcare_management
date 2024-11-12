@@ -6,6 +6,7 @@ import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/Edit_profile.dart';
 import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
+import 'package:healthcare_management_app/screens/customers/Appointment_History_App.dart';
 import 'package:healthcare_management_app/screens/customers/Make_an_appointment.dart';
 import 'package:healthcare_management_app/screens/customers/health_index.dart';
 import 'package:healthcare_management_app/screens/customers/online_consultation.dart';
@@ -71,7 +72,10 @@ class _HomeCustomerState extends State<HomeCustomer> {
                   ),
                 ),
                 CircleAvatar(
-                  backgroundImage: AssetImage('lib/assets/Avatar.png'), // Đường dẫn đến avatar
+                  //backgroundImage: AssetImage('lib/assets/Avatar.png'), // Đường dẫn đến avatar
+                  backgroundImage: userDto?.avatar != null
+                      ? NetworkImage(userDto!.avatar!)
+                      : AssetImage('lib/assets/Avatar.png'),
                   radius: 24, // Kích thước của avatar
                 ),
               ],
@@ -181,7 +185,7 @@ class _HomeCustomerState extends State<HomeCustomer> {
                           ],
                         ),
                         onTap: () {
-                          // _navigateToScreen(context, MedicalHistoryScreen()); // Chuyển đến màn hình lịch sử khám
+                           _navigateToScreen(context, AppointmentHistoryApp()); // Chuyển đến màn hình lịch sử khám
                         },
                       ),
                     ),

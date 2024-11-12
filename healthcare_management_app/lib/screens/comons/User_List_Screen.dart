@@ -1,4 +1,10 @@
+
+
+
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/user_dto.dart';
+import 'package:healthcare_management_app/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class UserListScreen extends StatefulWidget {
   @override
@@ -6,55 +12,69 @@ class UserListScreen extends StatefulWidget {
 }
 
 class _UserListScreenState extends State<UserListScreen> {
-  final List<Map<String, dynamic>> users = [
-    {'id': '001', 'name': 'User A', 'role': 'User'},
-    {'id': '002', 'name': 'User B', 'role': 'Admin'},
-    {'id': '003', 'name': 'Doctor C', 'role': 'Bác sĩ'},
-    // Thêm các người dùng khác
-  ];
-  List<Map<String, dynamic>> filteredUsers = []; // Danh sách người dùng sau khi lọc
+  List<UserDTO> filteredFacilities = [];
   final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    filteredUsers = users; // Khởi tạo danh sách lọc ban đầu bằng toàn bộ người dùng
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userProvider = context.read<UserProvider>();
+      userProvider.getAllUser().then((_) {
+        setState(() {
+          filteredFacilities = userProvider.list; // Get the full user list after updating
+        });
+      });
+    });
   }
 
+  // Get highest role based on the sorted role ID (lowest ID has highest priority)
+  String? getHighestRole(UserDTO user) {
+    if (user.roles.isEmpty) return 'No Role';
+    user.roles.sort((a, b) => a.id!.compareTo(b.id!));
+    return user.roles.first.name;
+  }
+
+// Filter users by name
   void filterUsers(String query) {
     setState(() {
-      filteredUsers = users.where((user) {
-        return user['name'].toLowerCase().contains(query.toLowerCase());
+      filteredFacilities = context.read<UserProvider>().list.where((user) {
+        return user.fullName?.toLowerCase().contains(query.toLowerCase()) ?? false;
       }).toList();
     });
   }
 
-  void changeUserRole(BuildContext context, Map<String, dynamic> user) {
+  void changeUserRole(BuildContext context, UserDTO user) {
+    String? selectedRole = getHighestRole(user);
+
     showDialog(
       context: context,
       builder: (context) {
-        String selectedRole = user['role'];
         return AlertDialog(
           title: Text('Change User Role'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Chọn quyền mới cho ${user['name']}:'),
-              DropdownButton<String>(
-                value: selectedRole,
-                items: ['User', 'Admin', 'Bác sĩ'].map((role) {
-                  return DropdownMenuItem(
-                    value: role,
-                    child: Text(role),
-                  );
-                }).toList(),
-                onChanged: (newRole) {
-                  setState(() {
-                    selectedRole = newRole!;
-                  });
-                },
-              ),
-            ],
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Select a new role for ${user.fullName}:'),
+                  DropdownButton<String>(
+                    value: selectedRole,
+                    items: ['ADMIN', 'DOCTOR', 'PATIENT', 'RECEPTIONIST'].map((role) {
+                      return DropdownMenuItem(
+                        value: role,
+                        child: Text(role),
+                      );
+                    }).toList(),
+                    onChanged: (newRole) {
+                      setState(() {
+                        selectedRole = newRole; // Update selected role immediately
+                      });
+                    },
+                  ),
+                ],
+              );
+            },
           ),
           actions: [
             TextButton(
@@ -62,11 +82,30 @@ class _UserListScreenState extends State<UserListScreen> {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                setState(() {
-                  user['role'] = selectedRole;
-                });
-                Navigator.pop(context);
+              onPressed: () async {
+                user.roles.clear();
+                user.roles.add(Role(name: selectedRole));
+
+                try {
+                  // Cập nhật quyền người dùng trong provider
+                  await context.read<UserProvider>().updateUserRole(user.username!, selectedRole!);
+
+                  // Lấy lại danh sách người dùng và cập nhật giao diện
+                  await context.read<UserProvider>().getAllUser();
+
+                  if (mounted) {
+                    setState(() {
+                      filteredFacilities = context.read<UserProvider>().list;
+                    });
+                  }
+
+                  Navigator.pop(context);
+                } catch (error) {
+                  // Xử lý lỗi
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Xóa không thành công')),
+                  );
+                }
               },
               child: Text('Confirm'),
             ),
@@ -76,24 +115,34 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  void deleteUser(BuildContext context, Map<String, dynamic> user) {
+
+
+// Delete user with confirmation dialog
+  void deleteUser(BuildContext context, UserDTO user) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Delete User'),
-          content: Text('Bạn có chắc chắn muốn xóa ${user['name']} không?'),
+          content: Text('Bạn có chắc chắn muốn xóa ${user.fullName} không?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text('No'),
             ),
             TextButton(
-              onPressed: () {
-                setState(() {
-                  users.remove(user);
-                  filteredUsers = users; // Cập nhật danh sách sau khi xóa
-                });
+              onPressed: () async {
+                try {
+                  await context.read<UserProvider>().deleteUser(user.username!);
+                  setState(() {
+                    filteredFacilities.remove(user);
+                  });
+                } catch (error) {
+                  // Thông báo lỗi nếu có
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Xóa không thành công')),
+                  );
+                }
                 Navigator.pop(context);
               },
               child: Text('Yes'),
@@ -125,17 +174,17 @@ class _UserListScreenState extends State<UserListScreen> {
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
-              onChanged: (query) => filterUsers(query), // Gọi hàm lọc khi thay đổi nội dung
+              onChanged: (query) => filterUsers(query), // Call filter function on text change
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredUsers.length,
+              itemCount: filteredFacilities.length,
               itemBuilder: (context, index) {
-                final user = filteredUsers[index];
+                final user = filteredFacilities[index];
                 return ListTile(
-                  title: Text(user['name']),
-                  subtitle: Text('Role: ${user['role']}'),
+                  title: Text(user.fullName ?? 'Tên'),
+                  subtitle: Text('Role: ${getHighestRole(user)}'), // Display highest role
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

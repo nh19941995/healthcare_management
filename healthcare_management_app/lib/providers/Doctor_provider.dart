@@ -1,0 +1,52 @@
+import 'package:flutter/cupertino.dart';
+import 'package:healthcare_management_app/apis/doctor_api.dart';
+import 'package:healthcare_management_app/dto/Doctor_dto.dart';
+import 'package:healthcare_management_app/models/Doctor_detail.dart';
+
+class DoctorProvider with ChangeNotifier {
+  final DoctorApi doctorApi;
+
+
+  DoctorProvider({required this.doctorApi}); // Updated constructor
+
+  final List<DoctorDTO> _list = [];
+  List<DoctorDTO> get list => _list;
+  DoctorDTO? _doctor_pro;
+  DoctorDTO? get doctor_pro => _doctor_pro;
+
+  DoctorDetail? _doctor_pro_appointment;
+  DoctorDetail? get doctor_pro_appointment => _doctor_pro_appointment;
+
+  Future getAllDoctor() async {
+    final doctors = await DoctorApi().getAllDoctors();
+    _list.clear();
+    _list.addAll(doctors);
+
+    // In ra danh sách _list để kiểm tra
+    print('Danh sách các doctors:');
+    for (var doctor in _list) {
+      print(doctor); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
+    }
+
+    notifyListeners();
+  }
+
+  // Fetch current user information based on username
+  Future<void> getDoctorByUserName() async {
+    DoctorDTO fetcheddoctor = await DoctorApi().getDoctorByUserName();
+    _doctor_pro = fetcheddoctor;
+    print("id: ${fetcheddoctor.username}");
+    notifyListeners();
+  }
+
+  Future<void> getDoctorByUserNameForAppointment(String username) async {
+    try {
+      DoctorDetail fetcheddoctor = await DoctorApi().getDoctorByUserNameForAppoiment(username);
+      _doctor_pro_appointment = fetcheddoctor;
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching doctor: $e");
+    }
+  }
+
+}

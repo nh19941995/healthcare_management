@@ -8,27 +8,28 @@ class Register {
     required this.address,
     required this.fullName,
     required this.description,
+
   });
 
-  final String? username;
-  final String? password;
-  final String? gender;
-  final String? email;
-  final String? phone;
+  final String username;
+  final String password;
+  final String gender;
+  final String email;
+  final String phone;
   final String? address;
-  final String? fullName;
+  final String fullName;
   final String? description;
 
   factory Register.fromJson(Map<String, dynamic> json){
     return Register(
-      username: json["username"],
-      password: json["password"],
-      gender: json["gender"],
-      email: json["email"],
-      phone: json["phone"],
-      address: json["address"],
-      fullName: json["fullName"],
-      description: json["description"],
+      username: json['username'] ?? '',   // Default to empty string if null
+      password: json['password'] ?? '',
+      gender: json['gender'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      address: json['address'] ?? '',
+      fullName: json['fullName'] ?? '',
+      description: json['description'] ?? '',
     );
   }
 
@@ -45,6 +46,6 @@ class Register {
 
   @override
   String toString(){
-    return "$username, $password, $gender, $email, $phone, $address, $fullName, $description, ";
+    return "$username, $password, $gender, $email, $phone, $address, $fullName, $description";
   }
 }

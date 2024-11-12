@@ -15,6 +15,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUp> {
   final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -23,19 +24,20 @@ class _SignUpScreenState extends State<SignUp> {
 
   Gender? _selectedGender = Gender.MALE; // Gán giá trị mặc định là MALE
   String? _fullNameError;
+  String? _userNameError;
   String? _phoneError;
   String? _emailError;
   String? _passwordError;
   String? _rePasswordError;
   String? _addressError;
 
-  // Biến để điều khiển ẩn/hiện mật khẩu
   bool _obscurePassword = true;
   bool _obscureRePassword = true;
 
   @override
   void dispose() {
     _fullNameController.dispose();
+    _userNameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -45,25 +47,24 @@ class _SignUpScreenState extends State<SignUp> {
   }
 
   void _signUp() async {
-    // Xóa bỏ các lỗi hiện tại trước khi kiểm tra
-   // await Provider.of<UserProvider>(context, listen: false).getAllUser();
     setState(() {
       _fullNameError = null;
+      _userNameError = null;
       _phoneError = null;
       _emailError = null;
       _passwordError = null;
       _rePasswordError = null;
       _addressError = null;
     });
-    // Lấy dữ liệu từ các trường điều khiển
+
     String fullName = _fullNameController.text;
+    String username = _userNameController.text;
     String phone = _phoneController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
     String rePassword = _rePasswordController.text;
     String address = _addressController.text;
 
-    // Kiểm tra các lỗi
     bool hasError = false;
 
     if (fullName.length < 5 || fullName.length > 50) {
@@ -73,7 +74,14 @@ class _SignUpScreenState extends State<SignUp> {
       hasError = true;
     }
 
-    if (phone.length < 1 || phone.length > 12 || !RegExp(r'^[0-9]+$').hasMatch(phone)) {
+    if (username.length < 5 || !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(username)) {
+      setState(() {
+        _userNameError = 'Username phải từ 5 ký tự trở lên và không dấu';
+      });
+      hasError = true;
+    }
+
+    if (phone.length < 9 || phone.length > 12 || !RegExp(r'^[0-9]+$').hasMatch(phone)) {
       setState(() {
         _phoneError = 'Phone phải là số và từ 9 đến 12 ký tự';
       });
@@ -94,49 +102,37 @@ class _SignUpScreenState extends State<SignUp> {
       hasError = true;
     }
 
-    if (address.length < 1 || address.length > 300) {
+    if (address.length < 10 || address.length > 300) {
       setState(() {
         _addressError = 'Address phải từ 10 đến 300 ký tự';
       });
       hasError = true;
     }
 
-    // Nếu có lỗi, không thực hiện tiếp
     if (hasError) return;
 
-    // Nếu không có lỗi, tiến hành tạo user
     String gender = _selectedGender == Gender.MALE ? 'MALE' : 'FEMALE';
 
-    // User newUser = User(
-    //   id: null,
-    //   address: address,
-    //   avatar: null,
-    //   createdAt: DateTime.now(),
-    //   deletedAt: null,
-    //   description: null,
-    //   email: email,
-    //   gender: gender,
-    //   lockReason: null,
-    //   name: fullName,
-    //   password: password,
-    //   phone: phone,
-    //   status: 'ACTIVE',
-    //   updatedAt: DateTime.now(),
-    //   roleId: 1,
-    // );
-    Register register = Register(username: fullName, password: password, gender: gender, email: email, phone: phone, address: address, fullName: fullName, description: "hello rtrtrwte rrtwtwer");
+    Register register = Register(
+        username: username,
+        password: password,
+        gender: gender,
+        email: email,
+        phone: phone,
+        address: address,
+        fullName: fullName,
+        description: "Người dùng thử nghiệm",
+        //avatar: 'lib/assets/Avatar.png'
+    );
 
     try {
-
       await Provider.of<AuthProvider>(context, listen: false).register(register);
       _showSignUpSuccessDialog();
     } catch (e) {
-      // Xử lý lỗi khi gọi API
       print("Error inserting user: $e");
     }
   }
-
-// Hàm hiển thị Dialog đăng ký thành công
+  // Hàm hiển thị Dialog đăng ký thành công
   void _showSignUpSuccessDialog() {
     showDialog(
       context: context,
@@ -164,8 +160,7 @@ class _SignUpScreenState extends State<SignUp> {
       },
     );
   }
-
-  // Hàm điều hướng tới màn hình Login
+// Hàm điều hướng tới màn hình Login
   void _navigateToLogin() {
     // Thực hiện điều hướng sang màn hình đăng nhập, tùy thuộc vào logic của bạn
     // Ví dụ:
@@ -176,6 +171,8 @@ class _SignUpScreenState extends State<SignUp> {
 
   }
 
+
+  // UI code below
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,11 +183,8 @@ class _SignUpScreenState extends State<SignUp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: AppTheme.xLargeSpacing,),
-              Text(
-                "Sign Up",
-                style: AppTheme.headerStyle
-              ),
+              SizedBox(height: AppTheme.xLargeSpacing),
+              Text("Sign Up", style: AppTheme.headerStyle),
               SizedBox(height: AppTheme.xLargeSpacing),
               TextField(
                 controller: _fullNameController,
@@ -198,6 +192,15 @@ class _SignUpScreenState extends State<SignUp> {
                   labelText: "Full Name",
                   border: OutlineInputBorder(),
                   errorText: _fullNameError,
+                ),
+              ),
+              SizedBox(height: AppTheme.smallSpacing),
+              TextField(
+                controller: _userNameController,
+                decoration: InputDecoration(
+                  labelText: "Username",
+                  border: OutlineInputBorder(),
+                  errorText: _userNameError,
                 ),
               ),
               SizedBox(height: AppTheme.smallSpacing),
@@ -327,7 +330,7 @@ class _SignUpScreenState extends State<SignUp> {
                       // Điều hướng tới trang Login
                       Navigator.push(context,
                           MaterialPageRoute(builder:
-                          (cotent)=> Login())
+                              (cotent)=> Login())
                       );
                     },
                     child: Text(

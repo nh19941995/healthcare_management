@@ -20,12 +20,15 @@ class _ListClinic extends State<ListClinic> {
       final clinicProvider = context.read<ClinicProvider>();
       clinicProvider.getAllClinic().then((_) {
         setState(() {
+          print(clinicProvider.list);
           filteredFacilities = clinicProvider.list; // Lấy danh sách sau khi đã cập nhật
         });
       });
     });
     _searchController.addListener(_filterFacilities);
   }
+
+
 
   @override
   void dispose() {
@@ -77,9 +80,9 @@ class _ListClinic extends State<ListClinic> {
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
+                  crossAxisCount: 2, // Số cột trong grid
+                  crossAxisSpacing: 16.0, // Khoảng cách giữa các cột
+                  mainAxisSpacing: 16.0, // Khoảng cách giữa các hàng
                 ),
                 itemCount: filteredFacilities.length,
                 itemBuilder: (context, index) {
@@ -99,21 +102,37 @@ class _ListClinic extends State<ListClinic> {
                         );
                       },
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start, // Căn chỉnh các widget con ở đầu
+                        crossAxisAlignment: CrossAxisAlignment.center, // Căn chỉnh theo chiều ngang
                         children: [
-                          Image.asset(
-                            //facility.image!,
-                            'lib/assets/Lifesavers Heart.png',
-                            height: 80,
-                            fit: BoxFit.cover,
+                          SizedBox(height: 8.0), // Thêm khoảng cách phía trên ảnh
+                          // Kiểm tra điều kiện và sử dụng Image phù hợp
+                          // facility?.image != null
+                          //     ? ClipRRect(
+                          //   borderRadius: BorderRadius.circular(10.0), // Bo góc cho ảnh
+                          //   child: Image.network(
+                          //     facility!.image!,
+                          //     width: 100, // Kích thước cố định cho ảnh
+                          //     height: 100, // Kích thước cố định cho ảnh
+                          //     fit: BoxFit.cover, // Lấp đầy không gian ảnh mà không bị méo
+                          //   ),
+                          // )
+                             // :
+                          CircleAvatar(
+                            backgroundImage: facility.image != null
+                                ? NetworkImage(facility.image!)
+                                : AssetImage('lib/assets/Avatar.png') as ImageProvider,
+                            radius: 40, // Kích thước của avatar
                           ),
-                          const SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0), // Khoảng cách giữa ảnh và tên
+                          // Hiển thị tên cơ sở
                           Text(
-                            facility.name!,
+                            facility?.name ?? 'Tên cơ sở', // Dự phòng nếu tên không có
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),
+                            textAlign: TextAlign.center, // Căn giữa tên
                           ),
                         ],
                       ),
@@ -121,6 +140,8 @@ class _ListClinic extends State<ListClinic> {
                   );
                 },
               ),
+
+
             ),
           ],
         ),

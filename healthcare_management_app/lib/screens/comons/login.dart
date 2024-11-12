@@ -2,14 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/login_dto.dart';
+import 'package:healthcare_management_app/dto/role_dto.dart';
+import 'package:healthcare_management_app/models/role.dart';
 import 'package:healthcare_management_app/providers/auth_provider.dart';
-import 'package:healthcare_management_app/screens/admins/Medical_Examination_Screen.dart';
+import 'package:healthcare_management_app/screens/admins/Booking_Table_Screen.dart';
+import 'package:healthcare_management_app/screens/comons/Role_Receptionist.dart';
+import 'package:healthcare_management_app/screens/comons/Role_selection_screen.dart';
 import 'package:healthcare_management_app/screens/comons/sign_up.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:http/http.dart' as http;
-import 'package:healthcare_management_app/screens/customers/home_customer.dart';
+import 'package:healthcare_management_app/screens/customers/Home_customer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../apis/auth.dart';
+import '../../dto/user_dto.dart';
 import '../../models/user.dart';
 import '../admins/admin_home.dart';
 import '../doctor/doctor_home.dart';
@@ -27,6 +32,8 @@ late final Auth authApi;
 class _LoginScreenState extends State<Login> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  late UserProvider userProvider;
+  UserDTO? userDTO;
 
   String? _userNameError;
   String? _passwordError;
@@ -34,24 +41,6 @@ class _LoginScreenState extends State<Login> {
   // Biến để điều khiển ẩn/hiện mật khẩu
   bool _obscurePassword = true;
   late SharedPreferences pres;
-
-  User user = User(
-    id: 3,
-    name: 'Mike Johnson',
-    email: 'mikejohnson@example.com',
-    password: 'password123',
-    address: '789 Oak St',
-    phone: '345-678-9012',
-    avatar: 'path/to/avatar3.png',
-    status: 'ACTIVE',
-    createdAt: DateTime.now(),
-    deletedAt: null,
-    description: 'Manager user',
-    gender: 'Male',
-    lockReason: null,
-    updatedAt: DateTime.now(),
-    roleId: 3, // Vai trò 3 vào Manager Home
-  );
 
   @override
   void dispose() {
@@ -68,6 +57,37 @@ class _LoginScreenState extends State<Login> {
   void initSheredPref() async {
     pres = await SharedPreferences.getInstance();
   }
+
+  void _navigateBasedOnRole(UserDTO user) {
+    List<int?> roleIds = user.roles.map((role) => role.id).toList();
+
+    if (roleIds.contains(1)) {
+      // Nếu là Admin, hiển thị màn hình "Chọn vai trò"
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => RoleSelectionScreen(showAdmin: true)),
+      );
+    } else if (roleIds.contains(2)) {
+      // Nếu là Doctor, hiển thị màn hình "Chọn vai trò" nhưng ẩn vai trò Admin
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => RoleSelectionScreen(showAdmin: false)),
+      );
+    } else if (roleIds.contains(3)) {
+      // Nếu là Patient, chuyển đến HomeCustomer
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeCustomer()),
+      );
+    } else if (roleIds.contains(4)) {
+      // Nếu là Receptionist, chuyển đến màn hình ReceptionistHome
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => RoleReceptionistScreen()),
+      );
+    }
+  }
+
 
 
   void _login() async {
@@ -102,22 +122,31 @@ class _LoginScreenState extends State<Login> {
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(regBody));
 
-      // In ra nội dung phản hồi từ server để kiểm tra
       print('Response status: ${response.statusCode}');
-      
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
 
-        // Kiểm tra nếu token tồn tại
         if (jsonResponse['token'] != null) {
           var myToken = jsonResponse['token'];
           pres.setString('token', myToken);
           TokenManager().setToken(myToken);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeCustomer(user: user,token:myToken)),
-          );
+
+          userProvider = Provider.of<UserProvider>(context, listen: false);
+
+          // Lấy thông tin người dùng từ server và cập nhật vai trò
+          await userProvider.fetchUser();
+          setState(() {
+            userDTO = userProvider.user;
+          });
+          if (userDTO != null) {
+            _navigateBasedOnRole(userDTO!);
+          } else {
+            setState(() {
+              _userNameError = "Không thể lấy thông tin người dùng";
+            });
+          }
+
         } else {
           setState(() {
             _userNameError = "Phản hồi không hợp lệ từ server";
@@ -134,6 +163,8 @@ class _LoginScreenState extends State<Login> {
       });
     }
   }
+
+
 
 
   @override

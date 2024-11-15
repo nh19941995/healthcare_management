@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/models/user.dart';
-import 'package:healthcare_management_app/screens/comons/Edit_profile.dart';
+import 'package:healthcare_management_app/screens/comons/Update_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
+import 'package:healthcare_management_app/screens/customers/Home_customer.dart';
 import '../comons/customBottomNavBar.dart';
+import '../comons/show_vertical_menu.dart';
 import 'List_Clinic__Screen.dart';
 import '../doctor/Doctor_selection_screen.dart';
 
@@ -161,6 +163,22 @@ class Booking extends StatelessWidget {
       //     // Handle bottom navigation
       //   },
       // ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
+          );
+        },
+      ),
     );
   }
 }

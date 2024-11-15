@@ -5,7 +5,12 @@ import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:healthcare_management_app/models/Doctor_detail.dart';
 import 'package:healthcare_management_app/providers/Appointment_provider.dart';
 import 'package:healthcare_management_app/providers/Doctor_provider.dart';
+import 'package:healthcare_management_app/providers/Medications_provider.dart';
+import 'package:healthcare_management_app/screens/comons/customBottomNavBar.dart';
 import 'package:provider/provider.dart';
+
+import '../comons/show_vertical_menu.dart';
+import 'Home_customer.dart';
 
 class AppointmentHistoryApp extends StatefulWidget {
   const AppointmentHistoryApp({super.key});
@@ -23,6 +28,24 @@ class _AppointmentHistoryAppState extends State<AppointmentHistoryApp> {
     });
   }
 
+  Color getStatusColor(String status) {
+    switch (status) {
+      case 'PENDING':
+        return Colors.orange;
+      case 'CANCELLED':
+        return Colors.red;
+      case 'CONFIRMED':
+        return Colors.green;
+      case 'COMPLETED':
+        return Colors.blue;
+      case 'NO_SHOW':
+        return Colors.grey;
+      case 'RESCHEDULED':
+        return Colors.purple;
+      default:
+        return Colors.blueAccent;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final listAppointment = context.watch<AppointmentProvider>().listAppointment;
@@ -51,32 +74,40 @@ class _AppointmentHistoryAppState extends State<AppointmentHistoryApp> {
             child: ListTile(
               contentPadding: const EdgeInsets.all(16),
               title: Text(
-                "Doctor : ${appointment.doctor.fullName ?? 'Không xác định'}",
+                "Doctor : ${appointment.doctor.fullName ?? ''}",
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Trạng thái: ${appointment.status ?? 'Không xác định'}"),
-                  Text("Ngày khám: ${appointment.createdAt ?? 'Không xác định'}"),
-                  Text("Địa điểm: ${appointment.doctor.medicalTraining ?? 'Không xác định'}"),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: getStatusColor(appointment.status),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'Status : ${appointment.status}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text("Ngày khám: ${appointment.createdAt ?? ''}"),
+                  Text("Địa điểm: ${appointment.doctor.medicalTraining ?? ''}"),
                 ],
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
-                // Chuyển đổi hàm onTap trong AppointmentHistoryApp
-                onTap: () async {
-                  // Gọi provider để lấy thông tin bác sĩ dựa trên `doctor.username`
-                  await context.read<DoctorProvider>().getDoctorByUserNameForAppointment(appointment.doctor.username!);
-
-                  // Chuyển sang màn hình chi tiết
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AppointmentDetail(appointmentDTO: appointment),
-                    ),
-                  );
-                }
-
+              onTap: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AppointmentDetail(appointmentDTO: appointment),
+                  ),
+                );
+              },
             ),
           );
         },
@@ -101,10 +132,33 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
   void initState() {
     super.initState();
     _doctorFuture = _loadDoctor();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MedicationsProvider>().getPrescriptionByAppointmentIdProvider(widget.appointmentDTO.id);
+    });
   }
 
   Future<DoctorDetail?> _loadDoctor() async {
     return context.read<DoctorProvider>().doctor_pro_appointment;
+  }
+
+  Color getStatusColor(String status) {
+    switch (status) {
+      case 'PENDING':
+        return Colors.orange;
+      case 'CANCELLED':
+        return Colors.red;
+      case 'CONFIRMED':
+        return Colors.green;
+      case 'COMPLETED':
+        return Colors.blue;
+      case 'NO_SHOW':
+        return Colors.grey;
+      case 'RESCHEDULED':
+        return Colors.purple;
+      default:
+        return Colors.blueAccent;
+    }
   }
 
   @override
@@ -126,46 +180,153 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text("Lỗi: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text("Không tìm thấy thông tin bác sĩ"));
           }
 
           final doctor = snapshot.data;
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Bác sĩ: ${widget.appointmentDTO.doctor.fullName ?? 'Không xác định'}",
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          return Consumer<MedicationsProvider>(
+            builder: (context, medicationsProvider, _) {
+              final prescription = medicationsProvider.prescriptionRequest;
+
+              return SingleChildScrollView(  // Thêm SingleChildScrollView ở đây
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Bác sĩ: ${widget.appointmentDTO.doctor.fullName ?? 'Không xác định'}",
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Chuyên khoa: ${doctor?.specialization?.name ?? 'Không xác định'}",
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: getStatusColor(widget.appointmentDTO.status),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Status : ${widget.appointmentDTO.status}',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Ngày khám: ${widget.appointmentDTO.createdAt ?? 'Không xác định'}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Địa điểm: ${widget.appointmentDTO.doctor.medicalTraining ?? 'Không xác định'}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 20),
+                      prescription != null
+                          ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Đơn thuốc:",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Chuẩn đoán: ${prescription.medicalDiagnosis}",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Danh sách thuốc:",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: prescription.medications.length,
+                            itemBuilder: (context, index) {
+                              final med = prescription.medications[index];
+                              return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Tên thuốc: ${med.medication?.name ?? 'Không xác định'}",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        "Tổng số lượng: ${med.totalDosage}",
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        "Liều dùng: ${med.dosageInstructions}",
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        "Ghi chú: ${med.note}",
+                                        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                          : const Text(
+                        "Không có đơn thuốc",
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  "Chuyên khoa: ${doctor?.specialization?.name ?? 'Không xác định'}",
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Trạng thái: ${widget.appointmentDTO.status ?? 'Không xác định'}",
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Ngày khám: ${widget.appointmentDTO.createdAt ?? 'Không xác định'}",
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Địa điểm: ${widget.appointmentDTO.doctor.medicalTraining ?? 'Không xác định'}",
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
+              );
+            },
+          );
+        },
+      ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
           );
         },
       ),
     );
   }
 }
+
+
+
 

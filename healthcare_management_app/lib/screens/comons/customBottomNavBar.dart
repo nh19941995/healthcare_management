@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/screens/comons/Notification_Screen.dart';
 
-
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
   final VoidCallback onSetupPressed;
+  final VoidCallback onHomePressed;
 
   const CustomBottomNavBar({
     Key? key,
     required this.currentIndex,
     required this.onTap,
     required this.onSetupPressed,
+    required this.onHomePressed,
   }) : super(key: key);
 
   @override
@@ -22,10 +23,11 @@ class CustomBottomNavBar extends StatelessWidget {
           icon: Icon(Icons.home),
           label: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications),
-          label: 'Notify',
-        ),
+        // Tạm thời comment phần Notify
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.notifications),
+        //   label: 'Notify',
+        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
           label: 'Setup',
@@ -34,16 +36,14 @@ class CustomBottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       selectedItemColor: Colors.blue,
       onTap: (index) {
-        if (index == 2) {
-          onSetupPressed(); // Gọi callback khi nhấn vào Setup
+        if (index == 0) {
+          onHomePressed(); // Gọi callback khi nhấn vào Home
         } else if (index == 1) {
-          // Điều hướng đến trang NotificationPage khi nhấn vào Notify
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => NotificationPage()),
-          );
+          // Tạm thời không thực hiện hành động nào khi bấm vào Notify
+          // Đoạn này đã được comment
+          onSetupPressed();
         } else {
-          onTap(index);
+        // Gọi callback khi nhấn vào Setup
         }
       },
     );

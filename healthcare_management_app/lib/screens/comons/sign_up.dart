@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/register.dart';
 import 'package:healthcare_management_app/enum.dart';
-import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/providers/auth_provider.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/login.dart';
@@ -69,42 +68,42 @@ class _SignUpScreenState extends State<SignUp> {
 
     if (fullName.length < 5 || fullName.length > 50) {
       setState(() {
-        _fullNameError = 'Full Name phải từ 5 đến 50 ký tự';
+        _fullNameError = 'Full Name must be from 5 to 50 characters';
       });
       hasError = true;
     }
 
     if (username.length < 5 || !RegExp(r'^[a-zA-Z0-9]+$').hasMatch(username)) {
       setState(() {
-        _userNameError = 'Username phải từ 5 ký tự trở lên và không dấu';
+        _userNameError = 'Username must be 5 characters or more and must be unsigned';
       });
       hasError = true;
     }
 
     if (phone.length < 9 || phone.length > 12 || !RegExp(r'^[0-9]+$').hasMatch(phone)) {
       setState(() {
-        _phoneError = 'Phone phải là số và từ 9 đến 12 ký tự';
+        _phoneError = 'Phone must be numeric and between 9 and 12 characters';
       });
       hasError = true;
     }
 
     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
       setState(() {
-        _emailError = 'Email không đúng định dạng';
+        _emailError = 'Email is not in correct format';
       });
       hasError = true;
     }
 
     if (password != rePassword) {
       setState(() {
-        _passwordError = 'Password và Re-password phải trùng khớp';
+        _passwordError = 'Password and Re-password must match';
       });
       hasError = true;
     }
 
-    if (address.length < 10 || address.length > 300) {
+    if (address.length < 5 || address.length > 300) {
       setState(() {
-        _addressError = 'Address phải từ 10 đến 300 ký tự';
+        _addressError = 'Address must be from 5 to 300 characters';
       });
       hasError = true;
     }
@@ -138,8 +137,8 @@ class _SignUpScreenState extends State<SignUp> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Đăng ký thành công!'),
-          content: Text('Bạn có muốn đăng nhập ngay bây giờ không?'),
+          title: Text('Registered successfully!'),
+          content: Text('Would you like to log in now ?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -176,6 +175,13 @@ class _SignUpScreenState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sign Up'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       backgroundColor: AppTheme.theme.scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(AppTheme.defaultPadding),
@@ -183,9 +189,13 @@ class _SignUpScreenState extends State<SignUp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: AppTheme.xLargeSpacing),
-              Text("Sign Up", style: AppTheme.headerStyle),
-              SizedBox(height: AppTheme.xLargeSpacing),
+              SizedBox(height: AppTheme.largeSpacing),
+              Text("Wellcome", style: AppTheme.headerStyle),
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+              SizedBox(height: AppTheme.largeSpacing),
               TextField(
                 controller: _fullNameController,
                 decoration: InputDecoration(

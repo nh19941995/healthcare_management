@@ -1,12 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/apis/auth.dart'; // Auth API import
 import 'package:healthcare_management_app/apis/user_api.dart';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
-import 'package:healthcare_management_app/models/user.dart';
-import 'package:healthcare_management_app/screens/comons/login.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'dart:io' as io;
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart'; // Thêm dòng này để kiểm tra nền tảng
 
 class UserProvider with ChangeNotifier {
   final UserApi userApi;
@@ -17,6 +18,7 @@ class UserProvider with ChangeNotifier {
   final List<UserDTO> _list = [];
   List<UserDTO> get list => _list;
   UserDTO? _user;
+  String? image;
 
   UserDTO? get user => _user;
 
@@ -33,9 +35,6 @@ class UserProvider with ChangeNotifier {
 
     notifyListeners();
   }
-
-
-
   // Update existing user information in API and list
   Future<void> updateUser(UserDTO user) async {
     final updatedUser = await userApi.updateUser(user);
@@ -61,11 +60,29 @@ class UserProvider with ChangeNotifier {
 
   Future<void> updateUserRole(String username, String role) async {
     final updateRole = await userApi.updateUserRole(username, role);
+    notifyListeners();
   }
 
   Future<void> deleteUser(String username) async {
     final deleteuser = userApi.deleteUser(username);
     list.removeWhere((user) => user.username == username);
+    notifyListeners();
+  }
+
+
+
+   Future<String?> uploadImage(dynamic imageFile) async {
+    try {
+      String? imageUrl;
+          imageUrl = await userApi.uploadImageAsFormData(imageFile);
+      // Cập nhật và thông báo thay đổi
+      image = imageUrl;
+      notifyListeners();
+
+    } catch (e) {
+      print("Error uploading image: $e");
+      return null;
+    }
   }
 
 }

@@ -9,22 +9,22 @@ class UserDTO {
     required this.email,
     required this.address,
     required this.phone,
-    required this.avatar,
+    this.avatar,
     required this.gender,
     required this.description,
-    required this.roles,
+     this.roles,
   });
 
   final int? id;
   final String? fullName;
-  final String? username;
+  final String username;
   final String? email;
   final String? address;
   final String? phone;
   final String? avatar;
   final String? gender;
   final String? description;
-  late final List<Role> roles;
+  late final List<Role>? roles;
 
   factory UserDTO.fromJson(Map<String, dynamic> json){
     return UserDTO(
@@ -51,7 +51,7 @@ class UserDTO {
     "avatar": avatar,
     "gender": gender,
     "description": description,
-    "roles": roles.map((x) => x?.toJson()).toList(),
+    "roles": roles?.map((x) => x?.toJson()).toList(),
   };
 
   @override

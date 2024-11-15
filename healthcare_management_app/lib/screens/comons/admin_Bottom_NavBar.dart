@@ -6,12 +6,14 @@ class AdminBottomNavbar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
   final VoidCallback onSetupPressed;
+  final VoidCallback onHomePressed;
 
   const AdminBottomNavbar({
     Key? key,
     required this.currentIndex,
     required this.onTap,
     required this.onSetupPressed,
+    required this.onHomePressed
   }) : super(key: key);
 
   @override
@@ -26,10 +28,10 @@ class AdminBottomNavbar extends StatelessWidget {
               icon: Icon(Icons.home),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              label: 'Notify',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.notifications),
+            //   label: 'Notify',
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: 'Setup',
@@ -43,15 +45,16 @@ class AdminBottomNavbar extends StatelessWidget {
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.grey, // Màu icon không chọn
           onTap: (index) {
-            if (index == 2) {
+            if (index == 1) {
               onSetupPressed(); // Gọi callback khi nhấn vào Setup
-            } else if (index == 1) {
-              // Điều hướng đến trang NotificationPage khi nhấn vào Notify
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NotificationPage()),
-              );
-            }else if(index == 3) {
+            } else if (index == 0) {
+              // // Điều hướng đến trang NotificationPage khi nhấn vào Notify
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => NotificationPage()),
+              // );
+              onHomePressed();
+             }else if(index == 2) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => UserListScreen()),

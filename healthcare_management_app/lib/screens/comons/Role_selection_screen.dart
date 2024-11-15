@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:healthcare_management_app/screens/admins/Booking_Table_Screen.dart';
-
-import '../customers/Home_customer.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
-  final bool showAdmin;
+  final List<Map<String, dynamic>> rolesToShow;
 
-  RoleSelectionScreen({required this.showAdmin});
+  RoleSelectionScreen({required this.rolesToShow});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chọn vai trò"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
-        children: [
-          if (showAdmin)
-            RoleCard(roleName: "Admin", onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => BookingTableScreen()));
-            }),
-          RoleCard(roleName: "Bác sĩ", onTap: () {
-            //Navigator.push(context, MaterialPageRoute(builder: (context) => DoctorHomeScreen()));
-          }),
-          RoleCard(roleName: "Khách hàng", onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeCustomer()));
-          }),
-        ],
+        children: rolesToShow.map((role) {
+          return RoleCard(
+            roleName: role['roleName'],
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => role['screen']),
+              );
+            },
+          );
+        }).toList(),
       ),
     );
   }
 }
-
 class RoleCard extends StatelessWidget {
   final String roleName;
   final VoidCallback onTap;

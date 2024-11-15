@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
 import 'package:healthcare_management_app/models/user.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
-import 'package:healthcare_management_app/screens/comons/Edit_profile.dart';
+import 'package:healthcare_management_app/screens/comons/Update_profile.dart';
 import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:healthcare_management_app/screens/customers/Appointment_History_App.dart';
 import 'package:healthcare_management_app/screens/customers/Make_an_appointment.dart';
 import 'package:healthcare_management_app/screens/customers/health_index.dart';
-import 'package:healthcare_management_app/screens/customers/online_consultation.dart';
+import 'package:healthcare_management_app/screens/customers/Qa.dart';
 import 'package:provider/provider.dart';
 import '../comons/TokenManager.dart';
 import '../comons/customBottomNavBar.dart';
@@ -239,6 +239,8 @@ class _HomeCustomerState extends State<HomeCustomer> {
         },
         onSetupPressed: () {
           MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
         },
       ),
     );

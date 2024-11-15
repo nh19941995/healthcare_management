@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io' as io;
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_management_app/models/user.dart';
-
 import '../dto/user_dto.dart';
-import '../models/role.dart';
 import '../screens/comons/TokenManager.dart';
+import 'package:http_parser/http_parser.dart';
+import 'dart:html' as html;
+
 
 const baseURL = "http://localhost:8080/users";
 const baseUpdateUser = "http://localhost:8080/api/users";
@@ -31,18 +35,6 @@ class UserApi {
     }
   }
 
-  // Phương thức để lấy thông tin người dùng theo ID
-  Future<User> getUserById(int id) async {
-    final response = await http.get(Uri.parse('$baseURL/$id'));
-
-    if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load user');
-    }
-  }
-
-  // Phương thức để cập nhật thông tin người dùng
   // Phương thức để cập nhật thông tin người dùng
   Future<User> updateUser(UserDTO user) async {
     final String? token = TokenManager().getToken();
@@ -64,22 +56,6 @@ class UserApi {
     }
   }
 
-
-
-  // // Phương thức để khóa người dùng
-  // Future<void> lockUser(int id) async {
-  //   final response = await http.put(
-  //     Uri.parse('$baseURL/$id'),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: jsonEncode({'status': 'LOCKED'}),
-  //   );
-  //
-  //   if (response.statusCode != 200) {
-  //     throw Exception('Failed to lock user: ${response.statusCode}');
-  //   }
-  // }
 
   // Phương thức để lấy thông tin người dùng theo username
   Future<UserDTO> getUserByUserName() async {
@@ -196,6 +172,100 @@ class UserApi {
       print("Error deleting user: $e");
     }
   }
+
+
+  Future<String> uploadImageAsFormData(dynamic imageFile) async {
+    final String? username = TokenManager().getUserSub();
+    final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
+
+    // Kiểm tra nếu thiếu token hoặc username
+    if (username == null || token == null) {
+      throw Exception("Lỗi xác thực: Thiếu username hoặc token");
+    }
+    var url = Uri.parse("http://localhost:8080/api/images/uploadAvatar");
+
+    try {
+      // Kiểm tra nếu nền tảng là Web
+      if (kIsWeb) {
+        if (imageFile is html.File) {
+          // Đọc file dưới dạng bytes
+          final reader = html.FileReader();
+          reader.readAsArrayBuffer(imageFile);
+          await reader.onLoadEnd.first;
+
+          // Chuyển đổi ArrayBuffer thành bytes
+          final bytes = reader.result as List<int>;
+
+          // Xác định contentType dựa trên loại file
+          final mediaType = MediaType('image', 'jpg'); // Cập nhật nếu ảnh có định dạng khác (ví dụ 'png')
+
+          // Tạo yêu cầu Multipart
+          var request = http.MultipartRequest('POST', url)
+            ..headers['Authorization'] = 'Bearer $token'
+            ..fields['username'] = username
+            ..files.add(http.MultipartFile.fromBytes(
+              'file',  // Tên trường file trong form data
+              bytes,
+              filename: imageFile.name,
+              contentType: mediaType,
+            ));
+
+          // Gửi yêu cầu và nhận phản hồi
+          var response = await request.send();
+
+          if (response.statusCode == 200) {
+            final responseBody = await response.stream.bytesToString();
+            return responseBody;  // Trả về phản hồi từ server
+          } else {
+            throw Exception("Upload thất bại: ${response.statusCode}");
+          }
+        } else {
+          throw Exception("Yêu cầu chỉ sử dụng html.File trên Web");
+        }
+      } else {
+        // Đối với Mobile, sử dụng File (dart:io)
+        if (imageFile is File) {
+          // Đọc ảnh dưới dạng bytes
+          final bytes = await imageFile.readAsBytes();
+
+          // Xác định contentType dựa trên loại file
+          final mediaType = MediaType('image', 'jpg');  // Cập nhật nếu ảnh có định dạng khác (ví dụ 'png')
+
+          // Tạo yêu cầu Multipart
+          var request = http.MultipartRequest('POST', url)
+            ..headers['Authorization'] = 'Bearer $token'
+            ..fields['username'] = username
+            ..files.add(http.MultipartFile.fromBytes(
+              'file',  // Tên trường file trong form data
+              bytes,
+              filename: imageFile.uri.pathSegments.last,
+              contentType: mediaType,
+            ));
+
+          // Gửi yêu cầu và nhận phản hồi
+          var response = await request.send();
+
+          if (response.statusCode == 200) {
+            final responseBody = await response.stream.bytesToString();
+            return responseBody;  // Trả về phản hồi từ server
+          } else {
+            throw Exception("Upload thất bại: ${response.statusCode}");
+          }
+        } else {
+          throw Exception("Yêu cầu chỉ sử dụng dart:io.File trên Mobile");
+        }
+      }
+    } catch (e) {
+      throw Exception("Có lỗi xảy ra khi upload ảnh: $e");
+    }
+  }
+
+
+
+
+
+
+
 
 }
 

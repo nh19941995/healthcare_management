@@ -3,7 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../dto/Doctor_dto.dart';
 import '../../models/Clinic.dart';
+import '../comons/customBottomNavBar.dart';
+import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
+import 'Home_customer.dart';
 import 'List_Clinic__Screen.dart';
 import 'Doctor_Detail_Screen.dart';
 
@@ -112,6 +115,22 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
           ),
         ],
       ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
+          );
+        },
+      ),
     );
   }
 }
@@ -155,14 +174,14 @@ class DoctorCard extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Text(
-              doctor.medicalTraining ?? '',
+              doctor.medicalTraining!,
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.grey,
               ),
             ),
             Text(
-              doctor.achievements ?? '',
+              doctor.description ?? '',
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.grey,

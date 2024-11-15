@@ -4,7 +4,10 @@ import 'package:healthcare_management_app/models/Doctor_detail.dart';
 import 'package:healthcare_management_app/providers/Doctor_provider.dart';
 import 'package:healthcare_management_app/screens/customers/Appointment_Booking.dart';
 import 'package:provider/provider.dart';
+import '../comons/customBottomNavBar.dart';
+import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
+import 'Home_customer.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
   final DoctorDTO doctor;
@@ -22,7 +25,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DoctorProvider>().getDoctorByUserNameForAppointment(widget.doctor.username);
+      context.read<DoctorProvider>().getDoctorByUserNameForAppointment(widget.doctor.username!);
     });
   }
 
@@ -135,6 +138,22 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
+          );
+        },
       ),
     );
   }

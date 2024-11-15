@@ -1,12 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:healthcare_management_app/dto/login_dto.dart';
-import 'package:healthcare_management_app/dto/role_dto.dart';
-import 'package:healthcare_management_app/models/role.dart';
-import 'package:healthcare_management_app/providers/auth_provider.dart';
-import 'package:healthcare_management_app/screens/admins/Booking_Table_Screen.dart';
-import 'package:healthcare_management_app/screens/comons/Role_Receptionist.dart';
 import 'package:healthcare_management_app/screens/comons/Role_selection_screen.dart';
 import 'package:healthcare_management_app/screens/comons/sign_up.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
@@ -16,10 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../apis/auth.dart';
 import '../../dto/user_dto.dart';
 import '../../models/user.dart';
+import '../admins/Booking_Table_Screen.dart';
 import '../admins/admin_home.dart';
 import '../doctor/doctor_home.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../recertionists/ReceptionistHome.dart';
 import 'TokenManager.dart'; // Thêm import này để sử dụng UserProvider
 
 
@@ -59,34 +54,48 @@ class _LoginScreenState extends State<Login> {
   }
 
   void _navigateBasedOnRole(UserDTO user) {
-    List<int?> roleIds = user.roles.map((role) => role.id).toList();
+    List<int?>? roleIds = user.roles?.map((role) => role.id).toList();
 
-    if (roleIds.contains(1)) {
-      // Nếu là Admin, hiển thị màn hình "Chọn vai trò"
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => RoleSelectionScreen(showAdmin: true)),
-      );
-    } else if (roleIds.contains(2)) {
-      // Nếu là Doctor, hiển thị màn hình "Chọn vai trò" nhưng ẩn vai trò Admin
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => RoleSelectionScreen(showAdmin: false)),
-      );
-    } else if (roleIds.contains(3)) {
-      // Nếu là Patient, chuyển đến HomeCustomer
+    if (roleIds == null || roleIds.isEmpty) {
+      return;  // Nếu không có vai trò, không làm gì cả
+    }
+
+    // Nếu chỉ có vai trò "Khách hàng" (role 3)
+    if (roleIds.contains(3) && roleIds.length == 1) {
+      // Nếu người dùng chỉ có 1 vai trò là khách hàng
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeCustomer()),
       );
-    } else if (roleIds.contains(4)) {
-      // Nếu là Receptionist, chuyển đến màn hình ReceptionistHome
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => RoleReceptionistScreen()),
-      );
+      return;
     }
+
+    // Tạo danh sách các vai trò cần hiển thị
+    List<Map<String, dynamic>> rolesToShow = [];
+
+    if (roleIds.contains(1)) {
+      rolesToShow.add({'roleName': 'Admin', 'screen': BookingTableScreen()});
+    }
+    if (roleIds.contains(2)) {
+      rolesToShow.add({'roleName': 'Bác sĩ', 'screen': DoctorHomeScreen(user:user)});
+    }
+    if (roleIds.contains(3)) {
+      rolesToShow.add({'roleName': 'Khách hàng', 'screen': HomeCustomer()});
+    }
+    if (roleIds.contains(4)) {
+      rolesToShow.add({'roleName': 'Receptionist', 'screen': ReceptionistHome()});
+    }
+
+    // Chuyển đến màn hình RoleSelectionScreen với các vai trò cần hiển thị
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RoleSelectionScreen(rolesToShow: rolesToShow),
+      ),
+    );
   }
+
+
 
 
 
@@ -163,9 +172,6 @@ class _LoginScreenState extends State<Login> {
       });
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -258,3 +264,4 @@ class _LoginScreenState extends State<Login> {
     );
   }
 }
+

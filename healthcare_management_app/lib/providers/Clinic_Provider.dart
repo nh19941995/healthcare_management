@@ -19,11 +19,11 @@ class ClinicProvider with ChangeNotifier {
     _list.clear();
     _list.addAll(clinics);
 
-    // In ra danh sách _list để kiểm tra
-    print('Danh sách các phòng khám:');
-    for (var clinic in _list) {
-      print(clinic); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
-    }
+    // // In ra danh sách _list để kiểm tra
+    // print('Danh sách các phòng khám:');
+    // for (var clinic in _list) {
+    //   print(clinic); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
+    // }
 
     notifyListeners();
   }

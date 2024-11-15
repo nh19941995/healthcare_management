@@ -1,8 +1,5 @@
-class DoctorDTO {
-  DoctorDTO({
-    required this.userId,
-    required this.doctorId,
-    required this.username,
+class UpdateDoctorDto {
+  UpdateDoctorDto({
     required this.achievements,
     required this.medicalTraining,
     required this.clinicId,
@@ -11,14 +8,11 @@ class DoctorDTO {
     required this.email,
     required this.address,
     required this.phone,
-    required this.avatar,
+    this.avatar,
     required this.gender,
     required this.description,
   });
 
-  final int? userId;
-  final int? doctorId;
-  final String username;
   final String? achievements;
   final String? medicalTraining;
   final int? clinicId;
@@ -31,11 +25,8 @@ class DoctorDTO {
   final String? gender;
   final String? description;
 
-  factory DoctorDTO.fromJson(Map<String, dynamic> json){
-    return DoctorDTO(
-      userId: json["userId"],
-      doctorId: json["doctorId"],
-      username: json["username"],
+  factory UpdateDoctorDto.fromJson(Map<String, dynamic> json){
+    return UpdateDoctorDto(
       achievements: json["achievements"],
       medicalTraining: json["medicalTraining"],
       clinicId: json["clinicId"],
@@ -51,9 +42,6 @@ class DoctorDTO {
   }
 
   Map<String, dynamic> toJson() => {
-    "userId": userId,
-    "doctorId": doctorId,
-    "username": username,
     "achievements": achievements,
     "medicalTraining": medicalTraining,
     "clinicId": clinicId,
@@ -69,6 +57,7 @@ class DoctorDTO {
 
   @override
   String toString(){
-    return "$userId, $doctorId, $username, $achievements, $medicalTraining, $clinicId, $specializationId, $fullName, $email, $address, $phone, $avatar, $gender, $description, ";
+    return "$achievements, $medicalTraining, $clinicId, $specializationId, $fullName, $email, $address, $phone, $avatar, $gender, $description, ";
   }
+
 }

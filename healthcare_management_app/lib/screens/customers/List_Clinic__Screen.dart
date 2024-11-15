@@ -4,6 +4,10 @@ import 'package:healthcare_management_app/providers/Clinic_Provider.dart';
 import 'package:healthcare_management_app/screens/customers/Clinic_details.dart';
 import 'package:provider/provider.dart';
 
+import '../comons/customBottomNavBar.dart';
+import '../comons/show_vertical_menu.dart';
+import 'Home_customer.dart';
+
 class ListClinic extends StatefulWidget {
   @override
   _ListClinic createState() => _ListClinic();
@@ -145,6 +149,22 @@ class _ListClinic extends State<ListClinic> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
+          );
+        },
       ),
     );
   }

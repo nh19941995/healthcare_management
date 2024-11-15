@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
 import 'package:healthcare_management_app/providers/user_provider.dart';
@@ -22,20 +19,19 @@ class _UserListScreenState extends State<UserListScreen> {
       final userProvider = context.read<UserProvider>();
       userProvider.getAllUser().then((_) {
         setState(() {
-          filteredFacilities = userProvider.list; // Get the full user list after updating
+          filteredFacilities = userProvider.list;
         });
       });
     });
   }
 
-  // Get highest role based on the sorted role ID (lowest ID has highest priority)
-  String? getHighestRole(UserDTO user) {
-    if (user.roles.isEmpty) return 'No Role';
-    user.roles.sort((a, b) => a.id!.compareTo(b.id!));
-    return user.roles.first.name;
+  // Trả về tất cả các vai trò của người dùng dưới dạng chuỗi
+  String getRoles(UserDTO user) {
+    if (user.roles == null || user.roles!.isEmpty) return 'No Roles';
+    return user.roles!.map((role) => role.name).join(', '); // Gộp tất cả các vai trò thành một chuỗi
   }
 
-// Filter users by name
+  // Filter users by name
   void filterUsers(String query) {
     setState(() {
       filteredFacilities = context.read<UserProvider>().list.where((user) {
@@ -45,7 +41,10 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   void changeUserRole(BuildContext context, UserDTO user) {
-    String? selectedRole = getHighestRole(user);
+    // Set selectedRole to a single role if there are multiple roles, or null if no roles
+    String? selectedRole = user.roles != null && user.roles!.isNotEmpty
+        ? user.roles!.first.name
+        : 'PATIENT'; // Default to 'ADMIN' if no role is found
 
     showDialog(
       context: context,
@@ -83,8 +82,8 @@ class _UserListScreenState extends State<UserListScreen> {
             ),
             TextButton(
               onPressed: () async {
-                user.roles.clear();
-                user.roles.add(Role(name: selectedRole));
+                user.roles?.clear();
+                user.roles?.add(Role(name: selectedRole));
 
                 try {
                   // Cập nhật quyền người dùng trong provider
@@ -116,8 +115,7 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
 
-
-// Delete user with confirmation dialog
+  // Delete user with confirmation dialog
   void deleteUser(BuildContext context, UserDTO user) {
     showDialog(
       context: context,
@@ -184,7 +182,7 @@ class _UserListScreenState extends State<UserListScreen> {
                 final user = filteredFacilities[index];
                 return ListTile(
                   title: Text(user.fullName ?? 'Tên'),
-                  subtitle: Text('Role: ${getHighestRole(user)}'), // Display highest role
+                  subtitle: Text('Roles: ${getRoles(user)}'), // Hiển thị tất cả vai trò
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

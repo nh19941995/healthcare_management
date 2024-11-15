@@ -8,8 +8,10 @@ class AppointmentProvider with ChangeNotifier {
   final AppointmentApi appointmentApi;
   List<ApiAppointmentDTO> _list = [];
   List<AppointmentDTO> _listAppointment = [];
+  List<AppointmentDTO> _listAppointmentAll = [];
 
   List<AppointmentDTO> get listAppointment => _listAppointment;
+  List<AppointmentDTO> get listAppointmentAll => _listAppointmentAll;
 
   AppointmentProvider({required this.appointmentApi});
 
@@ -37,13 +39,26 @@ class AppointmentProvider with ChangeNotifier {
     listAppointment.clear();
     listAppointment.addAll(appointment);
 
-    // In ra danh sách _list để kiểm tra
-    print('Danh sách các appointment:');
-    for (var user in listAppointment) {
-      print(user); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
-    }
+    // // In ra danh sách _list để kiểm tra
+    // print('Danh sách các appointment:');
+    // for (var user in listAppointment) {
+    //   print(user); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
+    // }
 
     notifyListeners();
   }
 
+  Future getAllAppointment() async {
+    final appointment = await AppointmentApi().getAllAppointment();
+    listAppointmentAll.clear();
+    listAppointmentAll.addAll(appointment);
+
+    // // In ra danh sách _list để kiểm tra
+    // print('Danh sách các appointment:');
+    // for (var user in listAppointment) {
+    //   print(user); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
+    // }
+
+    notifyListeners();
+  }
 }

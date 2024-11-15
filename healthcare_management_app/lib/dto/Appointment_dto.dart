@@ -9,7 +9,7 @@ class AppointmentDTO {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? deletedAt;
-  final String status;
+  late final String status;
   final Timeslots timeSlot;
   final DoctorDTO doctor;
   final UserDTO patient;

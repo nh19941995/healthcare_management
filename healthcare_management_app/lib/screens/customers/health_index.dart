@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/models/user.dart';
-import 'package:healthcare_management_app/screens/comons/Edit_profile.dart';
+import 'package:healthcare_management_app/screens/comons/Update_profile.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import '../comons/customBottomNavBar.dart';
 

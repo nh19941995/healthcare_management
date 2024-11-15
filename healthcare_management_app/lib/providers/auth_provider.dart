@@ -6,7 +6,7 @@ import 'package:healthcare_management_app/apis/user_api.dart';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import '../dto/register.dart';
 import '../models/user.dart'; // Giả sử bạn có một model User
-import '../models/role.dart'; // Giả sử bạn có một model Role
+
 
 class AuthProvider with ChangeNotifier {
   final Auth authApi;

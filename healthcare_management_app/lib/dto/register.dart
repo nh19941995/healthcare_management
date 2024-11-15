@@ -1,6 +1,6 @@
 class Register {
   Register({
-    required this.username,
+     this.username,
     required this.password,
     required this.gender,
     required this.email,
@@ -11,7 +11,7 @@ class Register {
 
   });
 
-  final String username;
+  final String? username;
   final String password;
   final String gender;
   final String email;

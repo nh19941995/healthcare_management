@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/screens/customers/Home_customer.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,8 @@ import '../../providers/Appointment_provider.dart';
 import '../../providers/Clinic_Provider.dart';
 import '../../providers/user_provider.dart';
 import '../comons/TokenManager.dart';
+import '../comons/customBottomNavBar.dart';
+import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
 
 class AppointmentBookingScreen extends StatefulWidget {
@@ -147,7 +150,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Booking information'),
+        title: const Text('Appointment Booking'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -164,11 +167,27 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
             SizedBox(height: AppTheme.defaultMargin),
             _buildDoctorInfo(),
             _buildPatientInfo(),
-            _buildDescriptionField(),
+            //_buildDescriptionField(),
             SizedBox(height: AppTheme.largeSpacing),
             _buildBookingButton(),
           ],
         ),
+      ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
+          );
+        },
       ),
     );
   }
@@ -307,31 +326,32 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     );
   }
 
-// Component: Trường nhập mô tả cuộc hẹn
-  Widget _buildDescriptionField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Mô tả (Tùy chọn):',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 8),
-        TextField(
-          controller: _descriptionController,
-          maxLines: 4,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'Nhập mô tả chi tiết nếu có',
-          ),
-        ),
-      ],
-    );
-  }
+// // Component: Trường nhập mô tả cuộc hẹn
+//   Widget _buildDescriptionField() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           'Mô tả (Tùy chọn):',
+//           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//         ),
+//         SizedBox(height: 8),
+//         TextField(
+//           controller: _descriptionController,
+//           maxLines: 4,
+//           decoration: InputDecoration(
+//             border: OutlineInputBorder(),
+//             hintText: 'Nhập mô tả chi tiết nếu có',
+//           ),
+//         ),
+//       ],
+//     );
+//   }
 
 // Component: Nút đặt lịch
   Widget _buildBookingButton() {
-    return Center(
+    return Container(
+      width: double.infinity, // Đảm bảo chiều rộng của button chiếm toàn bộ
       child: ElevatedButton(
         onPressed: selectedTimeId == null
             ? null
@@ -339,12 +359,10 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
           _showConfirmationDialog(context);
         },
         child: Text('Đặt lịch'),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12), backgroundColor: selectedTimeId == null ? Colors.grey : Colors.blue,
-          textStyle: TextStyle(fontSize: 18),
-        ),
+        style: AppTheme.elevatedButtonStyle,
       ),
     );
   }
+
 
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/dto/Appointment_dto.dart';
+import 'package:healthcare_management_app/providers/Appointment_provider.dart';
 import 'package:healthcare_management_app/screens/comons/admin_Bottom_NavBar.dart';
 import 'package:healthcare_management_app/screens/comons/customBottomNavBar.dart';
 import 'package:healthcare_management_app/screens/comons/show_vertical_menu.dart';
+import 'package:provider/provider.dart';
 
 import '../comons/User_List_Screen.dart';
 
@@ -59,7 +62,18 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
   String searchQuery = '';
   String selectedStatus = 'Tất cả';
 
-  void showBookingInfo(BuildContext context, Map<String, dynamic> booking) {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppointmentProvider>().getAllAppointment();
+      print("getAllAppointment ${context.read<AppointmentProvider>().listAppointmentAll}");
+    });
+  }
+
+
+  void showBookingInfo(BuildContext context, AppointmentDTO booking) {
     showDialog(
       context: context,
       builder: (context) {
@@ -68,10 +82,10 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Patient: ${booking['patient']}'),
-              Text('Doctor: ${booking['doctor']}'),
-              Text('Date: ${booking['date']}'),
-              Text('Phone: ${booking['phone']}'),
+              Text('Patient: ${booking.patient.fullName}'),
+              Text('Doctor: ${booking.doctor.fullName}'),
+              Text('Date: ${booking.createdAt}'),
+              Text('Phone: ${booking.patient.phone}'),
             ],
           ),
           actions: [
@@ -85,8 +99,8 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
     );
   }
 
-  void showStatusOptions(BuildContext context, Map<String, dynamic> booking) {
-    String selectedStatus = booking['status'];
+  void showStatusOptions(BuildContext context, AppointmentDTO booking) {
+    String selectedStatus = booking.status;
     showDialog(
       context: context,
       builder: (context) {
@@ -97,7 +111,7 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  for (String status in ['Đang xử lý', 'Từ chối', 'Chấp nhận'])
+                  for (String status in ['PENDING', 'CANCELLED', 'CONFIRMED'])
                     RadioListTile<String>(
                       title: Text(status),
                       value: status,
@@ -105,25 +119,25 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
                       onChanged: (value) {
                         setState(() {
                           selectedStatus = value!;
-                          if (selectedStatus != 'Từ chối') {
-                            booking['reason'] = '';
-                          }
+                          // if (selectedStatus != 'Từ chối') {
+                          //   booking['reason'] = '';
+                          // }
                         });
                       },
                     ),
-                  if (selectedStatus == 'Từ chối')
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Lý do từ chối',
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          booking['reason'] = value;
-                        },
-                      ),
-                    ),
+                  // if (selectedStatus == 'Từ chối')
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(top: 8.0),
+                  //     child: TextField(
+                  //       decoration: InputDecoration(
+                  //         labelText: 'Lý do từ chối',
+                  //         border: OutlineInputBorder(),
+                  //       ),
+                  //       onChanged: (value) {
+                  //         booking['reason'] = value;
+                  //       },
+                  //     ),
+                  //   ),
                 ],
               );
             },
@@ -136,7 +150,7 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  booking['status'] = selectedStatus;
+                  booking.status = selectedStatus;
                 });
                 Navigator.pop(context);
               },
@@ -148,7 +162,7 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
     );
   }
 
-  void confirmDeleteBooking(BuildContext context, Map<String, dynamic> booking) {
+  void confirmDeleteBooking(BuildContext context, AppointmentDTO booking) {
     showDialog(
       context: context,
       builder: (context) {
@@ -177,13 +191,13 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> filteredBookings = bookings.where((booking) {
-      return booking['patient']
-          .toString()
-          .toLowerCase()
+    final appointments = context.watch<AppointmentProvider>().listAppointmentAll;
+    List<AppointmentDTO> filteredBookings = appointments.where((booking) {
+      return booking.patient.fullName!.toLowerCase()
           .contains(searchQuery.toLowerCase()) &&
-          (selectedStatus == 'Tất cả' || booking['status'] == selectedStatus);
+          (selectedStatus == 'Tất cả' || booking.status == selectedStatus);
     }).toList();
+
 
     return Scaffold(
       appBar: AppBar(
@@ -253,17 +267,17 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
                     ],
                     rows: filteredBookings.map((booking) {
                       Color statusColor;
-                      if (booking['status'] == 'Chấp nhận') {
+                      if (booking.status == 'CONFIRMED') {
                         statusColor = Colors.green;
-                      } else if (booking['status'] == 'Đang xử lý') {
+                      } else if (booking.status == 'PENDING') {
                         statusColor = Colors.blue;
                       } else {
                         statusColor = Colors.red;
                       }
 
                       return DataRow(cells: [
-                        DataCell(Text(booking['id'])),
-                        DataCell(Text(booking['patient'])),
+                        DataCell(Text(booking.id.toString())),
+                        DataCell(Text(booking.patient.fullName!)),
                         DataCell(
                           IconButton(
                             icon: Icon(Icons.add, color: Colors.blue),
@@ -279,7 +293,7 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
                             onPressed: () =>
                                 showStatusOptions(context, booking),
                             child: Text(
-                              booking['status'],
+                              booking.status,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -308,6 +322,7 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
         onSetupPressed: () {
           MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
         },
+        onHomePressed: (){},
       ),
     );
   }

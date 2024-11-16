@@ -23,31 +23,80 @@ class _ReceptionistHome extends State<ReceptionistHome> {
   }
 
   void showBookingInfo(BuildContext context, AppointmentDTO booking) {
-    
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Booking Information'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Patient: ${booking.patient.fullName!}'),
-              Text('Doctor: ${booking.doctor.fullName}'),
-              Text('Date: ${booking.createdAt}'),
-              Text('Phone: ${booking.patient.phone}'),
-            ],
+          title: Text(
+            'Booking Information',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView( // Đảm bảo nội dung cuộn được nếu quá dài
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.person, color: Colors.blue),
+                  title: Text('Patient'),
+                  subtitle: Text(booking.patient.fullName ?? "N/A"),
+                ),
+                ListTile(
+                  leading: Icon(Icons.person_outline, color: Colors.green),
+                  title: Text('Doctor'),
+                  subtitle: Text(booking.doctor.fullName ?? "N/A"),
+                ),
+                ListTile(
+                  leading: Icon(Icons.calendar_today, color: Colors.orange),
+                  title: Text('Date'),
+                  subtitle: Text(booking.createdAt.toString() ?? "N/A"), // Hiển thị ngày tạo
+                ),
+                ListTile(
+                  leading: Icon(Icons.access_time, color: Colors.purple),
+                  title: Text('Timeslot'),
+                  subtitle: Text(booking.timeSlot.startAt ?? "N/A"), // Hiển thị timeslot
+                ),
+                ListTile(
+                  leading: Icon(Icons.phone, color: Colors.red),
+                  title: Text('Phone'),
+                  subtitle: Text(booking.patient.phone ?? "N/A"), // Hiển thị số điện thoại
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Close'),
+              child: Text(
+                'Close',
+                style: TextStyle(color: Colors.blue),
+              ),
             ),
           ],
         );
       },
     );
   }
+
+  /// Helper function to build a row with label and value
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$label ',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(color: Colors.grey[700]),
+          ),
+        ),
+      ],
+    );
+  }
+
 
   void showStatusOptions(BuildContext context, AppointmentDTO booking) {
     String selectedStatus = booking.status;
@@ -210,7 +259,7 @@ class _ReceptionistHome extends State<ReceptionistHome> {
                           DataColumn(label: Text('Patient')),
                           DataColumn(label: Text('Info')),
                           DataColumn(label: Text('Status')),
-                          DataColumn(label: Text('Delete')),
+                          //DataColumn(label: Text('Delete')),
                         ],
                         rows: filteredBookings.map((booking) {
                           // Configure your row cells
@@ -242,13 +291,13 @@ class _ReceptionistHome extends State<ReceptionistHome> {
                                 ),
                               ),
                             ),
-
-                            DataCell(
-                              IconButton(
-                                icon: Icon(Icons.delete, color: Colors.grey),
-                                onPressed: () => confirmDeleteBooking(context, booking),
-                              ),
-                            ),
+                            //
+                            // DataCell(
+                            //   IconButton(
+                            //     icon: Icon(Icons.delete, color: Colors.grey),
+                            //     onPressed: () => confirmDeleteBooking(context, booking),
+                            //   ),
+                            // ),
                           ]);
                         }).toList(),
                       ),

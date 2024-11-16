@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../dto/Api_appointment_dto.dart';
 import '../../dto/Doctor_dto.dart';
 import '../../dto/user_dto.dart';
+import '../../models/GetDoctorProfile.dart';
 import '../../models/Time_slot.dart';
 import '../../providers/Appointment_provider.dart';
 import '../../providers/Clinic_Provider.dart';
@@ -16,7 +17,7 @@ import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
 
 class AppointmentBookingScreen extends StatefulWidget {
-  final DoctorDTO doctor;
+  final GetDoctorProfile doctor;
 
   AppointmentBookingScreen({required this.doctor});
 
@@ -74,27 +75,27 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Xác nhận phiếu đặt'),
+        title: Text('Confirm booking'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Bác sĩ: ${widget.doctor.fullName}'),
-            Text('Medical Training: ${widget.doctor.medicalTraining}'),
+            Text('Doctor: ${widget.doctor.fullName}'),
+            Text('Clinic: ${widget.doctor.clinic?.name}'),
             SizedBox(height: 8),
-            Text('Thông tin khách hàng'),
+            Text('Customer information'),
             Text('Name: ${user?.fullName}'),
             Text('Phone: ${user?.phone}'),
             SizedBox(height: 8),
-            Text('Ngày hẹn: ${DateFormat('dd/MM/yyyy').format(selectedDate)}'),
-            Text('Giờ hẹn: $selectedTime'),
-            SizedBox(height: 8),
-            Text('Mô tả: ${_descriptionController.text}'),
+            Text('Appointment date: ${DateFormat('dd/MM/yyyy').format(selectedDate)}'),
+            Text('Appointment time: $selectedTime'),
+            // SizedBox(height: 8),
+            // Text('Mô tả: ${_descriptionController.text}'),
           ],
         ),
         actions: [
           TextButton(
-            child: Text('Hủy'),
+            child: Text('Cancel'),
             onPressed: () => Navigator.of(context).pop(),
           ),
           ElevatedButton(
@@ -126,7 +127,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   void _showSuccessSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Đặt lịch thành công!'),
+        content: Text('Schedule successfully!'),
         backgroundColor: Colors.green,
         duration: Duration(seconds: 3),
       ),
@@ -137,7 +138,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   void _showDateErrorSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Không thể chọn ngày trước hôm nay'),
+        content: Text('Cannot select dates before today'),
         backgroundColor: Colors.red,
         duration: Duration(seconds: 2),
       ),
@@ -267,7 +268,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Chọn khung giờ:',
+          'Choose a time frame:',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 8),
@@ -300,11 +301,11 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Thông tin bác sĩ:',
+          'Doctor information:',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 8),
-        Text('Bác sĩ: ${widget.doctor.fullName}'),
+        Text('Doctor: ${widget.doctor.fullName}'),
         Text('Medical Training: ${widget.doctor.medicalTraining}'),
       ],
     );
@@ -316,7 +317,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Thông tin khách hàng:',
+          'Customer information:',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 8),
@@ -358,7 +359,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
             : () {
           _showConfirmationDialog(context);
         },
-        child: Text('Đặt lịch'),
+        child: Text('Make an appointment'),
         style: AppTheme.elevatedButtonStyle,
       ),
     );

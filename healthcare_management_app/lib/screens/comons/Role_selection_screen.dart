@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare_management_app/screens/comons/customBottomNavBar.dart';
+import 'package:healthcare_management_app/screens/comons/login.dart';
+import 'package:healthcare_management_app/screens/comons/show_vertical_menu.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   final List<Map<String, dynamic>> rolesToShow;
@@ -9,7 +12,7 @@ class RoleSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chọn vai trò"),
+        title: Text("Select role"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -27,6 +30,22 @@ class RoleSelectionScreen extends StatelessWidget {
             },
           );
         }).toList(),
+      ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // // Điều hướng về trang HomeCustomer
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => Login()),
+          // );
+        },
       ),
     );
   }

@@ -152,23 +152,23 @@ class _LoginScreenState extends State<Login> {
             _navigateBasedOnRole(userDTO!);
           } else {
             setState(() {
-              _userNameError = "Không thể lấy thông tin người dùng";
+              _userNameError = "Unable to get user information";
             });
           }
 
         } else {
           setState(() {
-            _userNameError = "Phản hồi không hợp lệ từ server";
+            _userNameError = "Unable to get user information";
           });
         }
       } else {
         setState(() {
-          _userNameError = "Lỗi server: ${response.statusCode}";
+          _userNameError = "Incorrect name or password";
         });
       }
     } catch (error) {
       setState(() {
-        _userNameError = "Đã xảy ra lỗi: $error";
+        _userNameError = "An error has occurred";
       });
     }
   }
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<Login> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: AppTheme.xLargeSpacing),
+              SizedBox(height: AppTheme.mediumSpacing),
               Text(
                 "Welcome",
                 style: AppTheme.theme.textTheme.headlineLarge,
@@ -192,12 +192,12 @@ class _LoginScreenState extends State<Login> {
                 "Login",
                 style: AppTheme.theme.textTheme.headlineLarge,
               ),
-              SizedBox(height: AppTheme.xLargeSpacing),
+              SizedBox(height: AppTheme.mediumSpacing),
               // Hình ảnh trung tâm
               Container(
                 child: Image.asset('lib/assets/Lifesavers.png'),
               ),
-              SizedBox(height: AppTheme.xLargeSpacing),
+              SizedBox(height: AppTheme.mediumSpacing),
               TextField(
                 controller: _userNameController,
                 decoration: InputDecoration(

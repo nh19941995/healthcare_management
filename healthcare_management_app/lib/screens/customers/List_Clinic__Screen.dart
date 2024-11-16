@@ -131,7 +131,7 @@ class _ListClinic extends State<ListClinic> {
                           const SizedBox(height: 8.0), // Khoảng cách giữa ảnh và tên
                           // Hiển thị tên cơ sở
                           Text(
-                            facility?.name ?? 'Tên cơ sở', // Dự phòng nếu tên không có
+                            facility?.name ?? '', // Dự phòng nếu tên không có
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,

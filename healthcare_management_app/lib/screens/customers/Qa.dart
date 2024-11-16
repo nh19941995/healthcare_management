@@ -3,6 +3,10 @@ import 'package:healthcare_management_app/models/Qa.dart';
 import 'package:healthcare_management_app/providers/Qa_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../comons/customBottomNavBar.dart';
+import '../comons/show_vertical_menu.dart';
+import 'Home_customer.dart';
+
 class OnlineConsultation extends StatefulWidget {
   const OnlineConsultation({super.key});
 
@@ -88,6 +92,22 @@ class AnswerDetail extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
+          );
+        },
       ),
     );
   }

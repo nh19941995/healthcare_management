@@ -2,6 +2,7 @@ import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:healthcare_management_app/dto/update_doctor_dto.dart';
 import '../dto/Appointment_dto.dart';
 import '../models/Doctor_detail.dart';
+import '../models/GetDoctorProfile.dart';
 import '../screens/comons/TokenManager.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -43,7 +44,7 @@ class DoctorApi {
 
   }
 
-  Future<DoctorDTO> getDoctorByUserName() async {
+  Future<GetDoctorProfile> getDoctorByUserName() async {
     final String? username = TokenManager().getUserSub();
     final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
 
@@ -64,14 +65,14 @@ class DoctorApi {
       final data = jsonDecode(utf8.decode(response.bodyBytes));
       print('Data from API: $data'); // In ra dữ liệu từ API để kiểm tra
 
-      return DoctorDTO.fromJson(data);
+      return GetDoctorProfile.fromJson(data);
     } else {
       print('Failed to load doctor data. Status code: ${response.statusCode}');
       throw Exception('Failed to load doctor data');
     }
   }
 
-  Future<DoctorDetail> getDoctorByUserNameForAppoiment(String username) async {
+  Future<GetDoctorProfile> getDoctorByUserNameForAppoiment(String username) async {
     //print('Username: $username');
 
     final String urlGetUser = 'http://localhost:8080/api/doctors/$username';
@@ -83,7 +84,7 @@ class DoctorApi {
     if (response.statusCode == 200) {
       // Chuyển đổi phản hồi sang UTF-8
       final data = jsonDecode(utf8.decode(response.bodyBytes));
-      return DoctorDetail.fromJson(data);
+      return GetDoctorProfile.fromJson(data);
     } else {
       print('Failed to load doctor data. Status code: ${response.statusCode}');
       throw Exception('Failed to load doctor data');

@@ -3,7 +3,13 @@ import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:healthcare_management_app/providers/Doctor_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../customers/Doctor_Detail_Screen.dart';
+import '../../apis/doctor_api.dart';
+import '../../models/Doctor_detail.dart';
+import '../../models/GetDoctorProfile.dart';
+import '../comons/customBottomNavBar.dart';
+import '../comons/show_vertical_menu.dart';
+import '../customers/Doctor_information.dart';
+import '../customers/Home_customer.dart';
 
 class DoctorSelectionScreen extends StatefulWidget {
   const DoctorSelectionScreen({super.key});
@@ -51,7 +57,11 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chọn thông tin bác sĩ'),
+        title: const Text('List of doctors'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [
@@ -60,7 +70,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Tìm kiếm bác sĩ',
+                hintText: 'Search for a doctor',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -79,23 +89,73 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
               ),
               itemCount: filteredDoctors.length,
               itemBuilder: (context, index) {
-                return DoctorCard(doctor: filteredDoctors[index]);
+                return DoctorCard(userName: filteredDoctors[index].username);
               },
             ),
           ),
         ],
       ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context); // Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: () {
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeCustomer()),
+          );
+        },
+      ),
     );
   }
 }
 
-class DoctorCard extends StatelessWidget {
-  final DoctorDTO doctor;
+class DoctorCard extends StatefulWidget {
+  final String userName;
 
-  const DoctorCard({required this.doctor});
+  const DoctorCard({required this.userName, Key? key}) : super(key: key);
+
+  @override
+  _DoctorCardState createState() => _DoctorCardState();
+}
+
+class _DoctorCardState extends State<DoctorCard> {
+  late GetDoctorProfile doctor;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDoctorDetails();
+  }
+
+  Future<void> _fetchDoctorDetails() async {
+    try {
+      GetDoctorProfile fetchedDoctor =
+      await DoctorApi().getDoctorByUserNameForAppoiment(widget.userName);
+      setState(() {
+        doctor = fetchedDoctor;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching doctor: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -116,7 +176,7 @@ class DoctorCard extends StatelessWidget {
               backgroundImage: doctor.avatar != null
                   ? NetworkImage(doctor.avatar!) as ImageProvider
                   : const AssetImage('lib/assets/Avatar.png'),
-              radius: 30, // Kích thước avatar
+              radius: 36, // Kích thước avatar
             ),
             const SizedBox(height: 10),
             Text(
@@ -128,14 +188,22 @@ class DoctorCard extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Text(
-              doctor.medicalTraining ?? '',
+              doctor.specialization?.name ?? '',
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.grey,
               ),
             ),
             Text(
-              doctor.achievements ?? '',
+              doctor.medicalTraining ?? '',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              doctor.clinic?.name ?? '',
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.grey,

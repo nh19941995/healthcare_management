@@ -41,6 +41,6 @@ class Specialization {
 
   @override
   String toString(){
-    return "$id, $name, $description, $image, $createdAt, $updatedAt, $deletedAt, ";
+    return "$id, $name, $description, $image, $createdAt, $updatedAt, $deletedAt";
   }
 }

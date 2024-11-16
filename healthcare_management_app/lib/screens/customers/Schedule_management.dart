@@ -9,6 +9,7 @@ import 'package:healthcare_management_app/providers/Medications_provider.dart';
 import 'package:healthcare_management_app/screens/comons/customBottomNavBar.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/GetDoctorProfile.dart';
 import '../comons/show_vertical_menu.dart';
 import 'Home_customer.dart';
 
@@ -52,7 +53,7 @@ class _AppointmentHistoryAppState extends State<AppointmentHistoryApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lịch sử khám bệnh'),
+        title: const Text('Schedule management'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -89,14 +90,15 @@ class _AppointmentHistoryAppState extends State<AppointmentHistoryApp> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'Status : ${appointment.status}',
+                          appointment.status,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
                   ),
-                  Text("Ngày khám: ${appointment.createdAt ?? ''}"),
-                  Text("Địa điểm: ${appointment.doctor.medicalTraining ?? ''}"),
+                  Text("Date of examination: ${appointment.appointmentDate ?? ''}"),
+                  Text("examination hours: ${appointment.timeSlot.startAt ?? ''}"),
+                  Text("Medical examination location: ${appointment.doctor.medicalTraining ?? ''}"),
                 ],
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
@@ -126,7 +128,7 @@ class AppointmentDetail extends StatefulWidget {
 }
 
 class _AppointmentDetailState extends State<AppointmentDetail> {
-  late Future<DoctorDetail?> _doctorFuture;
+  late Future<GetDoctorProfile?> _doctorFuture;
 
   @override
   void initState() {
@@ -138,7 +140,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
     });
   }
 
-  Future<DoctorDetail?> _loadDoctor() async {
+  Future<GetDoctorProfile?> _loadDoctor() async {
     return context.read<DoctorProvider>().doctor_pro_appointment;
   }
 
@@ -165,7 +167,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chi tiết lịch sử khám bệnh"),
+        title: const Text("Detail appointment"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -173,13 +175,13 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
           },
         ),
       ),
-      body: FutureBuilder<DoctorDetail?>(
+      body: FutureBuilder<GetDoctorProfile?>(
         future: _doctorFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text("Lỗi: ${snapshot.error}"));
+            return Center(child: Text("Error: ${snapshot.error}"));
           }
 
           final doctor = snapshot.data;
@@ -195,11 +197,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Bác sĩ: ${widget.appointmentDTO.doctor.fullName ?? 'Không xác định'}",
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Chuyên khoa: ${doctor?.specialization?.name ?? 'Không xác định'}",
+                        "Bác sĩ: ${widget.appointmentDTO.doctor.fullName ?? ''}",
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
@@ -212,7 +210,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              'Status : ${widget.appointmentDTO.status}',
+                              widget.appointmentDTO.status,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -220,12 +218,16 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Ngày khám: ${widget.appointmentDTO.createdAt ?? 'Không xác định'}",
+                        "Medical examination date: ${widget.appointmentDTO.appointmentDate.toString() ?? 'Không xác định'}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        "Medical examination hours: ${widget.appointmentDTO.timeSlot.startAt ?? 'Không xác định'}",
                         style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Địa điểm: ${widget.appointmentDTO.doctor.medicalTraining ?? 'Không xác định'}",
+                        "Medical examination place: ${widget.appointmentDTO.doctor.medicalTraining ?? 'Không xác định'}",
                         style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 20),
@@ -234,17 +236,17 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Đơn thuốc:",
+                            "Prescription:",
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Chuẩn đoán: ${prescription.medicalDiagnosis}",
+                            "Diagnosis: ${prescription.medicalDiagnosis}",
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 20),
                           const Text(
-                            "Danh sách thuốc:",
+                            "List of medications:",
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 10),

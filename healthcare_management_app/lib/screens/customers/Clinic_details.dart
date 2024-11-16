@@ -3,12 +3,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../dto/Doctor_dto.dart';
 import '../../models/Clinic.dart';
+import '../../models/GetDoctorProfile.dart';
 import '../comons/customBottomNavBar.dart';
 import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
 import 'Home_customer.dart';
 import 'List_Clinic__Screen.dart';
-import 'Doctor_Detail_Screen.dart';
+import 'Doctor_information.dart';
 
 class MedicalFacilityDetails extends StatefulWidget {
   final Clinic facility;
@@ -21,7 +22,7 @@ class MedicalFacilityDetails extends StatefulWidget {
 
 class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
   TextEditingController _searchController = TextEditingController();
-  List<DoctorDTO> filteredDoctors = []; // Thay đổi thành List<DoctorDTO>
+  List<GetDoctorProfile> filteredDoctors = []; // Thay đổi thành List<DoctorDTO>
   String get clinicsUrl => "http://localhost:8080/api/clinics/${widget.facility.id}";
 
   @override
@@ -42,13 +43,12 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
 
     try {
       final response = await http.get(Uri.parse(clinicsUrl));
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
         final List<dynamic> doctorsDto = data['doctors'];
 
         setState(() {
-          filteredDoctors = doctorsDto.map((doctorJson) => DoctorDTO.fromJson(doctorJson)).toList();
+          filteredDoctors = doctorsDto.map((doctorJson) => GetDoctorProfile.fromJson(doctorJson)).toList();
         });
       } else {
         throw Exception('Không thể lấy dữ liệu bác sĩ: ${response.statusCode}');
@@ -136,7 +136,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
 }
 
 class DoctorCard extends StatelessWidget {
-  final DoctorDTO doctor;
+  final GetDoctorProfile doctor;
 
   const DoctorCard({required this.doctor});
 

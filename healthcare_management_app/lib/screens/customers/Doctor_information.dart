@@ -4,13 +4,14 @@ import 'package:healthcare_management_app/models/Doctor_detail.dart';
 import 'package:healthcare_management_app/providers/Doctor_provider.dart';
 import 'package:healthcare_management_app/screens/customers/Appointment_Booking.dart';
 import 'package:provider/provider.dart';
+import '../../models/GetDoctorProfile.dart';
 import '../comons/customBottomNavBar.dart';
 import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
 import 'Home_customer.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
-  final DoctorDTO doctor;
+  final GetDoctorProfile doctor;
 
   DoctorDetailScreen({required this.doctor});
 
@@ -32,12 +33,15 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final doctorProvider = context.watch<DoctorProvider>();
-    final DoctorDetail? doctorDetail = doctorProvider.doctor_pro_appointment;
+    final GetDoctorProfile? doctorDetail = doctorProvider.doctor_pro_appointment;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thông tin chi tiết'),
-        centerTitle: true,
+        title: Text('Doctor information'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: doctorDetail == null
           ? Center(child: CircularProgressIndicator()) // Hiển thị spinner khi dữ liệu chưa load
@@ -65,7 +69,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               ),
               SizedBox(height: 8),
               Text(
-                'Chuyên khoa ${doctorDetail.specialization?.name ?? 'N/A'}',
+                'Specialties ${doctorDetail.specialization?.name ?? 'N/A'}',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -82,7 +86,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Thông tin bác sĩ',
+                      'Doctor information',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -91,7 +95,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      widget.doctor.medicalTraining ?? 'Không có thông tin',
+                      widget.doctor.medicalTraining ?? '',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -99,7 +103,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      widget.doctor.achievements ?? 'Không có thành tựu',
+                      'Clinic: ${widget.doctor.clinic?.name ?? ''}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -107,7 +111,15 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      doctorDetail.specialization?.description ?? 'Không có mô tả',
+                      widget.doctor.achievements ?? '',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      doctorDetail.specialization?.description ?? '',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -132,7 +144,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                       ),
                     );
                   },
-                  child: Text('Chọn thời gian'),
+                  child: Text('Choose time'),
                 ),
               ),
             ],

@@ -74,7 +74,7 @@ class _SignUpScreenState extends State<EditProfileScreen> {
       _addressController.text = widget.userDTO!.address ?? '';
       _selectedGender =
           widget.userDTO!.gender == 'MALE' ? Gender.MALE : Gender.FEMALE;
-      _descriptionController.text = '';
+      _descriptionController.text = widget.userDTO!.description ?? '';
 
       // Nếu avatar có sẵn, tải và hiển thị nó
       if (widget.userDTO!.avatar != null) {

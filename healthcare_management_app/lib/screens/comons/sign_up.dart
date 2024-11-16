@@ -189,13 +189,13 @@ class _SignUpScreenState extends State<SignUp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: AppTheme.largeSpacing),
+              SizedBox(height: AppTheme.mediumSpacing),
               Text("Wellcome", style: AppTheme.headerStyle),
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
-              SizedBox(height: AppTheme.largeSpacing),
+              SizedBox(height: AppTheme.mediumSpacing),
               TextField(
                 controller: _fullNameController,
                 decoration: InputDecoration(

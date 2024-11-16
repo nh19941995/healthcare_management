@@ -7,10 +7,14 @@ import 'package:healthcare_management_app/providers/Specializations_provider.dar
 import 'package:provider/provider.dart';
 
 import '../../models/Clinic.dart';
+import '../../models/GetDoctorProfile.dart';
 import '../../models/Specialization.dart';
 import '../../providers/Doctor_provider.dart';
+import '../comons/customBottomNavBar.dart';
 import '../comons/login.dart';
+import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
+import 'doctor_home.dart';
 
 class UpdateDoctorProfileScreen extends StatefulWidget {
   final UserDTO? user;
@@ -40,15 +44,15 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
   Future<void> _loadData() async {
     // Fetch doctor data
     await context.read<DoctorProvider>().getDoctorByUserName();
-    DoctorDTO? doctorDTO = context.read<DoctorProvider>().doctor_pro;
+    GetDoctorProfile? doctorDTO = context.read<DoctorProvider>().doctor_pro;
 
     // Pre-fill form fields if doctorDTO is available
     if (doctorDTO != null) {
       print("clinicId ${doctorDTO.userId}");
       _achievementsController.text = doctorDTO.achievements ?? '';
       _medicalTrainingController.text = doctorDTO.medicalTraining ?? '';
-      // _selectedClinicId = doctorDTO.clinic?.id;
-      // _selectedSpecializationId = doctorDTO.specialization?.id;
+       _selectedClinicId = doctorDTO.clinic?.id;
+       _selectedSpecializationId = doctorDTO.specialization?.id;
     }
 
     // Load clinic and specialization data
@@ -190,6 +194,22 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar:CustomBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          // Handle other navigation
+        },
+        onSetupPressed: () {
+          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+        },
+        onHomePressed: (){
+          // Điều hướng về trang HomeCustomer
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DoctorHomeScreen(user: widget.user!,)),
+          );
+        },
       ),
     );
   }

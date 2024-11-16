@@ -41,33 +41,46 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   void changeUserRole(BuildContext context, UserDTO user) {
-    // Set selectedRole to a single role if there are multiple roles, or null if no roles
-    String? selectedRole = user.roles != null && user.roles!.isNotEmpty
+    String? selectedRole = user.roles?.isNotEmpty == true
         ? user.roles!.first.name
-        : 'PATIENT'; // Default to 'ADMIN' if no role is found
+        : 'PATIENT'; // Mặc định là 'PATIENT' nếu không có role.
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Change User Role'),
+          title: Text(
+            'Change User Role',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           content: StatefulBuilder(
             builder: (context, setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Select a new role for ${user.fullName}:'),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      'Select a new role for ${user.fullName}:',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
                   DropdownButton<String>(
                     value: selectedRole,
-                    items: ['ADMIN', 'DOCTOR', 'PATIENT', 'RECEPTIONIST'].map((role) {
-                      return DropdownMenuItem(
-                        value: role,
-                        child: Text(role),
-                      );
-                    }).toList(),
+                    isExpanded: true, // Cho dropdown chiếm toàn bộ chiều ngang
+                    items: ['ADMIN', 'DOCTOR', 'PATIENT', 'RECEPTIONIST']
+                        .map((role) => DropdownMenuItem(
+                      value: role,
+                      child: Text(
+                        role,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ))
+                        .toList(),
                     onChanged: (newRole) {
                       setState(() {
-                        selectedRole = newRole; // Update selected role immediately
+                        selectedRole = newRole; // Cập nhật role ngay lập tức
                       });
                     },
                   ),
@@ -78,41 +91,54 @@ class _UserListScreenState extends State<UserListScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
             TextButton(
               onPressed: () async {
-                user.roles?.clear();
-                user.roles?.add(Role(name: selectedRole));
+                if (selectedRole == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please select a role before confirming.')),
+                  );
+                  return;
+                }
 
                 try {
-                  // Cập nhật quyền người dùng trong provider
+                  // Cập nhật quyền người dùng
+                  user.roles?.clear();
+                  user.roles?.add(Role(name: selectedRole));
+
                   await context.read<UserProvider>().updateUserRole(user.username!, selectedRole!);
 
-                  // Lấy lại danh sách người dùng và cập nhật giao diện
+                  // Lấy lại danh sách người dùng
                   await context.read<UserProvider>().getAllUser();
 
-                  if (mounted) {
-                    setState(() {
-                      filteredFacilities = context.read<UserProvider>().list;
-                    });
-                  }
+                  // Hiển thị thông báo thành công
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Role updated successfully for ${user.fullName}!')),
+                  );
 
                   Navigator.pop(context);
                 } catch (error) {
-                  // Xử lý lỗi
+                  // Hiển thị lỗi
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Xóa không thành công')),
+                    SnackBar(content: Text('Failed to update role: $error')),
                   );
                 }
               },
-              child: Text('Confirm'),
+              child: Text(
+                'Confirm',
+                style: TextStyle(color: Colors.blue),
+              ),
             ),
           ],
         );
       },
     );
   }
+
 
 
   // Delete user with confirmation dialog

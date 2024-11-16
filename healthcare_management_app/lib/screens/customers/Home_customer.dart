@@ -6,7 +6,7 @@ import 'package:healthcare_management_app/providers/user_provider.dart';
 import 'package:healthcare_management_app/screens/comons/Update_profile.dart';
 import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
-import 'package:healthcare_management_app/screens/customers/Appointment_History_App.dart';
+import 'package:healthcare_management_app/screens/customers/Schedule_management.dart';
 import 'package:healthcare_management_app/screens/customers/Make_an_appointment.dart';
 import 'package:healthcare_management_app/screens/customers/health_index.dart';
 import 'package:healthcare_management_app/screens/customers/Qa.dart';
@@ -56,35 +56,45 @@ class _HomeCustomerState extends State<HomeCustomer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultPadding),
-        child: Column(
-          children: [
-            // Hiển thị tên người dùng và avatar
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text(
-                    'Welcome ${userDto?.fullName}',
-                    style: AppTheme.theme.textTheme.displayLarge,
-                    overflow: TextOverflow.ellipsis, // Hiển thị dấu "..." nếu văn bản quá dài
-                  ),
-                ),
-                CircleAvatar(
-                  //backgroundImage: AssetImage('lib/assets/Avatar.png'), // Đường dẫn đến avatar
-                  backgroundImage: userDto?.avatar != null
-                      ? NetworkImage(userDto!.avatar!)
-                      : AssetImage('lib/assets/Avatar.png'),
-                  radius: 24, // Kích thước của avatar
-                ),
-              ],
-            ),
-            SizedBox(height: AppTheme.largeSpacing),
-            Expanded(
-              child: Column(
+      appBar: AppBar(
+        title: const Text("Home"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context); // Quay lại danh sách lịch sử khám bệnh
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        // Thêm SingleChildScrollView để cuộn
+        child: Padding(
+          padding: const EdgeInsets.all(AppTheme.defaultPadding),
+          child: Column(
+            children: [
+              // Hiển thị tên người dùng và avatar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Mục Thông tin cá nhân
+                  Flexible(
+                    child: Text(
+                      'Welcome ${userDto?.fullName}',
+                      style: AppTheme.theme.textTheme.displayLarge,
+                      overflow: TextOverflow.ellipsis, // Hiển thị dấu "..." nếu văn bản quá dài
+                    ),
+                  ),
+                  CircleAvatar(
+                    backgroundImage: userDto?.avatar != null
+                        ? NetworkImage(userDto!.avatar!)
+                        : const AssetImage('lib/assets/Avatar.png')
+                    as ImageProvider,
+                    radius: 24, // Kích thước của avatar
+                  ),
+                ],
+              ),
+              SizedBox(height: AppTheme.largeSpacing),
+              Column(
+                children: [
+                  // Các mục như Thông tin cá nhân, Đặt lịch khám, Lịch sử khám, Tư vấn online
                   SizedBox(
                     height: 160.0, // Đặt chiều cao gấp đôi cho Card
                     child: Card(
@@ -101,29 +111,29 @@ class _HomeCustomerState extends State<HomeCustomer> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
+                              padding: const EdgeInsets.all(4.0),
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Image.asset(
                                   'lib/assets/office-man.png',
-                                  width: 100, // Chỉnh kích thước width theo nhu cầu
-                                  height: 100, // Chỉnh kích thước height theo nhu cầu
-                                  fit: BoxFit.cover, // Hoặc BoxFit.contain tùy vào cách bạn muốn hiển thị
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),
                           ],
                         ),
                         onTap: () {
-                          _navigateToScreen(context, EditProfileScreen(userDTO: userDto)); // Chuyển đến màn hình thông tin cá nhân
+                          _navigateToScreen(
+                              context, EditProfileScreen(userDTO: userDto));
                         },
                       ),
                     ),
                   ),
-
-                  // Mục Đặt lịch khám
+                  // Các Card khác
                   SizedBox(
-                    height: 160.0, // Đặt chiều cao gấp đôi cho Card
+                    height: 160.0,
                     child: Card(
                       child: ListTile(
                         title: Row(
@@ -132,13 +142,13 @@ class _HomeCustomerState extends State<HomeCustomer> {
                               child: Padding(
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
-                                  'Đặt lịch khám',
+                                  'Make an appointment',
                                   style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
+                              padding: const EdgeInsets.all(4.0),
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Image.asset(
@@ -155,7 +165,6 @@ class _HomeCustomerState extends State<HomeCustomer> {
                       ),
                     ),
                   ),
-
                   // Mục Lịch sử khám
                   SizedBox(
                     height: 160.0, // Đặt chiều cao gấp đôi cho Card
@@ -167,7 +176,7 @@ class _HomeCustomerState extends State<HomeCustomer> {
                               child: Padding(
                                 padding: const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
-                                  'Lịch sử khám',
+                                  'Schedule Management',
                                   style: AppTheme.theme.textTheme.displayMedium,
                                 ),
                               ),
@@ -185,7 +194,7 @@ class _HomeCustomerState extends State<HomeCustomer> {
                           ],
                         ),
                         onTap: () {
-                           _navigateToScreen(context, AppointmentHistoryApp()); // Chuyển đến màn hình lịch sử khám
+                          _navigateToScreen(context, AppointmentHistoryApp()); // Chuyển đến màn hình lịch sử khám
                         },
                       ),
                     ),
@@ -227,22 +236,21 @@ class _HomeCustomerState extends State<HomeCustomer> {
                   ),
                 ],
               ),
-            ),
-
-          ],
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar:CustomBottomNavBar(
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {
           // Handle other navigation
         },
         onSetupPressed: () {
-          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+          MenuUtils.showVerticalMenu(context); // Hiển thị menu khi nhấn Setup
         },
-        onHomePressed: (){
-        },
+        onHomePressed: () {},
       ),
     );
   }
+
 }

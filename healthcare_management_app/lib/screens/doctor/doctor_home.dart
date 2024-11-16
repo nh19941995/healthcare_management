@@ -10,7 +10,7 @@ import 'Create_Prescription_Screen.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   final UserDTO user;
-  DoctorHomeScreen({required this.user});
+  DoctorHomeScreen({ required this.user});
 
   @override
   _DoctorHomeScreen createState() => _DoctorHomeScreen();
@@ -240,28 +240,28 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
                   ),
                 ),
                 SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: selectedStatus,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedStatus = value!;
-                    });
-                  },
-                  items: [
-                    'Tất cả',
-                    'PENDING',
-                    'CANCELLED',
-                    'CONFIRMED',
-                    'COMPLETED',
-                    'NO_SHOW',
-                    'RESCHEDULED',
-                  ].map((status) {
-                    return DropdownMenuItem(
-                      value: status,
-                      child: Text(status),
-                    );
-                  }).toList(),
-                ),
+                // DropdownButton<String>(
+                //   value: selectedStatus,
+                //   onChanged: (value) {
+                //     setState(() {
+                //       selectedStatus = value!;
+                //     });
+                //   },
+                //   items: [
+                //     'Tất cả',
+                //     'PENDING',
+                //     'CANCELLED',
+                //     'CONFIRMED',
+                //     'COMPLETED',
+                //     'NO_SHOW',
+                //     'RESCHEDULED',
+                //   ].map((status) {
+                //     return DropdownMenuItem(
+                //       value: status,
+                //       child: Text(status),
+                //     );
+                //   }).toList(),
+                // ),
               ],
             ),
           ),

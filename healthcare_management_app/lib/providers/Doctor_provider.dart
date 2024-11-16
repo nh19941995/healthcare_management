@@ -5,6 +5,7 @@ import 'package:healthcare_management_app/dto/update_doctor_dto.dart';
 import 'package:healthcare_management_app/models/Doctor_detail.dart';
 
 import '../dto/Appointment_dto.dart';
+import '../models/GetDoctorProfile.dart';
 
 class DoctorProvider with ChangeNotifier {
   final DoctorApi doctorApi;
@@ -18,11 +19,11 @@ class DoctorProvider with ChangeNotifier {
 
   List<AppointmentDTO> get listAppointment => _listAppointment;
 
-  DoctorDTO? _doctor_pro;
-  DoctorDTO? get doctor_pro => _doctor_pro;
+  GetDoctorProfile? _doctor_pro;
+  GetDoctorProfile? get doctor_pro => _doctor_pro;
 
-  DoctorDetail? _doctor_pro_appointment;
-  DoctorDetail? get doctor_pro_appointment => _doctor_pro_appointment;
+  GetDoctorProfile? _doctor_pro_appointment;
+  GetDoctorProfile? get doctor_pro_appointment => _doctor_pro_appointment;
 
   Future<void> updateDoctor(UpdateDoctorDto updateDoctorDto) async {
    await DoctorApi().updateDoctor(updateDoctorDto);
@@ -45,7 +46,7 @@ class DoctorProvider with ChangeNotifier {
 
   // Fetch current user information based on username
   Future<void> getDoctorByUserName() async {
-    DoctorDTO fetcheddoctor = await DoctorApi().getDoctorByUserName();
+    GetDoctorProfile fetcheddoctor = await DoctorApi().getDoctorByUserName();
     _doctor_pro = fetcheddoctor;
     //print("id: ${fetcheddoctor.username}");
     notifyListeners();
@@ -53,7 +54,7 @@ class DoctorProvider with ChangeNotifier {
 
   Future<void> getDoctorByUserNameForAppointment(String username) async {
     try {
-      DoctorDetail fetcheddoctor = await DoctorApi().getDoctorByUserNameForAppoiment(username);
+      GetDoctorProfile fetcheddoctor = await DoctorApi().getDoctorByUserNameForAppoiment(username);
       _doctor_pro_appointment = fetcheddoctor;
       notifyListeners();
     } catch (e) {

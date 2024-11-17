@@ -276,11 +276,12 @@ class _CreatePrescriptionScreenState extends State<CreatePrescriptionScreen> {
             ),
           ],
 
-          Center(
+          SizedBox(
+            width: double.infinity, // Chiếm toàn bộ chiều rộng
             child: ElevatedButton(
-              style: AppTheme.elevatedButtonStyle,
+              style: AppTheme.elevatedButtonStyle, // Sử dụng style từ AppTheme
               onPressed: _createPrescription,
-              child: const Text('Create Prescription'),
+              child: Text('Create Prescription'),
             ),
           ),
           const SizedBox(height: 20),

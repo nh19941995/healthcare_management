@@ -41,6 +41,7 @@ class MedicationsProvider with ChangeNotifier {
 
   // Fetch current user information based on username
   Future<void> getPrescriptionByAppointmentIdProvider(int appointmentId) async {
+    _prescriptionRequest = null;
     GetAppointment fetchedUser = await medicationsApi.getPrescriptionByAppointmentId(appointmentId);
     _prescriptionRequest = fetchedUser;
     print("id: ${fetchedUser.appointmentId}");

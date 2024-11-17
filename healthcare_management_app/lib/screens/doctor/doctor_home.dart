@@ -10,7 +10,7 @@ import 'Create_Prescription_Screen.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   final UserDTO user;
-  DoctorHomeScreen({ required this.user});
+  DoctorHomeScreen({required this.user});
 
   @override
   _DoctorHomeScreen createState() => _DoctorHomeScreen();
@@ -18,13 +18,16 @@ class DoctorHomeScreen extends StatefulWidget {
 
 class _DoctorHomeScreen extends State<DoctorHomeScreen> {
   String searchQuery = '';
-  String selectedStatus = 'Tất cả';
+  String selectedStatus = 'CONFIRMED';
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DoctorProvider>().getAllAppointmentEachDoctor();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<DoctorProvider>().getAllAppointmentEachDoctor();
+    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<DoctorProvider>().getMuntilStatusAppointmentEachDoctor(selectedStatus);
     });
   }
 
@@ -35,23 +38,38 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
         return AlertDialog(
           title: Text(
             'Booking Information',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.blueAccent,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: Padding(
-            padding: const EdgeInsets.all(16.0),
+          content: SingleChildScrollView( // Đảm bảo nội dung cuộn được nếu quá dài
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInfoRow('Patient:', booking.patient.fullName!),
-                _buildInfoRow('Doctor:', booking.doctor.fullName!),
-                Text('Date: ${booking.createdAt}'),
-                Text('Time slot : ${booking.timeSlot.startAt}'),
-                _buildInfoRow('Phone:', booking.patient.phone!),
+                ListTile(
+                  leading: Icon(Icons.person, color: Colors.blue),
+                  title: Text('Patient'),
+                  subtitle: Text(booking.patient.fullName ?? "N/A"),
+                ),
+                ListTile(
+                  leading: Icon(Icons.person_outline, color: Colors.green),
+                  title: Text('Doctor'),
+                  subtitle: Text(booking.doctor.fullName ?? "N/A"),
+                ),
+                ListTile(
+                  leading: Icon(Icons.calendar_today, color: Colors.orange),
+                  title: Text('Date'),
+                  subtitle: Text(booking.appointmentDate?.toString() ?? "N/A"), // Hiển thị ngày tạo
+                ),
+                ListTile(
+                  leading: Icon(Icons.access_time, color: Colors.purple),
+                  title: Text('Timeslot'),
+                  subtitle: Text(booking.timeSlot.startAt ?? "N/A"), // Hiển thị timeslot
+                ),
+                ListTile(
+                  leading: Icon(Icons.phone, color: Colors.red),
+                  title: Text('Phone'),
+                  subtitle: Text(booking.patient.phone ?? "N/A"), // Hiển thị số điện thoại
+                ),
               ],
             ),
           ),
@@ -60,7 +78,7 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Close',
-                style: TextStyle(color: Colors.blueAccent),
+                style: TextStyle(color: Colors.blue),
               ),
             ),
           ],
@@ -68,6 +86,7 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
       },
     );
   }
+
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
@@ -98,49 +117,59 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
   }
 
   void showStatusOptions(BuildContext context, AppointmentDTO booking) {
-    String selectedStatus = booking.status;
+    String currentStatus = booking.status; // Lấy status hiện tại của booking
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Change Status'),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
+        return StatefulBuilder( // Sử dụng StatefulBuilder để quản lý trạng thái trong dialog
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Change Status'),
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (String status in ['CANCELLED', 'COMPLETED'])
-                    RadioListTile<String>(
-                      title: Text(status),
-                      value: status,
-                      groupValue: selectedStatus,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedStatus = value!;
-                        });
-                      },
-                    ),
-                ],
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                //context.read<DoctorProvider>().ch(booking.id, selectedStatus);
-                Navigator.pop(context);
-              },
-              child: Text('Save'),
-            ),
-          ],
+                children: ['CANCELLED', 'COMPLETED','CONFIRMED'].map((status) {
+                  return RadioListTile<String>(
+                    title: Text(status),
+                    value: status,
+                    groupValue: currentStatus, // Liên kết với status hiện tại
+                    onChanged: (value) {
+                      setState(() {
+                        currentStatus = value!; // Cập nhật status khi chọn
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    // Gọi hàm thay đổi trạng thái từ Provider
+                    await context
+                        .read<DoctorProvider>()
+                        .changeStatus(booking.id, currentStatus);
+
+                    // Cập nhật lại danh sách sau khi thay đổi
+                    await context
+                        .read<DoctorProvider>()
+                        .getMuntilStatusAppointmentEachDoctor(selectedStatus);
+
+                    Navigator.pop(context);
+                  },
+                  child: Text('Save'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
+
 
   Color getStatusColor(String status) {
     switch (status) {
@@ -149,9 +178,9 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
       case 'CANCELLED':
         return Colors.red;
       case 'CONFIRMED':
-        return Colors.green;
-      case 'COMPLETED':
         return Colors.blue;
+      case 'COMPLETED':
+        return Colors.green;
       case 'NO_SHOW':
         return Colors.grey;
       case 'RESCHEDULED':
@@ -185,16 +214,22 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                // Xử lý tạo đơn thuốc ở đây
+              onPressed: () async {
+                // Di chuyển đến trang tạo đơn thuốc
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => CreatePrescriptionScreen(
-                        booking:booking
+                      booking: booking,
                     ),
                   ),
-                );
+                ).then((_) async {
+                  // Khi quay lại từ trang tạo đơn thuốc, cập nhật trạng thái của cuộc hẹn thành COMPLETED
+                  await context.read<DoctorProvider>().changeStatus(booking.id, 'COMPLETED');
+
+                  // Cập nhật lại danh sách cuộc hẹn sau khi thay đổi trạng thái
+                  await context.read<DoctorProvider>().getMuntilStatusAppointmentEachDoctor(selectedStatus);
+                });
               },
               child: Text('Create Prescription'),
             ),
@@ -204,12 +239,16 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final listAppointment = context.watch<DoctorProvider>().listAppointment;
+    final isLoading = context.watch<DoctorProvider>().isLoading;
+    final listAppointment = context.watch<DoctorProvider>().listAppointmentMultilStatus;
+    //final listAppointment = context.watch<DoctorProvider>().listAppointment;
     List<AppointmentDTO> filteredBookings = listAppointment.where((booking) {
-      return booking.patient.fullName!.toLowerCase().contains(searchQuery.toLowerCase()) &&
-          (selectedStatus == 'Tất cả' || booking.status == selectedStatus);
+      final matchesSearch = booking.patient.fullName!.toLowerCase().contains(searchQuery.toLowerCase());
+      final matchesStatus = booking.status == selectedStatus;
+      return matchesSearch && matchesStatus;
     }).toList();
 
     return Scaffold(
@@ -220,7 +259,9 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
+      body:  isLoading
+          ? Center(child: CircularProgressIndicator()) // Hiển thị vòng quay khi đang load
+          : Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -240,33 +281,32 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
                   ),
                 ),
                 SizedBox(width: 8),
-                // DropdownButton<String>(
-                //   value: selectedStatus,
-                //   onChanged: (value) {
-                //     setState(() {
-                //       selectedStatus = value!;
-                //     });
-                //   },
-                //   items: [
-                //     'Tất cả',
-                //     'PENDING',
-                //     'CANCELLED',
-                //     'CONFIRMED',
-                //     'COMPLETED',
-                //     'NO_SHOW',
-                //     'RESCHEDULED',
-                //   ].map((status) {
-                //     return DropdownMenuItem(
-                //       value: status,
-                //       child: Text(status),
-                //     );
-                //   }).toList(),
-                // ),
+                DropdownButton<String>(
+                  value: selectedStatus,
+                  onChanged: (value) async {
+                    if (value != null) {
+                      setState(() {
+                        selectedStatus = value;
+                      });
+                      await context.read<DoctorProvider>().getMuntilStatusAppointmentEachDoctor(selectedStatus);
+                    }
+                  },
+                  items: [
+                    'PENDING',
+                    'CANCELLED',
+                    'CONFIRMED',
+                    'COMPLETED',
+                  ].map((status) {
+                    return DropdownMenuItem(value: status, child: Text(status));
+                  }).toList(),
+                ),
               ],
             ),
           ),
           Expanded(
-            child: LayoutBuilder(
+            child: filteredBookings.isEmpty
+                ? Center(child: Text('No appointments found'))
+                : LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   scrollDirection: Axis.vertical,
@@ -286,6 +326,20 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
                           DataColumn(label: Text('Prescription')), // Cột mới cho nút tạo đơn thuốc
                         ],
                         rows: filteredBookings.map((booking) {
+                          Color statusColor(String status) {
+                            switch (status) {
+                              case 'PENDING':
+                                return Colors.orange;
+                              case 'CANCELLED':
+                                return Colors.red;
+                              case 'CONFIRMED':
+                                return Colors.blue;
+                              case 'COMPLETED':
+                                return Colors.green;
+                              default:
+                                return Colors.blueAccent;
+                            }
+                          }
                           return DataRow(cells: [
                             DataCell(Text(booking.id.toString())),
                             DataCell(Text(booking.patient.fullName!)),
@@ -301,7 +355,7 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: getStatusColor(booking.status),
+                                    color: statusColor(booking.status),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -313,10 +367,18 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
                             ),
                             DataCell(
                               IconButton(
-                                icon: Icon(Icons.medical_services, color: Colors.green),
-                                onPressed: () => createPrescription(context, booking),
+                                icon: Icon(
+                                  Icons.medical_services,
+                                  color: (booking.status == 'CANCELLED' || booking.status == 'COMPLETED')
+                                      ? Colors.grey
+                                      : Colors.green,
+                                ),
+                                onPressed: (booking.status == 'CANCELLED' || booking.status == 'COMPLETED')
+                                    ? null
+                                    : () => createPrescription(context, booking),
                               ),
                             ),
+
                           ]);
                         }).toList(),
                       ),

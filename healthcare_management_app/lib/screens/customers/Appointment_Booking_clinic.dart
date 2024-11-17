@@ -16,17 +16,20 @@ import '../comons/customBottomNavBar.dart';
 import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
 
-class AppointmentBookingScreen extends StatefulWidget {
+class AppointmentBookingForClinicScreen extends StatefulWidget {
   final GetDoctorProfile doctor;
+  final String clinicName;
 
-  AppointmentBookingScreen({required this.doctor});
+  AppointmentBookingForClinicScreen(
+      {required this.doctor, required this.clinicName});
 
   @override
-  _AppointmentBookingScreenState createState() =>
-      _AppointmentBookingScreenState();
+  _AppointmentBookingForClinicScreen createState() =>
+      _AppointmentBookingForClinicScreen();
 }
 
-class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
+class _AppointmentBookingForClinicScreen
+    extends State<AppointmentBookingForClinicScreen> {
   late UserProvider userProvider;
   UserDTO? user;
   DateTime selectedDate = DateTime.now();
@@ -99,7 +102,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
                     ListTile(
                       leading: Icon(Icons.location_city, color: Colors.grey),
                       title: Text('Clinic'),
-                      subtitle: Text(widget.doctor.clinic?.name ?? "N/A"),
+                      subtitle: Text(widget.clinicName ?? "N/A"),
                     ),
                     Text('Customer information'),
                     ListTile(

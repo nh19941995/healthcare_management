@@ -36,9 +36,9 @@ class _AppointmentHistoryAppState extends State<AppointmentHistoryApp> {
       case 'CANCELLED':
         return Colors.red;
       case 'CONFIRMED':
-        return Colors.green;
-      case 'COMPLETED':
         return Colors.blue;
+      case 'COMPLETED':
+        return Colors.green;
       case 'NO_SHOW':
         return Colors.grey;
       case 'RESCHEDULED':
@@ -151,9 +151,9 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
       case 'CANCELLED':
         return Colors.red;
       case 'CONFIRMED':
-        return Colors.green;
-      case 'COMPLETED':
         return Colors.blue;
+      case 'COMPLETED':
+        return Colors.green;
       case 'NO_SHOW':
         return Colors.grey;
       case 'RESCHEDULED':

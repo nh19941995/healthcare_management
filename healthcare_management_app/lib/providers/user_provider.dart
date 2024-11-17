@@ -1,12 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:healthcare_management_app/apis/auth.dart'; // Auth API import
 import 'package:healthcare_management_app/apis/user_api.dart';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
-import 'dart:io' as io;
-import 'dart:html' as html;
 import 'package:flutter/foundation.dart'; // Thêm dòng này để kiểm tra nền tảng
 
 class UserProvider with ChangeNotifier {

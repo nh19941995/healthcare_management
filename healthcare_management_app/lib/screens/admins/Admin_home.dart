@@ -49,7 +49,7 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
                 ListTile(
                   leading: Icon(Icons.calendar_today, color: Colors.orange),
                   title: Text('Date'),
-                  subtitle: Text(booking.createdAt?.toString() ?? "N/A"), // Hiển thị ngày tạo
+                  subtitle: Text(booking.appointmentDate.toString() ?? "N/A"), // Hiển thị ngày tạo
                 ),
                 ListTile(
                   leading: Icon(Icons.access_time, color: Colors.purple),
@@ -107,7 +107,7 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          labelText: 'Tìm kiếm theo tên',
+                          labelText: 'Search by name',
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (value) {
@@ -129,7 +129,8 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
                         'ALL',
                         'PENDING',
                         'CANCELLED',
-                        'CONFIRMED'
+                        'CONFIRMED',
+                        'COMPLETED'
                       ].map((status) {
                         return DropdownMenuItem(
                           value: status,
@@ -161,9 +162,11 @@ class _BookingTableScreenState extends State<BookingTableScreen> {
                             case 'CANCELLED':
                               return Colors.red;
                             case 'CONFIRMED':
+                              return Colors.blueAccent;
+                            case 'COMPLETED':
                               return Colors.green;
                             default:
-                              return Colors.blueAccent;
+                              return Colors.grey;
                           }
                         }
 

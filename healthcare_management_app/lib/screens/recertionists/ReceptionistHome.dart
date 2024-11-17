@@ -49,7 +49,7 @@ class _ReceptionistHome extends State<ReceptionistHome> {
                 ListTile(
                   leading: Icon(Icons.calendar_today, color: Colors.orange),
                   title: Text('Date'),
-                  subtitle: Text(booking.createdAt.toString() ?? "N/A"), // Hiển thị ngày tạo
+                  subtitle: Text(booking.appointmentDate.toString() ?? "N/A"), // Hiển thị ngày tạo
                 ),
                 ListTile(
                   leading: Icon(Icons.access_time, color: Colors.purple),

@@ -7,6 +7,7 @@ import '../../models/GetDoctorProfile.dart';
 import '../comons/customBottomNavBar.dart';
 import '../comons/show_vertical_menu.dart';
 import '../comons/theme.dart';
+import 'Doctor_detail_for_clinic.dart';
 import 'Home_customer.dart';
 import 'List_Clinic__Screen.dart';
 import 'Doctor_information.dart';
@@ -109,7 +110,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
               ),
               itemCount: filteredDoctors.length,
               itemBuilder: (context, index) {
-                return DoctorCard(doctor: filteredDoctors[index]);
+                return DoctorCard(doctor: filteredDoctors[index],clinicName: widget.facility.name);
               },
             ),
           ),
@@ -137,8 +138,9 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
 
 class DoctorCard extends StatelessWidget {
   final GetDoctorProfile doctor;
+  final String clinicName;
 
-  const DoctorCard({required this.doctor});
+  const DoctorCard({required this.doctor , required this.clinicName});
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +149,7 @@ class DoctorCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DoctorDetailScreen(doctor: doctor),
+            builder: (context) => DoctorDetailForClinicScreen(doctor: doctor ,clinicName: clinicName),
           ),
         );
       },
@@ -174,11 +176,27 @@ class DoctorCard extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Text(
-              doctor.medicalTraining!,
+              doctor.specialization!.name!,
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.grey,
               ),
+            ),
+            Text(
+              doctor.medicalTraining ?? '',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              clinicName,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
             ),
             Text(
               doctor.description ?? '',

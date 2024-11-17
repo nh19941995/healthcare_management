@@ -40,7 +40,7 @@ class _UserListScreenState extends State<UserListScreen> {
     });
   }
 
-  void changeUserRole(BuildContext context, UserDTO user) {
+  Future<void> changeUserRole(BuildContext context, UserDTO user) async {
     String? selectedRole = user.roles?.isNotEmpty == true
         ? user.roles!.first.name
         : 'PATIENT'; // Mặc định là 'PATIENT' nếu không có role.
@@ -110,10 +110,16 @@ class _UserListScreenState extends State<UserListScreen> {
                   user.roles?.clear();
                   user.roles?.add(Role(name: selectedRole));
 
+                  // Cập nhật vai trò người dùng
                   await context.read<UserProvider>().updateUserRole(user.username!, selectedRole!);
 
                   // Lấy lại danh sách người dùng
                   await context.read<UserProvider>().getAllUser();
+
+                  // Cập nhật lại filteredFacilities
+                  setState(() {
+                    filteredFacilities = context.read<UserProvider>().list;
+                  });
 
                   // Hiển thị thông báo thành công
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -138,6 +144,7 @@ class _UserListScreenState extends State<UserListScreen> {
       },
     );
   }
+
 
 
 

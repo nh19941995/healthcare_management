@@ -52,7 +52,35 @@ class _CreatePrescriptionScreenState extends State<CreatePrescriptionScreen> {
   void _createPrescription() async {
     String medicalDiagnosis = diseaseController.text;
 
-    // Chuyển danh sách thuốc đã chọn thành PrescriptionRequest
+    // Kiểm tra nếu tên bệnh bị bỏ trống
+    if (medicalDiagnosis.isEmpty) {
+      _showErrorMessage('Please enter the disease name.');
+      return;
+    }
+
+    // Kiểm tra nếu không có thuốc được chọn
+    if (selectedMedications.isEmpty) {
+      _showErrorMessage('Please select at least one medication.');
+      return;
+    }
+
+    // Kiểm tra các liều dùng, tổng liều, và ghi chú
+    for (var medication in selectedMedications) {
+      if (dosageControllers[medication.id]?.text.isEmpty ?? true) {
+        _showErrorMessage('Please enter dosage for ${medication.name}.');
+        return;
+      }
+      if (totalDosageControllers[medication.id]?.text.isEmpty ?? true) {
+        _showErrorMessage('Please enter total dosage for ${medication.name}.');
+        return;
+      }
+      if (noteControllers[medication.id]?.text.isEmpty ?? true) {
+        _showErrorMessage('Please enter note for ${medication.name}.');
+        return;
+      }
+    }
+
+    // Nếu tất cả các trường hợp đều hợp lệ, tiếp tục tạo đơn thuốc
     PrescriptionRequest prescriptionRequest = PrescriptionRequest(
       appointmentId: widget.booking.id,
       medicalDiagnosis: medicalDiagnosis,
@@ -69,11 +97,52 @@ class _CreatePrescriptionScreenState extends State<CreatePrescriptionScreen> {
     try {
       await Provider.of<MedicationsProvider>(context, listen: false)
           .register(prescriptionRequest);
+
       _showSuccessDialog();
     } catch (e) {
       print("Error creating prescription: $e");
-      _showErrorDialog();
+      _showErrorDialog('Failed to create the prescription. Please try again.');
     }
+  }
+
+  void _showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Missing Information'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Đóng dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Đóng dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showSuccessDialog() {
@@ -88,7 +157,6 @@ class _CreatePrescriptionScreenState extends State<CreatePrescriptionScreen> {
               onPressed: () {
                 Navigator.pop(context); // Đóng dialog
                 Navigator.pop(context); // Quay về trang trước
-                Navigator.pop(context);
               },
               child: const Text('OK'),
             ),
@@ -98,26 +166,6 @@ class _CreatePrescriptionScreenState extends State<CreatePrescriptionScreen> {
     );
   }
 
-  void _showErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: const Text('An error occurred while creating the prescription.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Đóng dialog
-                Navigator.pop(context); // Quay về trang trước
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void filterMedications(String query) {
     final medications = context.read<MedicationsProvider>().list;

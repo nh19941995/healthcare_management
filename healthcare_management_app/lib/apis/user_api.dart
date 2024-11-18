@@ -12,7 +12,7 @@ import 'dart:html' as html;
 
 const baseURL = "http://localhost:8080/users";
 const baseUpdateUser = "http://localhost:8080/api/users";
-const getUserByAdmiUrl = "http://localhost:8080/admin/users?page=0&size=1000";
+const getUserActive = "http://localhost:8080/admin/users?page=0&size=1000";
 
 class UserApi {
   late String username;
@@ -89,7 +89,7 @@ class UserApi {
 
   //admin
 
-  Future<List<UserDTO>> getUsersByAdmin() async {
+  Future<List<UserDTO>> getUsersActive() async {
     final String? username = TokenManager().getUserSub();
     final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
 
@@ -97,7 +97,7 @@ class UserApi {
     print('Token: $token'); // In token ra để kiểm tra nếu cần
 
     final response = await http.get(
-      Uri.parse(getUserByAdmiUrl),
+      Uri.parse(getUserActive),
       headers: {
         'Authorization': 'Bearer $token', // Thêm token vào header
       },
@@ -150,9 +150,47 @@ class UserApi {
   }
 
 
+  Future<List<UserDTO>> blockOrUnblockUser(String username, String lockReason) async {
+    final String? token = TokenManager().getToken();
+    final url = Uri.parse('http://localhost:8080/admin/blockOrUnblock/$username/$lockReason');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token', // Thêm token vào header
+          //'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Kiểm tra mã hóa
+        final contentType = response.headers['content-type'];
+        if (contentType != null && contentType.contains('charset=utf-8')) {
+          // Dữ liệu đã được mã hóa đúng
+          final decodeResponse = jsonDecode(response.body) as List;
+          return decodeResponse.map((userJson) => UserDTO.fromJson(userJson)).toList();
+        } else {
+          // Chuyển đổi sang UTF-8 nếu không phải UTF-8
+          final responseBody = utf8.decode(response.bodyBytes);
+          final decodeResponse = jsonDecode(responseBody);
+
+          final userData = decodeResponse['content'] as List;
+          return userData.map((userJson) => UserDTO.fromJson(userJson)).toList();
+        }
+      } else {
+        throw Exception('Failed to load user: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Error blockOrUnblock user: $e");
+      return []; // Trả về danh sách rỗng khi có lỗi
+    }
+  }
+
+
   Future<void> deleteUser(String username) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http://localhost:8080/admin/blockOrUnblock/$username/shit');
+    final url = Uri.parse('http://localhost:8080/admin/deleteUser/$username');
 
     try {
       final response = await http.put(
@@ -172,6 +210,7 @@ class UserApi {
       print("Error deleting user: $e");
     }
   }
+
 
 
   Future<String> uploadImageAsFormData(dynamic imageFile) async {
@@ -260,13 +299,41 @@ class UserApi {
     }
   }
 
+  Future<List<UserDTO>> getUsersByStatus(String status) async {
+    final String? username = TokenManager().getUserSub();
+    final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
+    final url = 'http://localhost:8080/admin/getUsersByStatus/$status';
 
 
+    print('Username: $username');
+    print('Token: $token'); // In token ra để kiểm tra nếu cần
 
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token', // Thêm token vào header
+      },
+    );
 
+    if (response.statusCode == 200) {
+      // Kiểm tra mã hóa
+      final contentType = response.headers['content-type'];
+      if (contentType != null && contentType.contains('charset=utf-8')) {
+        // Dữ liệu đã được mã hóa đúng
+        final decodeResponse = jsonDecode(response.body) as List;
+        return decodeResponse.map((userJson) => UserDTO.fromJson(userJson)).toList();
+      } else {
+        // Chuyển đổi sang UTF-8 nếu không phải UTF-8
+        final responseBody = utf8.decode(response.bodyBytes);
+        final decodeResponse = jsonDecode(responseBody);
 
-
-
+        final userData = decodeResponse['content'] as List;
+        return userData.map((userJson) => UserDTO.fromJson(userJson)).toList();
+      }
+    } else {
+      throw Exception('Failed to load user: ${response.statusCode}');
+    }
+  }
 }
 
 

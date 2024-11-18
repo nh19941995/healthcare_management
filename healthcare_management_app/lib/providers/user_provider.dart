@@ -19,16 +19,16 @@ class UserProvider with ChangeNotifier {
 
   UserDTO? get user => _user;
 
-  Future getAllUser() async {
-    final users = await UserApi().getUsersByAdmin();
+  Future getUserActive() async {
+    final users = await UserApi().getUsersActive();
     _list.clear();
     _list.addAll(users);
 
-    // In ra danh sách _list để kiểm tra
-    print('Danh sách các user:');
-    for (var user in _list) {
-      print(user); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
-    }
+    // // In ra danh sách _list để kiểm tra
+    // print('Danh sách các user:');
+    // for (var user in _list) {
+    //   print(user); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
+    // }
 
     notifyListeners();
   }
@@ -60,13 +60,18 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future blockOrUnblockUser(String username,String lockReason ) async {
+    final deleteuser = await UserApi().blockOrUnblockUser(username,lockReason);
+    _list.clear();
+    _list.addAll(deleteuser);
+    notifyListeners();
+  }
+
   Future<void> deleteUser(String username) async {
     final deleteuser = userApi.deleteUser(username);
     list.removeWhere((user) => user.username == username);
     notifyListeners();
   }
-
-
 
    Future<String?> uploadImage(dynamic imageFile) async {
     try {
@@ -82,4 +87,16 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  Future getUsersByStatus(String status) async {
+    final users = await UserApi().getUsersByStatus(status);
+    _list.clear();
+    _list.addAll(users);
+    // // In ra danh sách _list để kiểm tra
+    // print('Danh sách các user:');
+    // for (var user in _list) {
+    //   print(user); // Sử dụng toString() của Clinic hoặc in ra các thuộc tính cụ thể
+    // }
+
+    notifyListeners();
+  }
 }

@@ -1,9 +1,8 @@
-import 'role_dto.dart';
-import 'doctor_dto.dart';
+import 'package:healthcare_management_app/dto/role_dto.dart';
 
 class UserDTO {
   UserDTO({
-     this.id,
+    this.id,
     required this.fullName,
     required this.username,
     required this.email,
@@ -12,7 +11,9 @@ class UserDTO {
     this.avatar,
     required this.gender,
     required this.description,
-     this.roles,
+    this.roles,
+    this.deletedAt, // Thêm trường deletedAt
+    this.lockReason, // Thêm trường lockReason
   });
 
   final int? id;
@@ -25,8 +26,10 @@ class UserDTO {
   final String? gender;
   final String? description;
   late final List<Role>? roles;
+  final String? deletedAt; // Trường deletedAt
+   String? lockReason; // Trường lockReason
 
-  factory UserDTO.fromJson(Map<String, dynamic> json){
+  factory UserDTO.fromJson(Map<String, dynamic> json) {
     return UserDTO(
       id: json["id"],
       fullName: json["fullName"],
@@ -37,7 +40,11 @@ class UserDTO {
       avatar: json["avatar"],
       gender: json["gender"],
       description: json["description"],
-      roles: json["roles"] == null ? [] : List<Role>.from(json["roles"]!.map((x) => Role.fromJson(x))),
+      roles: json["roles"] == null
+          ? []
+          : List<Role>.from(json["roles"]!.map((x) => Role.fromJson(x))),
+      deletedAt: json["deletedAt"], // Lấy giá trị deletedAt từ JSON
+      lockReason: json["lockReason"], // Lấy giá trị lockReason từ JSON
     );
   }
 
@@ -52,42 +59,12 @@ class UserDTO {
     "gender": gender,
     "description": description,
     "roles": roles?.map((x) => x?.toJson()).toList(),
+    "deletedAt": deletedAt, // Thêm trường deletedAt vào JSON
+    "lockReason": lockReason, // Thêm trường lockReason vào JSON
   };
 
   @override
-  String toString(){
-    return "$id, $fullName, $username, $email, $address, $phone, $avatar, $gender, $description, $roles, ";
+  String toString() {
+    return "$id, $fullName, $username, $email, $address, $phone, $avatar, $gender, $description, $roles, $deletedAt, $lockReason, ";
   }
 }
-
-class Role {
-  Role({
-     this.id,
-     this.name,
-    this.description,
-  });
-
-  final int? id;
-   final String? name;
-  final String? description;
-
-  factory Role.fromJson(Map<String, dynamic> json){
-    return Role(
-      id: json["id"],
-      name: json["name"],
-      description: json["description"],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-  };
-
-  @override
-  String toString(){
-    return "$id, $name, $description, ";
-  }
-}
-

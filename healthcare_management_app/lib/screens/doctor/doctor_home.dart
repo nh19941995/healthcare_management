@@ -351,7 +351,7 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
                             ),
                             DataCell(
                               InkWell(
-                                onTap: () => showStatusOptions(context, booking),
+                                //onTap: () => showStatusOptions(context, booking),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(

@@ -28,7 +28,7 @@ class _OnlineConsultationState extends State<OnlineConsultation> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Online Consultation'),
+        title: const Text('Q & A'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {

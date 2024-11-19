@@ -25,14 +25,13 @@ class _ListClinic extends State<ListClinic> {
       clinicProvider.getAllClinic().then((_) {
         setState(() {
           print(clinicProvider.list);
-          filteredFacilities = clinicProvider.list; // Lấy danh sách sau khi đã cập nhật
+          filteredFacilities =
+              clinicProvider.list; // Lấy danh sách sau khi đã cập nhật
         });
       });
     });
     _searchController.addListener(_filterFacilities);
   }
-
-
 
   @override
   void dispose() {
@@ -54,7 +53,7 @@ class _ListClinic extends State<ListClinic> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chọn cơ sở y tế'),
+        title: const Text('Choose a medical facility'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -72,7 +71,7 @@ class _ListClinic extends State<ListClinic> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Tìm kiếm cơ sở y tế',
+                  hintText: 'Search for medical facilities',
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -101,15 +100,19 @@ class _ListClinic extends State<ListClinic> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MedicalFacilityDetails(facility: facility),
+                            builder: (context) =>
+                                MedicalFacilityDetails(facility: facility),
                           ),
                         );
                       },
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start, // Căn chỉnh các widget con ở đầu
-                        crossAxisAlignment: CrossAxisAlignment.center, // Căn chỉnh theo chiều ngang
+                        mainAxisAlignment: MainAxisAlignment
+                            .start, // Căn chỉnh các widget con ở đầu
+                        crossAxisAlignment: CrossAxisAlignment
+                            .center, // Căn chỉnh theo chiều ngang
                         children: [
-                          SizedBox(height: 8.0), // Thêm khoảng cách phía trên ảnh
+                          SizedBox(
+                              height: 8.0), // Thêm khoảng cách phía trên ảnh
                           // Kiểm tra điều kiện và sử dụng Image phù hợp
                           // facility?.image != null
                           //     ? ClipRRect(
@@ -121,14 +124,16 @@ class _ListClinic extends State<ListClinic> {
                           //     fit: BoxFit.cover, // Lấp đầy không gian ảnh mà không bị méo
                           //   ),
                           // )
-                             // :
+                          // :
                           CircleAvatar(
                             backgroundImage: facility.image != null
                                 ? NetworkImage(facility.image!)
-                                : AssetImage('lib/assets/Avatar.png') as ImageProvider,
+                                : AssetImage('lib/assets/Avatar.png')
+                                    as ImageProvider,
                             radius: 40, // Kích thước của avatar
                           ),
-                          const SizedBox(height: 8.0), // Khoảng cách giữa ảnh và tên
+                          const SizedBox(
+                              height: 8.0), // Khoảng cách giữa ảnh và tên
                           // Hiển thị tên cơ sở
                           Text(
                             facility?.name ?? '', // Dự phòng nếu tên không có
@@ -144,21 +149,19 @@ class _ListClinic extends State<ListClinic> {
                   );
                 },
               ),
-
-
             ),
           ],
         ),
       ),
-      bottomNavigationBar:CustomBottomNavBar(
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {
           // Handle other navigation
         },
         onSetupPressed: () {
-          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+          MenuUtils.showVerticalMenu(context); // Hiển thị menu khi nhấn Setup
         },
-        onHomePressed: (){
+        onHomePressed: () {
           // Điều hướng về trang HomeCustomer
           Navigator.pushReplacement(
             context,

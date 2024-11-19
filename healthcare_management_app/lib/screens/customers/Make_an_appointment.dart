@@ -50,7 +50,8 @@ class Booking extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(AppTheme.Padding8),
+                                padding:
+                                    const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Doctor',
                                   style: AppTheme.theme.textTheme.displayMedium,
@@ -58,14 +59,18 @@ class Booking extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
+                              padding: const EdgeInsets.all(
+                                  4.0), // Padding tối thiểu
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Image.asset(
                                   'lib/assets/doctor.png',
-                                  width: 100, // Chỉnh kích thước width theo nhu cầu
-                                  height: 100, // Chỉnh kích thước height theo nhu cầu
-                                  fit: BoxFit.cover, // Hoặc BoxFit.contain tùy vào cách bạn muốn hiển thị
+                                  width:
+                                      100, // Chỉnh kích thước width theo nhu cầu
+                                  height:
+                                      100, // Chỉnh kích thước height theo nhu cầu
+                                  fit: BoxFit
+                                      .cover, // Hoặc BoxFit.contain tùy vào cách bạn muốn hiển thị
                                 ),
                               ),
                             ),
@@ -86,7 +91,8 @@ class Booking extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(AppTheme.Padding8),
+                                padding:
+                                    const EdgeInsets.all(AppTheme.Padding8),
                                 child: Text(
                                   'Medical facility',
                                   style: AppTheme.theme.textTheme.displayMedium,
@@ -94,13 +100,16 @@ class Booking extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(4.0), // Padding tối thiểu
+                              padding: const EdgeInsets.all(
+                                  4.0), // Padding tối thiểu
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Image.asset(
                                   'lib/assets/hospital-facility.png',
-                                  width: 100, // Chỉnh kích thước width theo nhu cầu
-                                  height: 100, // Chỉnh kích thước height theo nhu cầu
+                                  width:
+                                      100, // Chỉnh kích thước width theo nhu cầu
+                                  height:
+                                      100, // Chỉnh kích thước height theo nhu cầu
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -163,15 +172,15 @@ class Booking extends StatelessWidget {
       //     // Handle bottom navigation
       //   },
       // ),
-      bottomNavigationBar:CustomBottomNavBar(
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {
           // Handle other navigation
         },
         onSetupPressed: () {
-          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+          MenuUtils.showVerticalMenu(context); // Hiển thị menu khi nhấn Setup
         },
-        onHomePressed: (){
+        onHomePressed: () {
           // Điều hướng về trang HomeCustomer
           Navigator.pushReplacement(
             context,

@@ -145,7 +145,8 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   }
 
   // Tạo cuộc hẹn
-  void _createAppointment() {
+  // Tạo cuộc hẹn
+  Future<void> _createAppointment() async {
     final apiAppointmentDTO = ApiAppointmentDTO(
       patientUsername: user?.username ?? '',
       doctorUsername: widget.doctor.username!,
@@ -153,22 +154,53 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       appointmentDate: DateFormat('yyyy-MM-dd').format(selectedDate),
     );
 
-    context
-        .read<AppointmentProvider>()
-        .createAppointmentProvider(apiAppointmentDTO);
-    _showSuccessSnackBar(context);
+    try {
+      final result = await context.read<AppointmentProvider>().createAppointmentProvider(apiAppointmentDTO);
+
+      if (result == "success") {
+        _showSuccessSnackBar(context, "Appointment created successfully!");
+      } else {
+        _showErrorSnackBar(context, result); // Hiển thị lỗi từ server
+      }
+    } catch (error) {
+      _showErrorSnackBar(context, "An error occurred: $error");
+    }
   }
 
-  // Hiển thị thông báo thành công
-  void _showSuccessSnackBar(BuildContext context) {
+// Hiển thị thông báo thành công
+  void _showSuccessSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Schedule successfully!'),
+        content: Text(message),
         backgroundColor: Colors.green,
         duration: Duration(seconds: 3),
       ),
     );
   }
+
+// Hiển thị thông báo lỗi
+  void _showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Create failed appointment booking already exists"),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+
+// // Hiển thị thông báo lỗi
+//   void _showErrorSnackBar(BuildContext context, String message) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(
+//         content: Text(message),
+//         backgroundColor: Colors.red,
+//         duration: Duration(seconds: 3),
+//       ),
+//     );
+//   }
+
 
   // Hiển thị lỗi nếu ngày đã chọn trước ngày hôm nay
   void _showDateErrorSnackBar(BuildContext context) {

@@ -52,10 +52,10 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
           filteredDoctors = doctorsDto.map((doctorJson) => GetDoctorProfile.fromJson(doctorJson)).toList();
         });
       } else {
-        throw Exception('Không thể lấy dữ liệu bác sĩ: ${response.statusCode}');
+        throw Exception('Unable to get physician data: ${response.statusCode}');
       }
     } catch (e) {
-      print('Lỗi khi lấy dữ liệu bác sĩ: $e');
+      print('Error while retrieving doctor data: $e');
     }
   }
 
@@ -72,7 +72,11 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chi tiết cơ sở y tế'),
+        title: Text('Medical facility details'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [
@@ -84,7 +88,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      'Địa chỉ:',
+                      'Address:',
                       style: AppTheme.theme.textTheme.displaySmall,
                     ),
                     Text(
@@ -97,7 +101,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
             ),
           ),
           SizedBox(height: AppTheme.mediumSpacing),
-          Text('Danh sách bác sĩ', style: AppTheme.theme.textTheme.displayLarge),
+          Text('List of doctors', style: AppTheme.theme.textTheme.displayLarge),
           SizedBox(height: AppTheme.mediumSpacing),
           Expanded(
             child: GridView.builder(

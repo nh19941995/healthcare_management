@@ -76,10 +76,10 @@ class _LoginScreenState extends State<Login> {
       rolesToShow.add({'roleName': 'Admin', 'screen': BookingTableScreen()});
     }
     if (roleIds.contains(2)) {
-      rolesToShow.add({'roleName': 'Bác sĩ', 'screen': DoctorHomeScreen(user:user)});
+      rolesToShow.add({'roleName': 'Doctor', 'screen': DoctorHomeScreen(user:user)});
     }
     if (roleIds.contains(3)) {
-      rolesToShow.add({'roleName': 'Khách hàng', 'screen': HomeCustomer()});
+      rolesToShow.add({'roleName': 'Customer', 'screen': HomeCustomer()});
     }
     if (roleIds.contains(4)) {
       rolesToShow.add({'roleName': 'Receptionist', 'screen': ReceptionistHome()});
@@ -94,10 +94,6 @@ class _LoginScreenState extends State<Login> {
     );
   }
 
-
-
-
-
   void _login() async {
     setState(() {
       _userNameError = null;
@@ -109,13 +105,13 @@ class _LoginScreenState extends State<Login> {
 
     if (username.isEmpty) {
       setState(() {
-        _userNameError = "Username không được để trống";
+        _userNameError = "Username cannot be blank";
       });
       return;
     }
     if (password.isEmpty) {
       setState(() {
-        _passwordError = "Mật khẩu không được để trống";
+        _passwordError = "Email cannot be blank";
       });
       return;
     }

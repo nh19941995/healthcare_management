@@ -65,7 +65,7 @@ class MenuUtils {
                       children: [
                         Icon(Icons.medical_services, color: Colors.white, size: 30),
                         SizedBox(width: 10),
-                        Text('Cập nhật thông tin bác sĩ', style: TextStyle(color: Colors.white)),
+                        Text('Update information doctor', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ),
@@ -83,7 +83,7 @@ class MenuUtils {
                     children: [
                       Icon(Icons.logout, color: Colors.white, size: 30),
                       SizedBox(width: 10),
-                      Text('Đăng xuất', style: TextStyle(color: Colors.white)),
+                      Text('Log out', style: TextStyle(color: Colors.white)),
                     ],
                   ),
                 ),
@@ -100,17 +100,17 @@ class MenuUtils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Xác nhận đăng xuất'),
-          content: Text('Bạn có chắc chắn muốn đăng xuất không?'),
+          title: Text('Confirm logout'),
+          content: Text('Are you sure you want to sign out?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Hủy'),
+              child: Text('Cancelled'),
               onPressed: () {
                 Navigator.of(context).pop(); // Đóng popup
               },
             ),
             TextButton(
-              child: Text('Đăng xuất'),
+              child: Text('Log out'),
               onPressed: () {
                 userProvider.logout();
                 Navigator.pushAndRemoveUntil(

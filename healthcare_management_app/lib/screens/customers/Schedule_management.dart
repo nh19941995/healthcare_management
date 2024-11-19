@@ -197,7 +197,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Bác sĩ: ${widget.appointmentDTO.doctor.fullName ?? ''}",
+                        "Doctor: ${widget.appointmentDTO.doctor.fullName ?? ''}",
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
@@ -227,7 +227,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Medical examination place: ${widget.appointmentDTO.doctor.medicalTraining ?? 'Không xác định'}",
+                        "Medical examination place: ${widget.appointmentDTO.doctor.medicalTraining ?? ''}",
                         style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 20),
@@ -268,7 +268,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Tên thuốc: ${med.medication?.name ?? 'Không xác định'}",
+                                        "Drug name: ${med.medication?.name ?? ''}",
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -276,17 +276,17 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        "Tổng số lượng: ${med.totalDosage}",
+                                        "Total quantity: ${med.totalDosage}",
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        "Liều dùng: ${med.dosageInstructions}",
+                                        "Dosage: ${med.dosageInstructions}",
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        "Ghi chú: ${med.note}",
+                                        "Note: ${med.note}",
                                         style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                                       ),
                                     ],
@@ -298,7 +298,7 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                         ],
                       )
                           : const Text(
-                        "Không có đơn thuốc",
+                        "No prescription",
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],

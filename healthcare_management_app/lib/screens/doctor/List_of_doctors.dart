@@ -137,7 +137,7 @@ class _DoctorCardState extends State<DoctorCard> {
   Future<void> _fetchDoctorDetails() async {
     try {
       GetDoctorProfile fetchedDoctor =
-      await DoctorApi().getDoctorByUserNameForAppoiment(widget.userName);
+          await DoctorApi().getDoctorByUserNameForAppoiment(widget.userName);
       setState(() {
         doctor = fetchedDoctor;
         isLoading = false;

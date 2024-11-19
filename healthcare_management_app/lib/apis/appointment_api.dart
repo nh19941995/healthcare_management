@@ -8,11 +8,8 @@ import 'package:http/http.dart' as http;
 const getAllUrl = "http://localhost:8080/admin/appointments/ALL?page=0&size=1000000";
 class AppointmentApi {
 
-  Future<void> createAppointment(
-      ApiAppointmentDTO apiAppointmentDTO,
-      ) async {
+  Future<http.Response> createAppointment(ApiAppointmentDTO apiAppointmentDTO) async {
     final String? token = TokenManager().getToken();
-    // Tạo URL endpoint
     final url = Uri.parse(
         'http://localhost:8080/api/appointments/${apiAppointmentDTO.patientUsername}/'
             '${apiAppointmentDTO.doctorUsername}/${apiAppointmentDTO.timeSlotId}/${apiAppointmentDTO.appointmentDate}');
@@ -24,16 +21,9 @@ class AppointmentApi {
           'Authorization': 'Bearer $token', // Thêm token vào header
         },
       );
-      if (response.statusCode == 200) {
-        // Thành công, bạn có thể xử lý logic sau khi cập nhật vai trò tại đây
-        print("Appointment created successfully");
-      } else {
-        // Xử lý lỗi nếu có vấn đề với yêu cầu
-        print("Failed to appointment created: ${response.body}");
-      }
+      return response; // Trả về phản hồi của server để xử lý ở Provider
     } catch (error) {
-      // Xử lý lỗi kết nối hoặc ngoại lệ khác
-      print("An error occurred: $error");
+      throw Exception("API connection error: $error"); // Ném lỗi để Provider xử lý
     }
   }
 

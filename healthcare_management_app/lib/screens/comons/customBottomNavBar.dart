@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthcare_management_app/screens/comons/Notification_Screen.dart';
+//import 'package:healthcare_management_app/screens/comons/Notification_Screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;

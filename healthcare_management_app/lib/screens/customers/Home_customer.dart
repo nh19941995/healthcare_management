@@ -8,7 +8,7 @@ import 'package:healthcare_management_app/screens/comons/login.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:healthcare_management_app/screens/customers/Schedule_management.dart';
 import 'package:healthcare_management_app/screens/customers/Make_an_appointment.dart';
-import 'package:healthcare_management_app/screens/customers/health_index.dart';
+//import 'package:healthcare_management_app/screens/customers/health_index.dart';
 import 'package:healthcare_management_app/screens/customers/Qa.dart';
 import 'package:provider/provider.dart';
 import '../comons/TokenManager.dart';

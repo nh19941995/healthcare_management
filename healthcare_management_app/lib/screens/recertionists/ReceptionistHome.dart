@@ -39,12 +39,12 @@ class _ReceptionistHome extends State<ReceptionistHome> {
                 ListTile(
                   leading: Icon(Icons.person, color: Colors.blue),
                   title: Text('Patient'),
-                  subtitle: Text(booking.patient.fullName ?? "N/A"),
+                  subtitle: Text(booking.patient.fullName ?? ""),
                 ),
                 ListTile(
                   leading: Icon(Icons.person_outline, color: Colors.green),
                   title: Text('Doctor'),
-                  subtitle: Text(booking.doctor.fullName ?? "N/A"),
+                  subtitle: Text(booking.doctor.fullName ?? ""),
                 ),
                 ListTile(
                   leading: Icon(Icons.calendar_today, color: Colors.orange),
@@ -59,7 +59,7 @@ class _ReceptionistHome extends State<ReceptionistHome> {
                 ListTile(
                   leading: Icon(Icons.phone, color: Colors.red),
                   title: Text('Phone'),
-                  subtitle: Text(booking.patient.phone ?? "N/A"), // Hiển thị số điện thoại
+                  subtitle: Text(booking.patient.phone ?? ""), // Hiển thị số điện thoại
                 ),
               ],
             ),
@@ -154,32 +154,32 @@ class _ReceptionistHome extends State<ReceptionistHome> {
     );
   }
 
-  void confirmDeleteBooking(BuildContext context, AppointmentDTO booking) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Confirm Deletion'),
-          content: Text('Bạn có chắc chắn muốn xóa mục này không?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('No'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  // Handle deletion here
-                });
-                Navigator.pop(context);
-              },
-              child: Text('Yes'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void confirmDeleteBooking(BuildContext context, AppointmentDTO booking) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text('Confirm Deletion'),
+  //         content: Text('Bạn có chắc chắn muốn xóa mục này không?'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context),
+  //             child: Text('No'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               setState(() {
+  //                 // Handle deletion here
+  //               });
+  //               Navigator.pop(context);
+  //             },
+  //             child: Text('Yes'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -200,16 +200,19 @@ class _ReceptionistHome extends State<ReceptionistHome> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
+        body: LayoutBuilder(
+        builder: (context, constraints) {
+      double screenWidth = constraints.maxWidth; // Chiều rộng khả dụng
+      return Column(
+          children: [
+      Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
-                      labelText: 'Tìm kiếm theo tên',
+                      labelText: 'Search by name',
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (value) {
@@ -242,74 +245,73 @@ class _ReceptionistHome extends State<ReceptionistHome> {
               ],
             ),
           ),
+
           Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: DataTable(
-                        columnSpacing: constraints.maxWidth * 0.05, // Responsive column spacing
-                        columns: [
-                          DataColumn(label: Text('#')),
-                          DataColumn(label: Text('Patient')),
-                          DataColumn(label: Text('Info')),
-                          DataColumn(label: Text('Status')),
-                          //DataColumn(label: Text('Delete')),
-                        ],
-                        rows: filteredBookings.map((booking) {
-                          // Configure your row cells
-                          return DataRow(cells: [
-                            DataCell(Text(booking.id.toString())),
-                            DataCell(Text(booking.patient.fullName!)),
-                            DataCell(
-                              IconButton(
-                                icon: Icon(Icons.add, color: Colors.blue),
-                                onPressed: () => showBookingInfo(context, booking),
-                              ),
-                            ),
-                            DataCell(
-                              Align(
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 4.0), // Adjust the padding value as needed
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blueAccent,
-                                      padding: EdgeInsets.symmetric(horizontal: 12), // Adjust horizontal padding if needed
-                                    ),
-                                    onPressed: () => showStatusOptions(context, booking),
-                                    child: Text(
-                                      booking.status,
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            //
-                            // DataCell(
-                            //   IconButton(
-                            //     icon: Icon(Icons.delete, color: Colors.grey),
-                            //     onPressed: () => confirmDeleteBooking(context, booking),
-                            //   ),
-                            // ),
-                          ]);
-                        }).toList(),
+          child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal, // Cuộn ngang
+          child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: screenWidth), // Đảm bảo bảng không nhỏ hơn màn hình
+          child: DataTable(
+          columnSpacing: 12,
+          columns: [
+          DataColumn(label: Text('#')),
+          DataColumn(label: Text('Patient')),
+          DataColumn(label: Text('Info')),
+          DataColumn(label: Text('Status')),
+          ],
+            rows: filteredBookings.map((booking) {
+              Color statusColor(String status) {
+                switch (status) {
+                  case 'PENDING':
+                    return Colors.orange;
+                  case 'CANCELLED':
+                    return Colors.red;
+                  case 'CONFIRMED':
+                    return Colors.blueAccent;
+                  case 'COMPLETED':
+                    return Colors.green;
+                  default:
+                    return Colors.grey;
+                }
+              }
+
+              return DataRow(cells: [
+                      DataCell(Text(booking.id.toString())),
+                      DataCell(Text(booking.patient.fullName!)),
+                      DataCell(
+                        IconButton(
+                          icon: Icon(Icons.add, color: Colors.blue),
+                          onPressed: () => showBookingInfo(context, booking),
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              },
+                      DataCell(
+                        Align(
+                          alignment: Alignment.center,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                            ),
+                            onPressed: () => showStatusOptions(context, booking),
+                            child: Text(
+                              booking.status,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]);
+                  }).toList(),
+                ),
+              ),
             ),
           ),
 
+
         ],
-      ),
+      );
+        },
+        ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {

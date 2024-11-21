@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:healthcare_management_app/dto/Doctor_dto.dart';
-import 'package:healthcare_management_app/dto/update_doctor_dto.dart';
-import 'package:healthcare_management_app/dto/user_dto.dart';
-import 'package:healthcare_management_app/providers/Clinic_Provider.dart';
-import 'package:healthcare_management_app/providers/Specializations_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../dto/Doctor_dto.dart';
+import '../../dto/update_doctor_dto.dart';
+import '../../dto/user_dto.dart';
 import '../../models/Clinic.dart';
 import '../../models/GetDoctorProfile.dart';
 import '../../models/Specialization.dart';
 import '../../providers/Doctor_provider.dart';
+import '../../providers/Clinic_Provider.dart';
+import '../../providers/Specializations_provider.dart';
 import '../comons/customBottomNavBar.dart';
 import '../comons/login.dart';
 import '../comons/show_vertical_menu.dart';
@@ -18,6 +18,7 @@ import 'doctor_home.dart';
 
 class UpdateDoctorProfileScreen extends StatefulWidget {
   final UserDTO? user;
+
   UpdateDoctorProfileScreen({required this.user});
 
   @override
@@ -37,54 +38,64 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadData();
-
     });
   }
 
   Future<void> _loadData() async {
-    // Fetch doctor data
-    await context.read<DoctorProvider>().getDoctorByUserName();
-    GetDoctorProfile? doctorDTO = context.read<DoctorProvider>().doctor_pro;
+    try {
+      // Fetch doctor data
+      await context.read<DoctorProvider>().getDoctorByUserName();
+      GetDoctorProfile? doctorDTO = context.read<DoctorProvider>().doctor_pro;
 
-    // Pre-fill form fields if doctorDTO is available
-    if (doctorDTO != null) {
-      print("clinicId ${doctorDTO.userId}");
-      _achievementsController.text = doctorDTO.achievements ?? '';
-      _medicalTrainingController.text = doctorDTO.medicalTraining ?? '';
-       _selectedClinicId = doctorDTO.clinic?.id;
-       _selectedSpecializationId = doctorDTO.specialization?.id;
+      // Pre-fill form fields if doctorDTO is available
+      if (doctorDTO != null) {
+        _achievementsController.text = doctorDTO.achievements ?? '';
+        _medicalTrainingController.text = doctorDTO.medicalTraining ?? '';
+        _selectedClinicId = doctorDTO.clinic?.id;
+        _selectedSpecializationId = doctorDTO.specialization?.id;
+      }
+
+      // Load clinic and specialization data
+      await context.read<SpecializationsProvider>().getAllSpecializations();
+      await context.read<ClinicProvider>().getAllClinic();
+
+      // Initialize dropdown items
+      _loadClinics();
+      _loadSpecializations();
+
+      setState(() {});
+    } catch (e) {
+      print(e); // Debug lỗi
+      _showErrorDialog('Error Loading Data', 'Failed to load profile or related data.');
     }
-
-    // Load clinic and specialization data
-    await context.read<SpecializationsProvider>().getAllSpecializations();
-    await context.read<ClinicProvider>().getAllClinic();
-
-    // Initialize dropdown items
-    _loadClinics();
-    _loadSpecializations();
-
-    // Refresh UI
-    setState(() {});
   }
 
   void _loadClinics() {
     List<Clinic> clinics = context.read<ClinicProvider>().list;
-    _clinicItems = clinics.map((clinic) {
-      return DropdownMenuItem<int>(
-        value: clinic.id,
-        child: Text(clinic.name),
-      );
-    }).toList();
+    if (clinics.isNotEmpty) {
+      _clinicItems = clinics.map((clinic) {
+        return DropdownMenuItem<int>(
+          value: clinic.id,
+          child: Text(clinic.name),
+        );
+      }).toList();
+    } else {
+      _clinicItems = [];
+    }
   }
 
   void _loadSpecializations() {
     List<Specialization> specializations = context.read<SpecializationsProvider>().list;
-    _specializationItems = specializations.map((specialization) {
-      return DropdownMenuItem<int>(
-        value: specialization.id,
-        child: Text(specialization.name!),
-      );
-    }).toList();
+    if (specializations.isNotEmpty) {
+      _specializationItems = specializations.map((specialization) {
+        return DropdownMenuItem<int>(
+          value: specialization.id,
+          child: Text(specialization.name!),
+        );
+      }).toList();
+    } else {
+      _specializationItems = [];
+    }
   }
 
   void _saveProfile() async {
@@ -105,7 +116,8 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
       await context.read<DoctorProvider>().updateDoctor(updatedDoctor);
       _showUpdateSuccessDialog();
     } catch (e) {
-      _showErrorDialog('Update failed', 'An error occurred while updating your profile.');
+      print(e); // Debug lỗi
+      _showErrorDialog('Update Failed', 'An error occurred while updating your profile.');
     }
   }
 
@@ -119,7 +131,11 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Login()),
+                    (route) => false,
+              );
             },
             child: Text('OK'),
           ),
@@ -195,15 +211,15 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
           ),
         ),
       ),
-      bottomNavigationBar:CustomBottomNavBar(
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {
           // Handle other navigation
         },
         onSetupPressed: () {
-          MenuUtils.showVerticalMenu(context);// Hiển thị menu khi nhấn Setup
+          MenuUtils.showVerticalMenu(context); // Hiển thị menu khi nhấn Setup
         },
-        onHomePressed: (){
+        onHomePressed: () {
           // Điều hướng về trang HomeCustomer
           Navigator.pushReplacement(
             context,
@@ -240,10 +256,11 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
           ),
         ),
         value: value,
-        items: items,
+        items: items.isNotEmpty
+            ? items
+            : [DropdownMenuItem(value: null, child: Text('Loading...'))],
         onChanged: onChanged,
       ),
     );
   }
 }
-

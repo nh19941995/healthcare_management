@@ -41,7 +41,7 @@ class MenuUtils {
                     children: [
                       Icon(Icons.edit, color: Colors.white, size: 30),
                       SizedBox(width: 10),
-                      Text('Cập nhật thông tin', style: TextStyle(color: Colors.white)),
+                      Text('Update information', style: TextStyle(color: Colors.white)),
                     ],
                   ),
                 ),

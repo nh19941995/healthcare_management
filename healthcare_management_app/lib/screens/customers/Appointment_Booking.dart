@@ -380,7 +380,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
         ),
         SizedBox(height: 8),
         Text('Doctor: ${widget.doctor.fullName}'),
-        Text('Medical Training: ${widget.doctor.medicalTraining}'),
+        Text('Clinic: ${widget.doctor.medicalTraining}'),
       ],
     );
   }

@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import '../Config.dart';
 import '../dto/Appointment_dto.dart';
 import '../screens/comons/TokenManager.dart';
 
-const getReceptionistsUrl = "http://localhost:8080/api/receptionists";
-const changeStatusUrl = "http://localhost:8080/api/receptionists/1/CONFIRMED";
+final String apiUrl = Config.apiUrl;
+final getReceptionistsUrl = "$apiUrl/api/receptionists";
+final changeStatusUrl = "$apiUrl/api/receptionists/1/CONFIRMED";
 class ReceptionistsApi {
   Future<List<AppointmentDTO>> getAllAppointment() async {
 
@@ -48,7 +50,7 @@ class ReceptionistsApi {
 
   Future<void> changeStatus(int appointmentId, String status) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http://localhost:8080/api/receptionists/$appointmentId/$status'); // Sử dụng status từ tham số
+    final url = Uri.parse('$apiUrl/api/receptionists/$appointmentId/$status'); // Sử dụng status từ tham số
 
     try {
       final response = await http.put(

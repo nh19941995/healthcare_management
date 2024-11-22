@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../Config.dart';
 import '../models/Qa.dart';
 
-const baseURL = "http://localhost:8080/api/consultations";
+final String apiUrl = Config.apiUrl;
+final baseURL = "$apiUrl/api/consultations";
 
 class QaApi {
   Future<List<Qa>> getAllQa() async {
@@ -20,7 +22,7 @@ class QaApi {
         final List<dynamic> data = decodedResponse['content'];
         return data.map((qa) => Qa.fromJson(qa)).toList();
       } else {
-        throw Exception("Dữ liệu JSON không đúng định dạng.");
+        throw Exception("JSON data is malformed.");
       }
     } else {
       throw Exception("Failed to load data from API: ${response.statusCode}");

@@ -4,8 +4,11 @@ import 'package:healthcare_management_app/models/Time_slot.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-const clinicsUrl = "http://localhost:8080/api/clinics";
-const timeslotsUrl = "http://localhost:8080/api/timeslots";
+import '../Config.dart';
+
+final String apiUrl = Config.apiUrl;
+final clinicsUrl = "$apiUrl/api/clinics";
+final timeslotsUrl = "$apiUrl/api/timeslots";
 
 
 class ClinicApi {
@@ -20,7 +23,7 @@ class ClinicApi {
     final username = await getUsername();
     if (username != null) {
       print(username);
-      return "http://localhost:8080/api/clinics/$username";
+      return "$apiUrl/api/clinics/$username";
     } else {
       throw Exception('Username not found');
     }

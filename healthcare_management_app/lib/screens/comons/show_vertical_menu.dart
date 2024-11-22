@@ -47,30 +47,30 @@ class MenuUtils {
                 ),
               ),
               // Nếu userDto.roles không phải null và có vai trò "Doctor", hiển thị mục "Cập nhật thông tin bác sĩ"
-              if (userDto?.roles?.any((role) => role.name == 'DOCTOR') ?? false) ...[
-                Divider(color: Colors.white),
-                GestureDetector(
-                  onTap: () {
-                    // Điều hướng đến trang chỉnh sửa thông tin bác sĩ
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UpdateDoctorProfileScreen(user:userDto),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(15),
-                    child: Row(
-                      children: [
-                        Icon(Icons.medical_services, color: Colors.white, size: 30),
-                        SizedBox(width: 10),
-                        Text('Update information doctor', style: TextStyle(color: Colors.white)),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              // if (userDto?.roles?.any((role) => role.name == 'DOCTOR') ?? false) ...[
+              //   Divider(color: Colors.white),
+              //   GestureDetector(
+              //     onTap: () {
+              //       // Điều hướng đến trang chỉnh sửa thông tin bác sĩ
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (context) => UpdateDoctorProfileScreen(user:userDto),
+              //         ),
+              //       );
+              //     },
+              //     child: Container(
+              //       padding: EdgeInsets.all(15),
+              //       child: Row(
+              //         children: [
+              //           Icon(Icons.medical_services, color: Colors.white, size: 30),
+              //           SizedBox(width: 10),
+              //           Text('Update information doctor', style: TextStyle(color: Colors.white)),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ],
 
               // Mục "Đăng xuất"
               GestureDetector(

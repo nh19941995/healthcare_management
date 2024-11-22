@@ -32,6 +32,13 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
   int? _selectedSpecializationId;
   List<DropdownMenuItem<int>> _clinicItems = [];
   List<DropdownMenuItem<int>> _specializationItems = [];
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
 
   @override
   void initState() {
@@ -53,6 +60,12 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
         _medicalTrainingController.text = doctorDTO.medicalTraining ?? '';
         _selectedClinicId = doctorDTO.clinic?.id;
         _selectedSpecializationId = doctorDTO.specialization?.id;
+        _fullNameController.text = widget.user!.fullName ?? '';
+        _emailController.text = widget.user!.email ?? '';
+        _addressController.text = widget.user!.address ?? '';
+        _phoneController.text = widget.user!.phone ?? '';
+        _genderController.text = widget.user!.gender ?? '';
+        _descriptionController.text = widget.user!.description ?? '';
       }
 
       // Load clinic and specialization data
@@ -104,13 +117,14 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
       medicalTraining: _medicalTrainingController.text,
       clinicId: _selectedClinicId,
       specializationId: _selectedSpecializationId,
-      gender: widget.user?.gender,
-      description: widget.user?.description,
-      fullName: widget.user?.fullName,
-      email: widget.user?.email,
-      address: widget.user?.address,
-      phone: widget.user?.phone,
+      gender: _genderController.text,
+      description: _descriptionController.text,
+      fullName: _fullNameController.text,
+      email: _emailController.text,
+      address: _addressController.text,
+      phone: _phoneController.text,
     );
+
 
     try {
       await context.read<DoctorProvider>().updateDoctor(updatedDoctor);
@@ -164,8 +178,15 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
   void dispose() {
     _achievementsController.dispose();
     _medicalTrainingController.dispose();
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _addressController.dispose();
+    _phoneController.dispose();
+    _genderController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -186,6 +207,13 @@ class _UpdateDoctorProfileScreen extends State<UpdateDoctorProfileScreen> {
               SizedBox(height: 20),
               Text("Welcome : ${widget.user?.fullName}", style: Theme.of(context).textTheme.displayLarge),
               SizedBox(height: 20),
+              _buildTextField(_fullNameController, 'Full Name'),
+              _buildTextField(_emailController, 'Email'),
+              _buildTextField(_addressController, 'Address'),
+              _buildTextField(_phoneController, 'Phone'),
+              _buildTextField(_genderController, 'Gender'),
+              _buildTextField(_descriptionController, 'Description'),
+
               _buildTextField(_achievementsController, 'Achievements'),
               _buildTextField(_medicalTrainingController, 'Medical Training'),
               _buildDropdown(_clinicItems, 'Clinic', (value) {

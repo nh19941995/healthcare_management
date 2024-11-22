@@ -57,7 +57,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailForClinicScreen> {
                 backgroundImage: widget.doctor.avatar != null
                     ? NetworkImage(widget.doctor.avatar!)
                     : AssetImage('lib/assets/Avatar.png') as ImageProvider,
-                radius: 40, // Kích thước của avatar
+                radius: 48, // Kích thước của avatar
               ),
               SizedBox(height: 16),
               Text(

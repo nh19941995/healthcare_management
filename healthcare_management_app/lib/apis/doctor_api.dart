@@ -1,5 +1,6 @@
 import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:healthcare_management_app/dto/update_doctor_dto.dart';
+import '../Config.dart';
 import '../dto/Appointment_dto.dart';
 import '../models/Doctor_detail.dart';
 import '../models/GetDoctorProfile.dart';
@@ -7,7 +8,8 @@ import '../screens/comons/TokenManager.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-const baseURL = "http://localhost:8080/api/doctors";
+final String apiUrl = Config.apiUrl;
+final baseURL = "$apiUrl/api/doctors";
 
 class DoctorApi {
 
@@ -51,7 +53,7 @@ class DoctorApi {
     print('Username: $username');
     print('Token: $token'); // In token ra để kiểm tra nếu cần
 
-    final String urlGetUser = 'http://localhost:8080/api/doctors/$username';
+    final String urlGetUser = '$apiUrl/api/doctors/$username';
 
     final response = await http.get(
       Uri.parse(urlGetUser),
@@ -75,7 +77,7 @@ class DoctorApi {
   Future<GetDoctorProfile> getDoctorByUserNameForAppoiment(String username) async {
     //print('Username: $username');
 
-    final String urlGetUser = 'http://localhost:8080/api/doctors/$username';
+    final String urlGetUser = '$apiUrl/api/doctors/$username';
 
     final response = await http.get(
       Uri.parse(urlGetUser)
@@ -97,7 +99,7 @@ class DoctorApi {
     final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
 
     final response = await http.put(
-      Uri.parse("http://localhost:8080/api/doctors/${username}"), // Địa chỉ API để cập nhật người dùng
+      Uri.parse("$apiUrl/api/doctors/${username}"), // Địa chỉ API để cập nhật người dùng
       headers: {
         'Authorization': 'Bearer $token', // Thêm token vào header
         'Content-Type': 'application/json', // Định dạng nội dung
@@ -119,7 +121,7 @@ class DoctorApi {
       final String? username = TokenManager().getUserSub();
       final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
 
-      final gerAppointEachDoctorUrl = 'http://localhost:8080/api/doctors/appointments/$username/CONFIRMED';
+      final gerAppointEachDoctorUrl = '$apiUrl/api/doctors/appointments/$username/CONFIRMED';
 
       print('Username: $username');
       print('Token: $token'); // In token ra để kiểm tra nếu cần
@@ -153,7 +155,7 @@ class DoctorApi {
 
   Future<void> changeStatusForDoctor(int appointmentId, String status) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http:localhost:8080/api/doctors/appointments/$appointmentId/$status'); // Sử dụng status từ tham số
+    final url = Uri.parse('$apiUrl/api/doctors/appointments/$appointmentId/$status'); // Sử dụng status từ tham số
 
     try {
       final response = await http.put(

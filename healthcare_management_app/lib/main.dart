@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:healthcare_management_app/screens/comons/theme.dart';
 import 'package:healthcare_management_app/screens/customers/Appointment_Booking.dart';
 import 'package:healthcare_management_app/screens/comons/splash.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
   // Khởi tạo danh sách các API

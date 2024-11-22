@@ -268,6 +268,7 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
             child: Row(
               children: [
                 Expanded(
+                  flex: 2,
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: 'Search by name',
@@ -281,31 +282,45 @@ class _DoctorHomeScreen extends State<DoctorHomeScreen> {
                   ),
                 ),
                 SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: selectedStatus,
-                  onChanged: (value) async {
-                    if (value != null) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                      await context.read<DoctorProvider>().getMuntilStatusAppointmentEachDoctor(selectedStatus);
-                    }
-                  },
-                  items: [
-                    'PENDING',
-                    'CANCELLED',
-                    'CONFIRMED',
-                    'COMPLETED',
-                  ].map((status) {
-                    return DropdownMenuItem(value: status, child: Text(status));
-                  }).toList(),
+                Expanded(
+                  flex: 1,
+                  child: DropdownButtonFormField<String>(
+                    value: selectedStatus,
+                    onChanged: (value) async {
+                      if (value != null) {
+                        setState(() {
+                          selectedStatus = value;
+                        });
+                        await context
+                            .read<DoctorProvider>()
+                            .getMuntilStatusAppointmentEachDoctor(selectedStatus);
+                      }
+                    },
+                    items: [
+                      'PENDING',
+                      'CANCELLED',
+                      'CONFIRMED',
+                      'COMPLETED',
+                    ].map((status) {
+                      return DropdownMenuItem(
+                        value: status,
+                        child: Text(status),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Status',
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
                 ),
+
               ],
             ),
           ),
           Expanded(
             child: filteredBookings.isEmpty
-                ? Center(child: Text('No appointments found'))
+                ? Center(child: Text('No appointments '))
                 : LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(

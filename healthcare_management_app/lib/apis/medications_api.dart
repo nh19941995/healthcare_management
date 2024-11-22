@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:healthcare_management_app/dto/getAppointment.dart';
 import 'package:healthcare_management_app/models/Medication.dart';
 import 'package:http/http.dart' as http;
+import '../Config.dart';
 import '../models/Qa.dart';
 import '../models/prescriptions.dart';
 import '../screens/comons/TokenManager.dart';
 
-const baseURL = "http://localhost:8080/api/medications";
-const prescriptions = "http://localhost:8080/api/prescriptions";
+final String apiUrl = Config.apiUrl;
+final baseURL = "$apiUrl/api/medications";
+final prescriptions = "$apiUrl/api/prescriptions";
 
 class MedicationsApi {
   Future<List<Medication>> getAllMedicationsApi() async {
@@ -61,7 +63,7 @@ class MedicationsApi {
     print('Username: $username');
     print('Token: $token'); // In token ra để kiểm tra nếu cần
 
-    final String url = 'http://localhost:8080/api/prescriptions/appointment/$appointmentId';
+    final String url = '$apiUrl/api/prescriptions/appointment/$appointmentId';
 
     final response = await http.get(
       Uri.parse(url),

@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Config.dart';
 import '../dto/register.dart';
 import '../models/user.dart';
 
-
-const registerUrl = "http://localhost:8080/auth/simpleRegister";
-const loginUrl = "http://localhost:8080/auth/login";
-const fixUserUrl = "http://localhost:8080/users";
+final String apiUrl = Config.apiUrl; // Cấu hình URL API
+final registerUrl = "$apiUrl/auth/simpleRegister";
+final loginUrl = "$apiUrl/auth/login";
+final fixUserUrl = "$apiUrl/users";
 
 class Auth {
 
@@ -47,7 +48,7 @@ class Auth {
       final Map<String, dynamic> userData = jsonDecode(response.body);
       return User.fromJson(userData); // Giả sử bạn có một model User để chuyển đổi dữ liệu
     } else {
-      throw Exception('Không thể lấy thông tin người dùng');
+      throw Exception('Unable to get user information');
     }
   }
 

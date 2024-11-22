@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../Config.dart';
 import '../models/Specialization.dart';
 
-const baseURL = "http://localhost:8080/api/specializations?page=0&size=50";
+final String apiUrl = Config.apiUrl;
+final baseURL = "$apiUrl/api/specializations?page=0&size=50";
 class SpecializationApi {
   Future<List<Specialization>> getAllSpecializations() async {
     final response = await http.get(Uri.parse(baseURL));

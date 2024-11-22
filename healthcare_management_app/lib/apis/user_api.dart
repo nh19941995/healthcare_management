@@ -4,15 +4,17 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_management_app/models/user.dart';
+import '../Config.dart';
+import '../dto/updateUserForDoctorDto.dart';
 import '../dto/user_dto.dart';
 import '../screens/comons/TokenManager.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:html' as html;
 
-
-const baseURL = "http://localhost:8080/users";
-const baseUpdateUser = "http://localhost:8080/api/users";
-const getUserActive = "http://localhost:8080/admin/users?page=0&size=1000";
+final String apiUrl = Config.apiUrl;
+final baseURL = "$apiUrl/users";
+final baseUpdateUser = "$apiUrl/api/users";
+final getUserActive = "$apiUrl/admin/users?page=0&size=1000";
 
 class UserApi {
   late String username;
@@ -56,6 +58,27 @@ class UserApi {
     }
   }
 
+  // Phương thức để cập nhật thông tin người dùng
+  Future<UpdateUserForDoctorDto> updateUserForDoctor(UpdateUserForDoctorDto user) async {
+    final String? token = TokenManager().getToken();
+
+    final response = await http.put(
+      Uri.parse(baseUpdateUser), // Địa chỉ API để cập nhật người dùng
+      headers: {
+        'Authorization': 'Bearer $token', // Thêm token vào header
+        'Content-Type': 'application/json', // Định dạng nội dung
+      },
+      body: jsonEncode(user.toJson()), // Chuyển đổi UserDTO thành JSON
+    );
+
+    if (response.statusCode == 200) {
+      return UpdateUserForDoctorDto.fromJson(jsonDecode(response.body));
+    } else {
+      print('Failed to update user. Status code: ${response.statusCode}');
+      throw Exception('Failed to update user');
+    }
+  }
+
 
   // Phương thức để lấy thông tin người dùng theo username
   Future<UserDTO> getUserByUserName() async {
@@ -65,7 +88,7 @@ class UserApi {
     print('Username: $username');
     print('Token: $token'); // In token ra để kiểm tra nếu cần
 
-    final String urlGetUser = 'http://localhost:8080/api/users/$username';
+    final String urlGetUser = '$apiUrl/api/users/$username';
 
     final response = await http.get(
       Uri.parse(urlGetUser),
@@ -126,7 +149,7 @@ class UserApi {
 
   Future<void> updateUserRole(String username, String role) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http://localhost:8080/admin/updateRole/$username/$role');
+    final url = Uri.parse('$apiUrl/admin/updateRole/$username/$role');
 
     try {
       final response = await http.put(
@@ -152,7 +175,7 @@ class UserApi {
 
   Future<List<UserDTO>> blockOrUnblockUser(String username, String lockReason) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http://localhost:8080/admin/blockOrUnblock/$username/$lockReason');
+    final url = Uri.parse('$apiUrl/admin/blockOrUnblock/$username/$lockReason');
 
     try {
       final response = await http.put(
@@ -190,7 +213,7 @@ class UserApi {
 
   Future<void> deleteUser(String username) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http://localhost:8080/admin/deleteUser/$username');
+    final url = Uri.parse('$apiUrl/admin/deleteUser/$username');
 
     try {
       final response = await http.put(
@@ -302,7 +325,7 @@ class UserApi {
   Future<List<UserDTO>> getUsersByStatus(String status) async {
     final String? username = TokenManager().getUserSub();
     final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
-    final url = 'http://localhost:8080/admin/getUsersByStatus/$status';
+    final url = '$apiUrl/admin/getUsersByStatus/$status?page=1&size=500';
 
 
     print('Username: $username');

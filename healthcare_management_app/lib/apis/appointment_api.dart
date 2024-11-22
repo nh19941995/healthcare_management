@@ -1,19 +1,20 @@
 import 'dart:convert';
 
+import '../Config.dart';
 import '../dto/Api_appointment_dto.dart';
 import '../dto/Appointment_dto.dart';
 import '../screens/comons/TokenManager.dart';
 import 'package:http/http.dart' as http;
 
-const getAllUrl = "http://localhost:8080/admin/appointments/ALL?page=0&size=1000000";
+final String apiUrl = Config.apiUrl; // Cấu hình URL API
+ final String getAllUrl = "$apiUrl/admin/appointments/ALL?page=0&size=1000000";
 class AppointmentApi {
 
   Future<http.Response> createAppointment(ApiAppointmentDTO apiAppointmentDTO) async {
     final String? token = TokenManager().getToken();
     final url = Uri.parse(
-        'http://localhost:8080/api/appointments/${apiAppointmentDTO.patientUsername}/'
+        '$apiUrl/api/appointments/${apiAppointmentDTO.patientUsername}/'
             '${apiAppointmentDTO.doctorUsername}/${apiAppointmentDTO.timeSlotId}/${apiAppointmentDTO.appointmentDate}');
-
     try {
       final response = await http.post(
         url,
@@ -33,7 +34,7 @@ class AppointmentApi {
       final String? username = TokenManager().getUserSub();
       final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
 
-      final historyUrl = 'http://localhost:8080/api/patients/appointments/$username';
+      final historyUrl = '$apiUrl/api/patients/appointments/$username';
       print('Username: $username');
       print('Token: $token'); // In token ra để kiểm tra nếu cần
 

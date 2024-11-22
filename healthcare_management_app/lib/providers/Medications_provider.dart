@@ -8,6 +8,9 @@ import 'package:healthcare_management_app/models/Medication.dart';
 import 'package:healthcare_management_app/models/Qa.dart';
 import 'package:healthcare_management_app/models/prescriptions.dart';
 
+import '../Config.dart';
+
+final String apiUrl = Config.apiUrl;
 class MedicationsProvider with ChangeNotifier {
   final MedicationsApi medicationsApi;
   MedicationsProvider({required this.medicationsApi}) {
@@ -53,7 +56,7 @@ class MedicationsProvider with ChangeNotifier {
   Medication? get MedicationDetail => _MedicationDetail;
 
   Future<void> getMedicationDetailById(int appointmentId) async {
-    final url = Uri.parse('http://localhost:8080/api/medications/$appointmentId');
+    final url = Uri.parse('$apiUrl/api/medications/$appointmentId');
 
     try {
       final response = await http.get(url);

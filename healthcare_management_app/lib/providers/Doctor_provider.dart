@@ -6,10 +6,12 @@ import 'package:healthcare_management_app/dto/Doctor_dto.dart';
 import 'package:healthcare_management_app/dto/update_doctor_dto.dart';
 import 'package:http/http.dart' as http;
 
+import '../Config.dart';
 import '../dto/Appointment_dto.dart';
 import '../models/GetDoctorProfile.dart';
 import '../screens/comons/TokenManager.dart';
 
+final String apiUrl = Config.apiUrl;
 class DoctorProvider with ChangeNotifier {
   final DoctorApi doctorApi;
 
@@ -81,7 +83,7 @@ class DoctorProvider with ChangeNotifier {
 
   Future<void> changeStatus(int appointmentId, String status) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http://localhost:8080/api/doctors/appointments/$appointmentId/$status'); // Sử dụng status từ tham số
+    final url = Uri.parse('$apiUrl/api/doctors/appointments/$appointmentId/$status'); // Sử dụng status từ tham số
 
     try {
       final response = await http.put(
@@ -165,7 +167,7 @@ class DoctorProvider with ChangeNotifier {
       final String? username = TokenManager().getUserSub();
       final String? token = TokenManager().getToken(); // Lấy token từ TokenManager
 
-      final gerAppointEachDoctorUrl = 'http://localhost:8080/api/doctors/appointments/$username/$status';
+      final gerAppointEachDoctorUrl = '$apiUrl/api/doctors/appointments/$username/$status';
 
       print('Username: $username');
       print('Token: $token'); // In token ra để kiểm tra nếu cần

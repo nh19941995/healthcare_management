@@ -8,7 +8,7 @@ class UpdateDoctorDto {
     required this.email,
     required this.address,
     required this.phone,
-    this.avatar,
+    //this.avatar,
     required this.gender,
     required this.description,
   });
@@ -21,7 +21,7 @@ class UpdateDoctorDto {
   final String? email;
   final String? address;
   final String? phone;
-  final String? avatar;
+  //final String? avatar;
   final String? gender;
   final String? description;
 
@@ -35,7 +35,7 @@ class UpdateDoctorDto {
       email: json["email"],
       address: json["address"],
       phone: json["phone"],
-      avatar: json["avatar"],
+      //avatar: json["avatar"],
       gender: json["gender"],
       description: json["description"],
     );
@@ -50,14 +50,16 @@ class UpdateDoctorDto {
     "email": email,
     "address": address,
     "phone": phone,
-    "avatar": avatar,
+    //"avatar": avatar,
     "gender": gender,
     "description": description,
   };
 
   @override
   String toString(){
-    return "$achievements, $medicalTraining, $clinicId, $specializationId, $fullName, $email, $address, $phone, $avatar, $gender, $description, ";
+    return "$achievements, $medicalTraining, $clinicId, $specializationId, $fullName, $email, $address, $phone,"
+        //" $avatar, "
+        "$gender, $description, ";
   }
 
 }

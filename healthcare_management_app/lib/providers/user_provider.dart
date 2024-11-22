@@ -4,7 +4,9 @@ import 'package:healthcare_management_app/apis/auth.dart'; // Auth API import
 import 'package:healthcare_management_app/apis/user_api.dart';
 import 'package:healthcare_management_app/dto/login_dto.dart';
 import 'package:healthcare_management_app/dto/user_dto.dart';
-import 'package:flutter/foundation.dart'; // Thêm dòng này để kiểm tra nền tảng
+import 'package:flutter/foundation.dart';
+
+import '../dto/updateUserForDoctorDto.dart'; // Thêm dòng này để kiểm tra nền tảng
 
 class UserProvider with ChangeNotifier {
   final UserApi userApi;
@@ -14,6 +16,10 @@ class UserProvider with ChangeNotifier {
 
   final List<UserDTO> _list = [];
   List<UserDTO> get list => _list;
+
+  final List<UpdateUserForDoctorDto> _listForDoctor = [];
+  List<UpdateUserForDoctorDto> get listForDoctor => _listForDoctor;
+
   UserDTO? _user;
   String? image;
 
@@ -38,6 +44,15 @@ class UserProvider with ChangeNotifier {
     final index = _list.indexWhere((element) => element.id == updatedUser.id);
     if (index != -1) {
       _list[index] = updatedUser as UserDTO;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateUserForDoctor(UpdateUserForDoctorDto user) async {
+    final updatedUser = await userApi.updateUserForDoctor(user);
+    final index = _listForDoctor.indexWhere((element) => element.id == updatedUser.id);
+    if (index != -1) {
+      _listForDoctor[index] = updatedUser as UpdateUserForDoctorDto;
       notifyListeners();
     }
   }

@@ -55,7 +55,7 @@ class _ListClinic extends State<ListClinic> {
       appBar: AppBar(
         title: const Text('Choose a medical facility'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -105,46 +105,32 @@ class _ListClinic extends State<ListClinic> {
                           ),
                         );
                       },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment
-                            .start, // Căn chỉnh các widget con ở đầu
-                        crossAxisAlignment: CrossAxisAlignment
-                            .center, // Căn chỉnh theo chiều ngang
-                        children: [
-                          SizedBox(
-                              height: 8.0), // Thêm khoảng cách phía trên ảnh
-                          // Kiểm tra điều kiện và sử dụng Image phù hợp
-                          // facility?.image != null
-                          //     ? ClipRRect(
-                          //   borderRadius: BorderRadius.circular(10.0), // Bo góc cho ảnh
-                          //   child: Image.network(
-                          //     facility!.image!,
-                          //     width: 100, // Kích thước cố định cho ảnh
-                          //     height: 100, // Kích thước cố định cho ảnh
-                          //     fit: BoxFit.cover, // Lấp đầy không gian ảnh mà không bị méo
-                          //   ),
-                          // )
-                          // :
-                          CircleAvatar(
-                            backgroundImage: facility.image != null
-                                ? NetworkImage(facility.image!)
-                                : AssetImage('lib/assets/Avatar.png')
-                                    as ImageProvider,
-                            radius: 40, // Kích thước của avatar
-                          ),
-                          const SizedBox(
-                              height: 8.0), // Khoảng cách giữa ảnh và tên
-                          // Hiển thị tên cơ sở
-                          Text(
-                            facility?.name ?? '', // Dự phòng nếu tên không có
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+                      child:Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center, // Căn giữa nội dung theo chiều dọc
+                          crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa nội dung theo chiều ngang
+                          children: [
+                            // Ảnh (hoặc avatar)
+                            CircleAvatar(
+                              backgroundImage: facility.image != null
+                                  ? NetworkImage(facility.image!)
+                                  : AssetImage('lib/assets/Avatar.png') as ImageProvider,
+                              radius: 48, // Kích thước của avatar
                             ),
-                            textAlign: TextAlign.center, // Căn giữa tên
-                          ),
-                        ],
-                      ),
+                            const SizedBox(height: 16.0), // Khoảng cách giữa ảnh và tên
+                            // Hiển thị tên cơ sở
+                            Text(
+                              facility?.name ?? '', // Dự phòng nếu tên không có
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center, // Căn giữa tên
+                            ),
+                          ],
+                        ),
+                      )
+
                     ),
                   );
                 },

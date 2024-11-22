@@ -16,11 +16,11 @@ class QaProvider with ChangeNotifier {
     _list.clear();
     _list.addAll(qa);
 
-    // In ra danh sách _list để kiểm tra
-    print('Danh sách các qa:');
-    for (var qa in _list) {
-      print(qa); // Sử dụng toString() của Qa hoặc in ra các thuộc tính cụ thể
-    }
+    // // In ra danh sách _list để kiểm tra
+    // print('Danh sách các qa:');
+    // for (var qa in _list) {
+    //   print(qa); // Sử dụng toString() của Qa hoặc in ra các thuộc tính cụ thể
+    // }
 
     notifyListeners();
   }

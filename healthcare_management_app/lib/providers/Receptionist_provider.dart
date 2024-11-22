@@ -1,5 +1,6 @@
 import 'package:healthcare_management_app/apis/receptionists_api.dart';
 
+import '../Config.dart';
 import '../dto/Api_appointment_dto.dart';
 import '../apis/appointment_api.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import '../dto/Appointment_dto.dart';
 import '../screens/comons/TokenManager.dart';
 import 'package:http/http.dart' as http;
 
+final String apiUrl = Config.apiUrl;
 class ReceptionistProvider with ChangeNotifier {
   final ReceptionistsApi receptionistsApi;
   List<AppointmentDTO> _listAppointment = [];
@@ -31,7 +33,7 @@ class ReceptionistProvider with ChangeNotifier {
   }
   Future<void> changeStatus(int appointmentId, String status) async {
     final String? token = TokenManager().getToken();
-    final url = Uri.parse('http://localhost:8080/api/receptionists/$appointmentId/$status'); // Sử dụng status từ tham số
+    final url = Uri.parse('$apiUrl/api/receptionists/$appointmentId/$status'); // Sử dụng status từ tham số
 
     try {
       final response = await http.put(

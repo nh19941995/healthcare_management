@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../Config.dart';
 import '../../dto/Doctor_dto.dart';
 import '../../models/Clinic.dart';
 import '../../models/GetDoctorProfile.dart';
@@ -11,6 +12,8 @@ import 'Doctor_detail_for_clinic.dart';
 import 'Home_customer.dart';
 import 'List_Clinic__Screen.dart';
 import 'Doctor_information.dart';
+
+final String apiUrl = Config.apiUrl;
 
 class MedicalFacilityDetails extends StatefulWidget {
   final Clinic facility;
@@ -24,7 +27,7 @@ class MedicalFacilityDetails extends StatefulWidget {
 class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
   TextEditingController _searchController = TextEditingController();
   List<GetDoctorProfile> filteredDoctors = []; // Thay đổi thành List<DoctorDTO>
-  String get clinicsUrl => "http://localhost:8080/api/clinics/${widget.facility.id}";
+  String get clinicsUrl => "$apiUrl/api/clinics/${widget.facility.id}";
 
   @override
   void initState() {
@@ -40,7 +43,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
   }
 
   Future<void> doctorApi() async {
-    final String clinicsUrl = 'http://localhost:8080/api/clinics/${widget.facility.id}';
+    final String clinicsUrl = '$apiUrl/api/clinics/${widget.facility.id}';
 
     try {
       final response = await http.get(Uri.parse(clinicsUrl));
@@ -85,12 +88,12 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Address:',
-                      style: AppTheme.theme.textTheme.displaySmall,
-                    ),
+                    // Text(
+                    //   'Address:',
+                    //   style: AppTheme.theme.textTheme.displaySmall,
+                    // ),
                     Text(
                       widget.facility.name,
                       style: AppTheme.theme.textTheme.displaySmall,
@@ -101,7 +104,7 @@ class _MedicalFacilityDetails extends State<MedicalFacilityDetails> {
             ),
           ),
           SizedBox(height: AppTheme.mediumSpacing),
-          Text('List of doctors', style: AppTheme.theme.textTheme.displayLarge),
+          // Text('List of doctors', style: AppTheme.theme.textTheme.displayLarge),
           SizedBox(height: AppTheme.mediumSpacing),
           Expanded(
             child: GridView.builder(
